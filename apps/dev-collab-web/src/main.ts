@@ -1,16 +1,13 @@
-import './assets/main.css'
-
-import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-import { createVuetify } from './vendors/vuetify'
-
 import App from './App.vue'
 import router from './router'
+import { usePinia } from './vendors/pinia'
+import { useVuetify } from './vendors/vuetify'
 
 const app = createApp(App)
 
-app.use(createVuetify())
-app.use(createPinia())
+app.use(useVuetify())
+app.use(usePinia())
 app.use(router)
 
 app.mount('#app')
