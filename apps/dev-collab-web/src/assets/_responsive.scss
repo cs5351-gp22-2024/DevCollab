@@ -1,0 +1,199 @@
+// _responsive.scss
+
+@use 'sass:math';
+@import 'variables';
+
+// Responsive mixins
+@mixin responsive($breakpoint) {
+  @if $breakpoint == small {
+    @media (min-width: $breakpoint-small) {
+      @content;
+    }
+  } @else if $breakpoint == medium {
+    @media (min-width: $breakpoint-medium) {
+      @content;
+    }
+  } @else if $breakpoint == large {
+    @media (min-width: $breakpoint-large) {
+      @content;
+    }
+  } @else if $breakpoint == xlarge {
+    @media (min-width: $breakpoint-xlarge) {
+      @content;
+    }
+  } @else if $breakpoint == xxlarge {
+    @media (min-width: $breakpoint-xxlarge) {
+      @content;
+    }
+  }
+}
+
+// Responsive styles
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: 0px !important;
+
+  @include responsive(small) {
+    max-width: $container-small;
+  }
+
+  @include responsive(medium) {
+    max-width: $container-medium;
+  }
+
+  @include responsive(large) {
+    max-width: $container-large;
+  }
+
+  @include responsive(xlarge) {
+    max-width: $container-xlarge;
+  }
+
+  @include responsive(xxlarge) {
+    max-width: $container-xxlarge;
+  }
+
+  @media (min-width: 1920px) {
+    max-width: $container-max;
+  }
+}
+
+// Responsive typography
+h1 {
+  font-size: 2rem;
+
+  @include responsive(medium) {
+    font-size: 2.5rem;
+  }
+
+  @include responsive(large) {
+    font-size: 3rem;
+  }
+}
+
+h2 {
+  font-size: 1.75rem;
+
+  @include responsive(medium) {
+    font-size: 2rem;
+  }
+
+  @include responsive(large) {
+    font-size: 2.25rem;
+  }
+}
+
+h3 {
+  font-size: 1.5rem;
+
+  @include responsive(medium) {
+    font-size: 1.75rem;
+  }
+
+  @include responsive(large) {
+    font-size: 2rem;
+  }
+}
+
+// Responsive grid system
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+// Generate column classes for different screen sizes
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    @extend .col;
+  }
+
+  @include responsive(small) {
+    .col-sm-#{$i} {
+      flex: 0 0 percentage(math.div($i, 12));
+      max-width: percentage(math.div($i, 12));
+    }
+  }
+
+  @include responsive(medium) {
+    .col-md-#{$i} {
+      flex: 0 0 percentage(math.div($i, 12));
+      max-width: percentage(math.div($i, 12));
+    }
+  }
+
+  @include responsive(large) {
+    .col-lg-#{$i} {
+      flex: 0 0 percentage(math.div($i, 12));
+      max-width: percentage(math.div($i, 12));
+    }
+  }
+
+  @include responsive(xlarge) {
+    .col-xl-#{$i} {
+      flex: 0 0 percentage(math.div($i, 12));
+      max-width: percentage(math.div($i, 12));
+    }
+  }
+
+  @include responsive(xxlarge) {
+    .col-xxl-#{$i} {
+      flex: 0 0 percentage(math.div($i, 12));
+      max-width: percentage(math.div($i, 12));
+    }
+  }
+}
+
+// Additional responsive utility classes
+@mixin hidden-breakpoint($min, $max: null) {
+  @if $max {
+    @media (min-width: $min) and (max-width: $max) {
+      display: none !important;
+    }
+  } @else {
+    @media (min-width: $min) {
+      display: none !important;
+    }
+  }
+}
+
+.hidden-xs {
+  @include hidden-breakpoint(0, $breakpoint-small - 1);
+}
+
+.hidden-sm {
+  @include hidden-breakpoint($breakpoint-small, $breakpoint-medium - 1);
+}
+
+.hidden-md {
+  @include hidden-breakpoint($breakpoint-medium, $breakpoint-large - 1);
+}
+
+.hidden-lg {
+  @include hidden-breakpoint($breakpoint-large, $breakpoint-xlarge - 1);
+}
+
+.hidden-xl {
+  @include hidden-breakpoint($breakpoint-xlarge, $breakpoint-xxlarge - 1);
+}
+
+.hidden-xxl {
+  @include hidden-breakpoint($breakpoint-xxlarge);
+}
+
+// Responsive image
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
