@@ -1,12 +1,17 @@
 # DevCollab
 
-## 1st Time Setup
+## Modules
 
-### Initialize Web
+### Web
 
-Run the following command in your shell.
+The frontend module. You may execute the following tasks under the folder `./apps/dev-collab-web`.
 
-```sh
-cd apps/dev-collab-web
-npm ci
-```
+- 1st time setup: `npm ci`
+- development: `npm run dev`
+
+### Api
+
+The frontend module. You may execute the following tasks under the folder `./apps/dev-collab-api`.
+
+- 1st time setup: `npm ci`
+- development: `npm run dev`
