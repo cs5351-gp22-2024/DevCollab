@@ -21,7 +21,8 @@ body {
   background: $color-background;
   line-height: 1.6;
   font-family: $font-family-base;
-  font-size: 0.9375rem; // 15px
+  font-size: $font-size-base;
+  font-weight: $font-weight-base;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

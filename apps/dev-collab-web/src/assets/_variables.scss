@@ -5,17 +5,17 @@ $breakpoint-small: 576px;
 $breakpoint-medium: 768px;
 $breakpoint-large: 992px;
 $breakpoint-xlarge: 1200px;
-$breakpoint-xxlarge: 1400px; // New breakpoint for larger screens
+$breakpoint-xxlarge: 1400px;
 
 // Container widths
 $container-small: 540px;
 $container-medium: 720px;
 $container-large: 960px;
 $container-xlarge: 1140px;
-$container-xxlarge: 1320px; // New container width for larger screens
-$container-max: 1880px; // Maximum container width (1920px - 40px for padding)
+$container-xxlarge: 1320px;
+$container-max: 1880px;
 
-// Custom Color
+// Custom Colors
 $primary-color: #3498db;
 $secondary-color: #2ecc71;
 $accent-color: #00bd7e;
@@ -59,3 +59,53 @@ $color-heading: $vt-c-text-light-1;
 $color-text: $vt-c-text-light-1;
 
 $section-gap: 160px;
+
+// Font sizes
+$font-size-base: 1rem;
+
+$h1-font-size: $font-size-base * 3; // 48px
+$h2-font-size: $font-size-base * 2.625; // 42px
+$h3-font-size: $font-size-base * 2; // 32px
+$h4-font-size: $font-size-base * 1.75; // 28px
+$h5-font-size: $font-size-base * 1.5; // 24px
+$c1-font-size: $font-size-base * 1.125; // 18px (p1)
+$c2-font-size: $font-size-base * 1; // 16px (p2)
+$c3-font-size: $font-size-base * 0.875; // 14px (p3)
+$n1-font-size: $font-size-base * 4.5; // 72px
+$n2-font-size: $font-size-base * 3; // 48px
+$n3-font-size: $font-size-base * 2.25; // 36px
+
+// Mobile font sizes
+$h1-font-size-mb: $font-size-base * 1.5; // 24px
+$h2-font-size-mb: $font-size-base * 1.5; // 24px
+$h3-font-size-mb: $font-size-base * 1.375; // 22px
+$h4-font-size-mb: $font-size-base * 1.25; // 20px
+$h5-font-size-mb: $font-size-base * 1.125; // 18px
+$c1-font-size-mb: $font-size-base * 1; // 16px
+$c2-font-size-mb: $font-size-base * 0.875; // 14px
+$c3-font-size-mb: $font-size-base * 0.75; // 12px
+$n1-font-size-mb: $font-size-base * 3; // 48px
+$n2-font-size-mb: $font-size-base * 2.25; // 36px
+$n3-font-size-mb: $font-size-base * 1.75; // 28px
+
+// Font weights
+$font-weight-lighter: 100;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semi-bold: 600;
+$font-weight-bold: 700;
+
+$font-weight-base: $font-weight-light;
+
+$h1-font-weight: $font-weight-medium;
+$h2-font-weight: $font-weight-medium;
+$h3-font-weight: $font-weight-medium;
+$h4-font-weight: $font-weight-medium;
+$h5-font-weight: $font-weight-medium;
+$c1-font-weight: $font-weight-light;
+$c2-font-weight: $font-weight-light;
+$c3-font-weight: $font-weight-light;
+$n1-font-weight: $font-weight-medium;
+$n2-font-weight: $font-weight-medium;
+$n3-font-weight: $font-weight-medium;
