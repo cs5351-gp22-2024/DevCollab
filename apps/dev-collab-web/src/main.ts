@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 import './assets/styles.scss'
 
+
 const app = createApp(App)
 
 app.use(useVuetify())

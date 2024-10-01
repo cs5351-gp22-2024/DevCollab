@@ -3,32 +3,6 @@
 @use 'sass:math';
 @import 'variables';
 
-// Responsive mixins
-@mixin responsive($breakpoint) {
-  @if $breakpoint == small {
-    @media (min-width: $breakpoint-small) {
-      @content;
-    }
-  } @else if $breakpoint == medium {
-    @media (min-width: $breakpoint-medium) {
-      @content;
-    }
-  } @else if $breakpoint == large {
-    @media (min-width: $breakpoint-large) {
-      @content;
-    }
-  } @else if $breakpoint == xlarge {
-    @media (min-width: $breakpoint-xlarge) {
-      @content;
-    }
-  } @else if $breakpoint == xxlarge {
-    @media (min-width: $breakpoint-xxlarge) {
-      @content;
-    }
-  }
-}
-
-// Responsive styles
 .container {
   width: 100%;
   padding-right: 15px;
@@ -61,44 +35,6 @@
   }
 }
 
-// Responsive typography
-h1 {
-  font-size: 2rem;
-
-  @include responsive(medium) {
-    font-size: 2.5rem;
-  }
-
-  @include responsive(large) {
-    font-size: 3rem;
-  }
-}
-
-h2 {
-  font-size: 1.75rem;
-
-  @include responsive(medium) {
-    font-size: 2rem;
-  }
-
-  @include responsive(large) {
-    font-size: 2.25rem;
-  }
-}
-
-h3 {
-  font-size: 1.5rem;
-
-  @include responsive(medium) {
-    font-size: 1.75rem;
-  }
-
-  @include responsive(large) {
-    font-size: 2rem;
-  }
-}
-
-// Responsive grid system
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -113,7 +49,6 @@ h3 {
   padding-left: 15px;
 }
 
-// Generate column classes for different screen sizes
 @for $i from 1 through 12 {
   .col-#{$i} {
     @extend .col;
@@ -155,7 +90,6 @@ h3 {
   }
 }
 
-// Additional responsive utility classes
 @mixin hidden-breakpoint($min, $max: null) {
   @if $max {
     @media (min-width: $min) and (max-width: $max) {
@@ -192,7 +126,6 @@ h3 {
   @include hidden-breakpoint($breakpoint-xxlarge);
 }
 
-// Responsive image
 .img-fluid {
   max-width: 100%;
   height: auto;
