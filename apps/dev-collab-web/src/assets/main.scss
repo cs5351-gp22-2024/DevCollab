@@ -169,3 +169,9 @@ a {
   margin-right: auto !important;
   margin-left: auto !important;
 }
+
+.bg-image {
+  background-image: url("/public/project-background.png");
+  background-size: cover;
+  background-position: center;
+}
