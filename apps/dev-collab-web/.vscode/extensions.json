@@ -8,6 +8,9 @@
     "csstools.postcss",
     "hollowtree.vue-snippets",
     "octref.vetur",
-    "nucllear.vscode-extension-auto-import"
+    "nucllear.vscode-extension-auto-import",
+    "bradlc.vscode-tailwindcss",
+    "anbuselvanrocky.bootstrap5-vscode",
+    "thekalinga.bootstrap4-vscode"
   ]
 }
