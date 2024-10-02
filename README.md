@@ -2,7 +2,7 @@
 
 ## Modules
 
-### Web
+### WEB
 
 The frontend module. You may execute the following tasks under the folder `./apps/dev-collab-web`.
 
