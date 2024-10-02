@@ -1,5 +1,160 @@
 <template>
-  <div>
-    <h1>Login page</h1>
-  </div>
+  <v-app class="bg-image">
+    <div class="position-fixed vh-100 vw-100 d-flex">
+      <div class="bg-cover w-75 vh-100 opacity-75"></div>
+      <div class="bg-splash vh-100 opacity-75"></div>
+    </div>
+    <v-container class="vh-100 position-relative z-3 text-center flex-column d-flex">
+      <div class="start-0 w-100 text-start d-flex">
+        <GitHubBtn></GitHubBtn>
+        <div class="ms-auto align-self-center logo-div-sm">
+          <span><img :src="Logo" alt="LOGO" style="width: 1rem" />DEVCOLLAB </span>
+        </div>
+      </div>
+      <div class="container-sm">
+        <div v-if="showEmailInput" class="large-text p-3 red-text-1">LOGIN</div>
+        <div v-if="!showEmailInput" class="large-text p-3 red-text-1">WELCOME BACK</div>
+        <div v-if="!showEmailInput" class="fs-3 p-1 red-text-1 fw-bolder">#{{ username }}</div>
+        <div class="h2 p-1 color-gray-2">Connect Your</div>
+        <div class="h2 p-1 red-text-1">#Team #Task #Project</div>
+        <InputEditText
+          v-if="showEmailInput"
+          class="mt-4"
+          InputType="email"
+          PlaceHolder="Email"
+          v-model="value"
+          :SubmitAction="checkEmail"
+        ></InputEditText>
+
+        <InputEditText
+          v-if="showPasswordInput"
+          class="mt-4"
+          InputType="password"
+          PlaceHolder="Password"
+          v-model="value"
+          :SubmitAction="submitPassword"
+        ></InputEditText>
+
+        <InputEditText
+          v-if="showVerificationInput"
+          class="mt-4"
+          InputType="number"
+          PlaceHolder="Verification Code"
+          v-model="value"
+          :SubmitAction="submitVerification"
+        ></InputEditText>
+
+        <div class="mt-2">
+          <a class="red-text-1 text-decoration-underline fs-4" href="registration">
+            Sign Up For DEVCOLLAB
+          </a>
+        </div>
+      </div>
+
+      <CoverFooter></CoverFooter>
+      <SideLogo></SideLogo>
+    </v-container>
+  </v-app>
 </template>
+
+<script>
+import Logo from '../../../public/logo-gray.png'
+import SideLogo from '@/components/cover_page_components/SideLogo.vue'
+import GitHubBtn from '@/components/cover_page_components/GitHubBtn.vue'
+import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
+import InputEditText from '@/components/cover_page_components/InputEditText.vue'
+import { ref } from 'vue'
+
+const showEmailInput = ref(true)
+const showPasswordInput = ref(false)
+const showVerificationInput = ref(false)
+const username = ref('')
+export default {
+  components: {
+    GitHubBtn,
+    SideLogo,
+    CoverFooter,
+    InputEditText
+  },
+  setup() {
+    const LogoRef = Logo // Use Logo directly since it's a static import
+
+    const checkEmail = (value) => {
+      console.log('Checking Email')
+      console.log(value)
+      const data = {
+        email: 'codeMonkey001@gmail.com',
+        username: 'CodeMokey001@gmail.com',
+        mfa: false // Set this to true or false based on your logic
+      }
+
+      // Update visibility based on the mfa value
+      username.value = data.username
+      showEmailInput.value = false // Hide email input
+      if (data.mfa) {
+        showPasswordInput.value = false // Hide password input
+        showVerificationInput.value = true // Show verification input
+      } else {
+        showPasswordInput.value = true // Show password input
+        showVerificationInput.value = false // Hide verification input
+      }
+    }
+
+    const submitPassword = (value) => {
+      console.log('Checking Password')
+      console.log(value)
+    }
+
+    const submitVerification = (value) => {
+      console.log('Checking Verification')
+      console.log(value)
+    }
+
+    return {
+      Logo: LogoRef,
+      showEmailInput,
+      showPasswordInput,
+      showVerificationInput,
+      username,
+      checkEmail,
+      submitPassword,
+      submitVerification
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.large-text {
+  font-size: 6rem;
+}
+.logo-div-sm {
+  display: none;
+}
+.red-text-1 {
+  color: $red-1;
+}
+.color-gray-2 {
+  color: $gray-2;
+}
+@media (max-width: 1440px) {
+  .large-text {
+    font-size: 2rem;
+  }
+  .logo-div {
+    display: none;
+  }
+  .logo-div-sm {
+    display: block;
+  }
+}
+.bg-splash {
+  background-image: url('/public/splash.svg');
+  width: 15%;
+  background-size: cover;
+  background-position: center;
+}
+.bg-cover {
+  background-color: $vt-c-white;
+}
+</style>
