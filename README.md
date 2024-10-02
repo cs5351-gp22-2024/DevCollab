@@ -9,7 +9,7 @@ The frontend module. You may execute the following tasks under the folder `./app
 - 1st time setup: `npm ci`
 - development: `npm run dev`
 
-### Api
+### API
 
 The frontend module. You may execute the following tasks under the folder `./apps/dev-collab-api`.
 
