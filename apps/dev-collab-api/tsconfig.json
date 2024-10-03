@@ -24,6 +24,8 @@
     "moduleResolution": "Node16",
     "paths": {
       "shared/*": ["../../packages/shared/*"]
-    }
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   }
 }
