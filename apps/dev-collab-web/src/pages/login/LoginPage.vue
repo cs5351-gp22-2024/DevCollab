@@ -17,35 +17,45 @@
         <div v-if="!showEmailInput" class="fs-3 p-1 red-text-1 fw-bolder">#{{ username }}</div>
         <div class="h2 p-1 color-gray-2">Connect Your</div>
         <div class="h2 p-1 red-text-1">#Team #Task #Project</div>
+
+        <!-- Email Input -->
         <InputEditText
           v-if="showEmailInput"
           class="mt-4"
           InputType="email"
           PlaceHolder="Email"
-          v-model="value"
+          @input-change="updateEmail"
+          :ShowSubmit="true"
           :SubmitAction="checkEmail"
-        ></InputEditText>
+        ></InputEditText
+        ><!-- Listen for input-change event -->
 
+        <!-- Password Input -->
         <InputEditText
           v-if="showPasswordInput"
           class="mt-4"
           InputType="password"
           PlaceHolder="Password"
-          v-model="value"
+          @input-change="updatePassword"
+          :ShowSubmit="true"
           :SubmitAction="submitPassword"
-        ></InputEditText>
+        ></InputEditText
+        ><!-- Listen for input-change event -->
 
+        <!-- Verification Code Input -->
         <InputEditText
           v-if="showVerificationInput"
           class="mt-4"
           InputType="number"
           PlaceHolder="Verification Code"
-          v-model="value"
+          @input-change="updateVerificationCode"
+          :ShowSubmit="true"
           :SubmitAction="submitVerification"
-        ></InputEditText>
+        ></InputEditText
+        ><!-- Listen for input-change event -->
 
         <div class="mt-2">
-          <a class="red-text-1 text-decoration-underline fs-4" href="registration">
+          <a class="red-text-1 text-decoration-underline fs-4" href="sign-up">
             Sign Up For DEVCOLLAB
           </a>
         </div>
@@ -56,7 +66,6 @@
     </v-container>
   </v-app>
 </template>
-
 <script>
 import Logo from '../../../public/logo-gray.png'
 import SideLogo from '@/components/cover_page_components/SideLogo.vue'
@@ -65,10 +74,6 @@ import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
 import InputEditText from '@/components/cover_page_components/InputEditText.vue'
 import { ref } from 'vue'
 
-const showEmailInput = ref(true)
-const showPasswordInput = ref(false)
-const showVerificationInput = ref(false)
-const username = ref('')
 export default {
   components: {
     GitHubBtn,
@@ -79,9 +84,29 @@ export default {
   setup() {
     const LogoRef = Logo // Use Logo directly since it's a static import
 
-    const checkEmail = (value) => {
+    const showEmailInput = ref(true)
+    const showPasswordInput = ref(false)
+    const showVerificationInput = ref(false)
+    const username = ref('')
+    const email = ref('')
+    const password = ref('')
+    const verificationCode = ref('')
+
+    const updateEmail = (value) => {
+      email.value = value // Update email value
+    }
+
+    const updatePassword = (value) => {
+      password.value = value // Update password value
+    }
+
+    const updateVerificationCode = (value) => {
+      verificationCode.value = value // Update verification code value
+    }
+
+    const checkEmail = () => {
       console.log('Checking Email')
-      console.log(value)
+      console.log(email.value) // Use the email data property
       const data = {
         email: 'codeMonkey001@gmail.com',
         username: 'CodeMokey001@gmail.com',
@@ -91,6 +116,7 @@ export default {
       // Update visibility based on the mfa value
       username.value = data.username
       showEmailInput.value = false // Hide email input
+
       if (data.mfa) {
         showPasswordInput.value = false // Hide password input
         showVerificationInput.value = true // Show verification input
@@ -100,15 +126,22 @@ export default {
       }
     }
 
-    const submitPassword = (value) => {
+    const submitPassword = () => {
       console.log('Checking Password')
-      console.log(value)
+      console.log(password.value) // Use the password data property
     }
 
-    const submitVerification = (value) => {
+    const submitVerification = () => {
       console.log('Checking Verification')
-      console.log(value)
+      console.log(verificationCode.value) // Use the verification code data property
     }
+
+    /*   // Call checkEmail when the email input changes
+    watch(email, (newValue) => {
+      if (newValue) {
+        checkEmail()
+      }
+    }) */
 
     return {
       Logo: LogoRef,
@@ -116,6 +149,9 @@ export default {
       showPasswordInput,
       showVerificationInput,
       username,
+      updateEmail,
+      updatePassword,
+      updateVerificationCode,
       checkEmail,
       submitPassword,
       submitVerification
