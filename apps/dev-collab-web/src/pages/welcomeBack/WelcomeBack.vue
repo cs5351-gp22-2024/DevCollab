@@ -5,21 +5,39 @@ import ConnectBtn from '@/components/cover_page_components/ConnectBtn.vue'
 import GitHubBtn from '@/components/cover_page_components/GitHubBtn.vue'
 import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
 
+import TeamSelector from '@/components/cover_page_components/TeamSelector.vue'
+import { ref } from 'vue'
+
 export default {
   data() {
     return {
       Logo: Logo
     }
   },
+
+  setup() {
+    const Username = ref('CODE MONKEY')
+    const defaultTeamId = ref(1001) // ref(0)
+
+    return {
+      Username,
+      defaultTeamId
+    }
+  },
   components: {
+    TeamSelector: TeamSelector,
     GitHubBtn: GitHubBtn,
     SideLogo: SideLogo,
     ConnectBtn: ConnectBtn,
     CoverFooter: CoverFooter
   },
+
   methods: {
-    goLogin() {
-      this.$router.push({ name: 'login' })
+    findTeam() {
+      this.$router.push({ name: 'projects' })
+    },
+    updateSelectedTeam(id) {
+      this.$refs.ConnectBtn.updateSelectedTeam(id)
     }
   }
 }
@@ -35,6 +53,9 @@ export default {
 }
 .color-gray-2 {
   color: $gray-2;
+}
+.large-text {
+  font-size: 6rem;
 }
 @media (max-width: 1440px) {
   .large-text {
@@ -59,11 +80,27 @@ export default {
         </div>
       </div>
       <div class="container-sm">
-        <div class="h1 p-4 color-gray-2">Keeping Your Projects on Track</div>
-        <div class="h2 p-2 color-gray-2">Synchronize Your Team's Efforts</div>
+        <div class="h1 p-4 color-gray-2">Welcome Back,</div>
+        <div class="h2 p-2 large-text red-text-1">{{ Username }}</div>
         <div class="h6 p-2 red-text-1">DEVCOLLAB</div>
       </div>
-      <ConnectBtn class="my-auto"></ConnectBtn>
+      <div class="w-100 text-center d-flex justify-content-center">
+        <div class="w-50">
+          <TeamSelector
+            :defaultTeamId="defaultTeamId"
+            @updateSelectedTeam="updateSelectedTeam"
+          ></TeamSelector>
+          <div class="red-text-1 fs-6 mt-2 text-start">
+            <span class="cursor-pointer" @click="findTeam">I'm looking for another team</span>
+          </div>
+        </div>
+      </div>
+      <ConnectBtn
+        ref="ConnectBtn"
+        class="my-auto"
+        LoginState="EXISTING_USER"
+        :defaultTeamId="defaultTeamId"
+      ></ConnectBtn>
       <CoverFooter></CoverFooter>
       <SideLogo></SideLogo>
     </v-container>
