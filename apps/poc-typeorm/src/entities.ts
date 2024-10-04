@@ -18,6 +18,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Flower, (flower) => flower.user)
   flowers: Flower[] | null = null;
+
+  @Column({ type: "timestamp" })
+  updated: Date | null = null;
 }
 
 @Entity("Flower")

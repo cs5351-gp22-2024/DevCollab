@@ -2,6 +2,7 @@ CREATE TABLE
     User (
         `userId` int NOT NULL AUTO_INCREMENT,
         `name` varchar(255),
+        `updated` DATETIME,
         PRIMARY KEY (`userId`)
     );
 

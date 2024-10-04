@@ -45,6 +45,7 @@ ds.initialize().then(async (ds) => {
    */
   for (const tim of tims) {
     tim.name = tim.name?.toUpperCase() || tim.name;
+    tim.updated = new Date();
   }
   await userRepo.save(tims);
 

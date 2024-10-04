@@ -13,6 +13,7 @@ const AppDataSource = new DataSource({
   entities: [User, Flower],
   subscribers: [],
   migrations: [],
+  timezone: "Z",
 });
 
 export const getAppDataSource = () => AppDataSource;
