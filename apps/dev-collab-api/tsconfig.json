@@ -18,6 +18,7 @@
   },
 
   "include": ["src/**/*", "../../packages/shared/**/*"],
+  "esModuleInterop": true,
 
   "compilerOptions": {
     // typescript options here
