@@ -24,7 +24,7 @@ export class ProjectService implements IProjectService {
 
     this._projectRepository.addProject(newProject);
 
-    this._dbContext.save();
+    await this._dbContext.save();
 
     return newProject.projectId;
   }

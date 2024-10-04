@@ -3,17 +3,21 @@ import { Project } from "../entities/project";
 
 export interface IProjectRepository {
   addProject(project: Project): void;
-  getLatestProjects(): Project;
+  getLatestProjects(): Promise<Project[]>;
 }
 
 export class ProjectRepository implements IProjectRepository {
-  constructor(private dbContext: IDbContext) {}
+  constructor(private _dbContext: IDbContext) {}
 
   addProject(project: Project): void {
-    throw new Error("Method not implemented.");
+    this._dbContext.needCreate(project);
   }
 
-  getLatestProjects(): Project {
-    throw new Error("Method not implemented.");
+  async getLatestProjects(): Promise<Project[]> {
+    return await this._dbContext.projects.find({
+      order: {
+        created: "desc",
+      },
+    });
   }
 }
