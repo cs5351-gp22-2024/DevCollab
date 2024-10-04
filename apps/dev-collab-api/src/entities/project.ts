@@ -12,8 +12,11 @@ export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   projectId: number = 0;
 
+  @Column({ type: "varchar" })
+  name: string = "";
+
   @Column({ type: "varchar", nullable: true })
-  name: string | null = null;
+  description: string | null = null;
 
   @Column({ type: "varchar", nullable: true })
   avatar: string | null = null;
