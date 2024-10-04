@@ -25,7 +25,7 @@ We use Mysql as the database, so please either install it at the [official site]
 Please also add the following login account in your local database.
 
 ```yaml
-username: sa
+username: root
 password: P@ssw0rd
 ```
 
