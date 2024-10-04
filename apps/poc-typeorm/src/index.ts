@@ -2,7 +2,7 @@ import { isEmpty } from "lodash";
 import "reflect-metadata";
 import { ILike } from "typeorm";
 import { getAppDataSource } from "./datasource";
-import { Flower, User } from "./entities";
+import { User } from "./entities";
 import { createFlower, createUser } from "./logics";
 
 const ds = getAppDataSource();
@@ -43,7 +43,6 @@ ds.initialize().then(async (ds) => {
   /**
    * Update user
    */
-  let counter = 0;
   for (const tim of tims) {
     tim.name = tim.name?.toUpperCase() || tim.name;
   }
@@ -52,11 +51,12 @@ ds.initialize().then(async (ds) => {
   /**
    * Delete user
    */
-  const flowerRepo = ds.manager.getRepository(Flower);
   const evenTims = tims.filter((t) => t.userId % 2 === 0);
   for (const t of evenTims) {
-    await flowerRepo.remove(t.flowers || []);
-    await userRepo.remove(t);
+    console.log(
+      `removing user ${t.userId} and flowers ${t.flowers?.map((f) => f.flowerId)}`
+    );
+    await ds.manager.remove([t, ...(t.flowers || [])]);
   }
 
   ds.destroy();
