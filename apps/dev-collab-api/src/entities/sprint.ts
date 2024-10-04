@@ -15,9 +15,9 @@ export class Sprint extends BaseEntity {
   @ManyToOne(() => Project, (project) => project.sprints)
   project: Project | null = null;
 
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamp" })
   startDate: Date | null = null;
 
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamp" })
   endDate: Date | null = null;
 }

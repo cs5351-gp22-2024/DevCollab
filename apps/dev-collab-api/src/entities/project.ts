@@ -12,16 +12,16 @@ export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   projectId: number = 0;
 
-  @Column()
+  @Column({ type: "varchar", nullable: true })
   name: string | null = null;
 
-  @Column()
+  @Column({ type: "varchar", nullable: true })
   avatar: string | null = null;
 
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamp" })
   created: Date | null = null;
 
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamp" })
   modified: Date | null = null;
 
   @OneToMany(() => Sprint, (sprint) => sprint.project)
