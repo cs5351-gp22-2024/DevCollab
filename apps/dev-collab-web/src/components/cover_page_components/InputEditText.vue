@@ -4,12 +4,13 @@
       <input
         :type="InputType"
         :placeholder="PlaceHolder"
-        v-model="inputValue"
+        :value="inputValue"
+        @input="onInputChange"
         class="border rounded-2 red-border-1 border-2 bg-color-white red-text-1 fs-2 px-4 py-2 w-100"
       />
       <div class="h-100 position-absolute end-0 d-inline p-2">
         <IconSubmit
-          v-show="submitButtonVisible"
+          v-show="ShowSubmit"
           @click="handleSubmit"
           color="white"
           class="bg-red-1 rounded-5 p-2 h-100"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import IconSubmit from '../icons/IconSubmit.vue'
 
 export default {
@@ -40,29 +41,23 @@ export default {
       type: Function,
       default: null
     },
+    ShowSubmit: {
+      type: Boolean,
+      default: false
+    },
     value: {
-      // Accept a value prop for v-model
       type: String,
       default: ''
     }
   },
   setup(props, { emit }) {
-    const submitButtonVisible = ref(false)
-    const inputValue = ref(props.value) // Create a local ref for input value
+    const inputValue = props.value // Create a local ref for input value
 
-    // Watch for changes in the SubmitAction prop
-    watch(
-      () => props.SubmitAction,
-      (newValue) => {
-        submitButtonVisible.value = typeof newValue === 'function' // Check if it's a function
-      },
-      { immediate: true }
-    )
-
-    // Watch inputValue to emit changes to parent
-    watch(inputValue, (newValue) => {
-      emit('update:value', newValue) // Emit the updated value to parent
-    })
+    // Emit the input value change to parent
+    const onInputChange = (event) => {
+      inputValue.value = event.target.value // Update local value
+      emit('input-change', inputValue.value) // Emit custom event with new value
+    }
 
     const handleSubmit = () => {
       console.log('Form submitted!')
@@ -72,8 +67,8 @@ export default {
     }
 
     return {
-      submitButtonVisible,
-      inputValue, // Use the local ref for v-model binding
+      inputValue,
+      onInputChange, // Expose the input change handler
       handleSubmit
     }
   }
