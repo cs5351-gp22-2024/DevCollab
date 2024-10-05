@@ -2,14 +2,14 @@
 
 ## Modules
 
-### WEB
+### Web
 
 The frontend module. You may execute the following tasks under the folder `./apps/dev-collab-web`.
 
 - 1st time setup: `npm ci`
 - development: `npm run dev`
 
-### API
+### Api
 
 The api module. You may execute the following tasks under the folder `./apps/dev-collab-api`.
 
