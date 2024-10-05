@@ -4,6 +4,7 @@ import { createHomeRoutes } from '@/pages/home/home.routes'
 import { createLoginRoutes } from '@/pages/login/login-routes'
 import { createMainRoutes } from '@/pages/main/main-routes'
 import { createGuideRoutes } from '@/pages/guide/guide-routes'
+import { createComponentRoutes } from '@/pages/component/component-routes'
 import { createSignupRoutes } from '@/pages/signup/signup-routes'
 import { createWelcomeRoutes } from '@/pages/welcome/welcome-routes'
 import { createWelcomebackRoutes } from '@/pages/welcomeBack/welcomeBack-routes'
@@ -15,7 +16,12 @@ const router = createRouter({
     ...createWelcomeRoutes(),
     ...createWelcomebackRoutes(),
     ...createSignupRoutes(),
-    ...createMainRoutes([...createHomeRoutes(), ...createProjectsRoutes(), ...createGuideRoutes()])
+    ...createMainRoutes([
+      ...createHomeRoutes(),
+      ...createProjectsRoutes(),
+      ...createGuideRoutes(),
+      ...createComponentRoutes()
+    ])
   ]
 })
 

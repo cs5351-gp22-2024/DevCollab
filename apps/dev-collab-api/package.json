@@ -1,7 +1,7 @@
 {
   "scripts": {
     "track-sql": "db-integrity-tracker --sqlfolder=./src/sql --trackfile=./db-tracker.txt",
-    "dev": "npm run track-sql && nodemon ./src/index.ts"
+    "dev": "nodemon ./src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
