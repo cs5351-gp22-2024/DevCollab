@@ -8,6 +8,8 @@ import { createComponentRoutes } from '@/pages/component/component-routes'
 import { createSignupRoutes } from '@/pages/signup/signup-routes'
 import { createWelcomeRoutes } from '@/pages/welcome/welcome-routes'
 import { createWelcomebackRoutes } from '@/pages/welcomeBack/welcomeBack-routes'
+import { createAutomationRoutes } from '@/pages/automation/automation-routes'
+import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +22,8 @@ const router = createRouter({
       ...createHomeRoutes(),
       ...createProjectsRoutes(),
       ...createGuideRoutes(),
+      ...createAutomationRoutes(),
+      ...creategithubRoutes(),
       ...createComponentRoutes()
     ])
   ]

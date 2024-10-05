@@ -127,9 +127,9 @@ a {
   text-decoration: none;
   transition: color 0.3s ease;
 
-  &:hover {
-    color: color.scale($accent-color, $lightness: -27%);
-  }
+  // &:hover {
+  //   color: color.scale($secondary-color, $lightness: -27%);
+  // }
 }
 
 .btn {
