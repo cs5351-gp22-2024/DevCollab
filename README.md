@@ -41,6 +41,23 @@ password: "P@ssw0rd"
 database: "DevCollab"
 ```
 
-### SQL
+### Writing New SQL
 
 For each of the update sql, you need to put your sql into the folder `apps\dev-collab-api\src\sql`. The file name follows the following format `YYYYMMDD_Feature`.
+
+### Execute New SQL
+
+When there are new sql files available from your teammate commits, the tool `db-integrity-tracker` will notify you to apply them into your local database when you start to develop via `npm run dev`. The log will output which sql files should be executed.
+
+```txt
+Make sure you have run the following sqls in your local database:
+- 20241004_Project.sql
+```
+
+You may also run the following command `npm run track-sql` to check the integrity. If no output, it means the current database is up-to-date.
+
+After you have applied the sql files, you need to append the filenames of the sql files into the `db-tracker.txt`. So, your db-tracker.txt should be looked like the following.
+
+```
+20241004_Project.sql
+```
