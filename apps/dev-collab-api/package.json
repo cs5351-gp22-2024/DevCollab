@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "dev": "nodemon ./src/index.ts"
+    "track-sql": "db-integrity-tracker --sqlfolder=./src/sql --trackfile=./db-tracker.txt",
+    "dev": "npm run track-sql && nodemon ./src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.4",
+    "db-integrity-tracker": "file:../../packages/db-integrity-tracker",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",

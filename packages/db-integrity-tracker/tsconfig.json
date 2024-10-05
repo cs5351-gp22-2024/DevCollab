@@ -17,15 +17,14 @@
     }
   },
 
-  "include": ["src/**/*", "../../packages/shared/**/*"],
+  "include": ["src/**/*"],
 
   "compilerOptions": {
     // typescript options here
     "moduleResolution": "Node16",
-    "paths": {
-      "shared/*": ["../../packages/shared/*"]
-    },
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "outDir": "bin"
   }
 }

@@ -1,7 +1,12 @@
 {
-  "main": "src/index.ts",
+  "name": "db-integrity-tracker",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "ts-node src/index.ts --sqlfolder=./src/sql --trackfile=./db-tracker.txt"
+    "test": "ts-node src/index.ts --sqlfolder=./src/sql --trackfile=./db-tracker.txt",
+    "build": "tsc --project tsconfig.json"
+  },
+  "bin": {
+    "db-integrity-tracker": "bin/index.js"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.10",
