@@ -43,4 +43,4 @@ database: "DevCollab"
 
 ### SQL
 
-For each of the update sql, you need to put your sql into the folder `apps\dev-collab-api\src\sql`. The file name follows the following format `Feature_YYYYMMDD`.
+For each of the update sql, you need to put your sql into the folder `apps\dev-collab-api\src\sql`. The file name follows the following format `YYYYMMDD_Feature`.
