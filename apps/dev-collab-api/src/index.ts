@@ -1,8 +1,10 @@
 import "reflect-metadata";
 import bodyParser from "body-parser";
 import express from "express";
+import "express-async-errors";
 import { HomeMessageModel } from "shared/models/home";
 import { AppDataSource } from "./db/db-datasrc";
+import { createHttpErrorHandler } from "./errors/http-error-handler";
 import { projectRouter } from "./routers/project-router";
 
 const app = express();
@@ -15,6 +17,8 @@ app.get("/api/home/messages", (req, res) => {
 });
 
 app.use("/", projectRouter);
+
+app.use(createHttpErrorHandler());
 
 AppDataSource.initialize().then(() => {
   app.listen(port, () => {

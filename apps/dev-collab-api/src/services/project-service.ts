@@ -1,8 +1,10 @@
 import { inject, injectable } from "inversify";
+import { isEmpty } from "lodash";
 import { ProjectCreateCommand } from "shared/models/project";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Project } from "../entities/project";
+import { HttpBadRequestError } from "../errors/http-errors";
 import { IProjectRepository } from "../repositories/project-repository";
 
 export interface IProjectService {
@@ -19,6 +21,10 @@ export class ProjectService implements IProjectService {
   ) {}
 
   async createProject(command: ProjectCreateCommand) {
+    if (isEmpty(command.name)) {
+      throw new HttpBadRequestError("Project name is required");
+    }
+
     const newProject = new Project();
     const now = new Date();
 
