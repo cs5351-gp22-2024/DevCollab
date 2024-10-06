@@ -20,15 +20,12 @@ export default defineConfig({
         sassOptions: {
           quietDeps: true
         },
-        silenceDeprecations: ['legacy-js-api'],
+        silenceDeprecations: ['legacy-js-api']
       }
     },
     postcss: {
-      plugins: [
-        tailwindcss('./tailwind.config.ts'),
-        autoprefixer,
-      ],
-    },
+      plugins: [tailwindcss('./tailwind.config.ts'), autoprefixer]
+    }
   },
   resolve: {
     alias: {
