@@ -1,5 +1,5 @@
 <template>
-  <div :class="['bg-white rounded-lg shadow p-4 mb-4', { 'border-l-4 border-blue-500': isReply }]">
+  <div class="bg-white rounded-lg shadow p-4 mb-4">
     <div class="flex items-center mb-2">
       <img :src="avatarUrl" :alt="comment.author" class="w-8 h-8 rounded-full mr-3" />
       <div class="w-full flex justify-between">
@@ -36,10 +36,6 @@ export default defineComponent({
     comment: {
       type: Object as PropType<Comment>,
       required: true
-    },
-    isReply: {
-      type: Boolean,
-      default: false
     }
   },
   setup(props) {

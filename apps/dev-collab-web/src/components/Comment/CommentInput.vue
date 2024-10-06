@@ -3,11 +3,11 @@
     <div
       v-if="!isExpanded"
       @click="isExpanded = true"
-      class="border border-gray-300 rounded-full px-4 py-2 text-gray-500 cursor-pointer hover:bg-gray-100"
+      class="border rounded-full px-4 py-2 text-gray-500 cursor-pointer hover:bg-gray-100"
     >
       Add a comment...
     </div>
-    <div v-else class="border border-gray-300 rounded-lg p-2">
+    <div v-else class="border border-primary rounded-lg p-2">
       <div class="relative">
         <textarea
           ref="commentTextarea"
@@ -20,7 +20,7 @@
         ></textarea>
         <div
           v-if="showMentionDropdown"
-          class="absolute left-0 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
+          class="absolute left-0 mt-1 w-64 bg-white border border-primary rounded-lg shadow-lg z-10"
         >
           <div
             v-for="user in filteredUsers"

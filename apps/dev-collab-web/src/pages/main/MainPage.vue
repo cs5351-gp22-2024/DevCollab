@@ -21,16 +21,16 @@
             title="Projects"
             :to="{ name: 'projects' }"
           ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-refresh-auto"
+            title="Automation"
+            :to="{ name: 'automation' }"
+          ></v-list-item>
           <v-list-item prepend-icon="mdi-" title="Guide" :to="{ name: 'guide' }"></v-list-item>
           <v-list-item
             prepend-icon="mdi-"
             title="Component"
             :to="{ name: 'component' }"
-          ></v-list-item>
-          <v-list-item
-            prepend-icon="mdi-refresh-auto"
-            title="Automation"
-            :to="{ name: 'automation' }"
           ></v-list-item>
         </v-list>
 
