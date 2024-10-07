@@ -44,6 +44,26 @@
             </div>
           </div>
         </div>
+        
+      </div>
+    </section>
+  </div>
+
+  <div class="container mx-auto p-4">
+    <section class="mb-8">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
+          <div @click="sendMessage" class="bg-red-400 p-4 rounded-lg hover-div">
+            <div class="block">
+              <div class="text">
+                <p>WebSocket TEST</p>
+              </div>
+            </div>
+          </div>
+          <ul>
+            <li v-for="message in messages" :key="message.id">{{ message.text }}</li>
+          </ul>
+        </div>
       </div>
     </section>
   </div>
@@ -52,7 +72,7 @@
 // For icons & Page navigation
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Router } from 'vue-router'
+import type { Router } from 'vue-router'
 import github from '@/assets/icons/Icon_github.svg'
 import gitlab from '@/assets/icons/Icon_gitlab.svg'
 
@@ -60,13 +80,44 @@ export default defineComponent({
   data() {
     return {
       github: github,
-      gitlab: gitlab
+      gitlab: gitlab,
+      ws: null as WebSocket | null,
+      messages: [] as { id: number; text: string }[]
     }
+  },
+  mounted() {
+    // Establish WebSocket connection when the component is mounted
+    this.ws = new WebSocket('ws://localhost:3000'); // WebSocket server URL
+
+    this.ws.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    this.ws.onmessage = (event) => {
+      const newMessage = { id: this.messages.length + 1, text: event.data };
+      this.messages.push(newMessage);
+    };
+
+    this.ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
   },
   methods: {
     githubPage(): void {
       const router: Router = this.$router
       router.push('/automation/github') // Navigate to a sub-page
+    },
+    sendMessage() {
+      if (this.ws !== null) {
+        // Send a message to the WebSocket server
+        this.ws.send('Hello from Vue.js!');
+      }
+    }
+  },
+  beforeDestroy() {
+    // Close WebSocket connection
+    if (this.ws) {
+      this.ws.close();
     }
   }
 })
@@ -76,7 +127,6 @@ export default defineComponent({
 import { ref } from 'vue'
 import _ from 'lodash'
 
-// Tailwind modal state
 const availableSoon = ref(false)
 </script>
 

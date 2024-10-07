@@ -9,6 +9,7 @@ import { createWelcomeRoutes } from '@/pages/welcome/welcome-routes'
 import { createWelcomebackRoutes } from '@/pages/welcomeBack/welcomeBack-routes'
 import { createAutomationRoutes } from '@/pages/automation/automation-routes'
 import { creategithubRoutes } from '@/pages/automation/github/github-routes'
+import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,7 @@ const router = createRouter({
     ...createWelcomeRoutes(),
     ...createWelcomebackRoutes(),
     ...createSignupRoutes(),
-    ...createMainRoutes([...createHomeRoutes(), ...createProjectsRoutes(), ...createGuideRoutes(),...createAutomationRoutes(),...creategithubRoutes()])
+    ...createMainRoutes([...createHomeRoutes(), ...createProjectsRoutes(), ...createGuideRoutes(),...createAutomationRoutes(),...creategithubRoutes(),...creategithubNewWebhookRoutes()])
   ]
 })
 
