@@ -1,13 +1,16 @@
 import { inject, injectable } from "inversify";
 import { isEmpty } from "lodash";
-import { ProjectCreateCommand } from "shared/models/project";
+import { ProjectCreateCommand, ProjectModel } from "shared/models/project";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Project } from "../entities/project";
 import { HttpBadRequestError } from "../errors/http-errors";
+import { mapProjectToProjectModel } from "../mappers/project";
 import { IProjectRepository } from "../repositories/project-repository";
 
 export interface IProjectService {
+  getProject(projectId: number): Promise<ProjectModel>;
+  getAllProjects(): Promise<ProjectModel[]>;
   createProject(command: ProjectCreateCommand): Promise<number>;
 }
 
@@ -19,6 +22,21 @@ export class ProjectService implements IProjectService {
     @inject(TYPES.IProjectRepository)
     private _projectRepository: IProjectRepository
   ) {}
+  async getProject(projectId: number): Promise<ProjectModel> {
+    const project = await this._projectRepository.getProject(projectId);
+
+    if (!project) {
+      throw new HttpBadRequestError("Project does not exist");
+    }
+
+    return mapProjectToProjectModel(project);
+  }
+
+  async getAllProjects(): Promise<ProjectModel[]> {
+    const projects = await this._projectRepository.getAllProjects();
+
+    return projects.map((p) => mapProjectToProjectModel(p));
+  }
 
   async createProject(command: ProjectCreateCommand) {
     if (isEmpty(command.name)) {
