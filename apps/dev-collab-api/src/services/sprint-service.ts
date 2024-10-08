@@ -20,6 +20,7 @@ export interface ISprintService {
   ): Promise<number>;
   getProjectSprints(projectId: number): Promise<SprintModel[]>;
   updateSprint(sprintId: number, command: SprintUpdateCommand): Promise<void>;
+  removeSprint(sprintId: number): Promise<void>;
 }
 
 @injectable()
@@ -141,6 +142,23 @@ export class SprintService implements ISprintService {
     sprint.endDate = new Date(endDate);
 
     this._sprintRepository.updateSprint(sprint);
+
+    await this._dbContext.save();
+  }
+
+  async removeSprint(sprintId: number): Promise<void> {
+    const sprint = await this._sprintRepository.getSprint(sprintId);
+    const now = new Date();
+
+    if (!sprint) {
+      throw new HttpBadRequestError("Sprint does not exist");
+    }
+
+    if (sprint.endDate && now.toISOString() > sprint.endDate.toISOString()) {
+      throw new HttpBadRequestError("Past sprint cannot be removed");
+    }
+
+    this._sprintRepository.removeSprint(sprint);
 
     await this._dbContext.save();
   }

@@ -7,6 +7,7 @@ export interface ISprintRepository {
   addSprint(sprint: Sprint): void;
   updateSprint(sprint: Sprint): void;
   getSprint(sprintId: number): Promise<Sprint | null>;
+  removeSprint(sprint: Sprint): void;
 }
 
 @injectable()
@@ -30,5 +31,9 @@ export class SprintRepository implements ISprintRepository {
         project: true,
       },
     });
+  }
+
+  removeSprint(sprint: Sprint): void {
+    this._dbContext.needRemove(sprint);
   }
 }

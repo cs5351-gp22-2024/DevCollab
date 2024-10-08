@@ -33,3 +33,12 @@ sprintRouter.patch("/api/sprints/:sprintId", async (req, res) => {
 
   res.send(200);
 });
+
+sprintRouter.delete("/api/sprints/:sprintId", async (req, res) => {
+  const sprintId = parseInt(req.params.sprintId);
+  const service = appContainer.get(TYPES.ISprintService);
+
+  await service.removeSprint(sprintId);
+
+  res.send(200);
+});
