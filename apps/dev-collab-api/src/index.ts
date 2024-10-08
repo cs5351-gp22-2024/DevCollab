@@ -6,6 +6,7 @@ import { HomeMessageModel } from "shared/models/home";
 import { AppDataSource } from "./db/db-datasrc";
 import { createHttpErrorHandler } from "./errors/http-error-handler";
 import { projectRouter } from "./routers/project-router";
+import { userRouter } from "./routers/user-router";
 
 const app = express();
 const port = 3000;
@@ -17,7 +18,7 @@ app.get("/api/home/messages", (req, res) => {
 });
 
 app.use("/", projectRouter);
-
+app.use("/", userRouter);
 app.use(createHttpErrorHandler());
 
 AppDataSource.initialize().then(() => {
