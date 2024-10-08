@@ -10,6 +10,7 @@ import http from "http"; // For Automation Github
 import { createServer } from "http"; // For Automation Github
 import { Server as WebSocketServer } from "ws"; // For Automation Github
 import { userRouter } from "./routers/user-router";
+import { sprintRouter } from "./routers/sprint-router";
 
 const app = express();
 const port = 3000;
@@ -22,6 +23,8 @@ app.get("/api/home/messages", (req, res) => {
 
 app.use("/", projectRouter);
 app.use("/", userRouter);
+app.use("/", sprintRouter);
+
 app.use(createHttpErrorHandler());
 
 // For Automation Github

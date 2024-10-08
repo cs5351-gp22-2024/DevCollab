@@ -31,6 +31,7 @@ export class ProjectService implements IProjectService {
     @inject(TYPES.IProjectRepository)
     private _projectRepository: IProjectRepository
   ) {}
+
   async getProject(projectId: number): Promise<ProjectModel> {
     const project = await this._projectRepository.getProject(projectId);
 
