@@ -3,15 +3,16 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  BaseEntity,
 } from "typeorm";
 
 @Entity("users") // Table name in the database
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn({ name: "user_id" })
   userId!: number; // Primary key that starts from 1000
 
   @Column({ type: "varchar", length: 1000 })
-  name!: string; 
+  name!: string;
 
   @Column({ type: "varchar", length: 1000, unique: true })
   email!: string; //(unique)
@@ -23,11 +24,18 @@ export class User {
   email_2fa!: boolean; // Two-factor authentication status
 
   @CreateDateColumn({ name: "last_activity_time", type: "timestamp" })
-  last_activity_time!: Date ; // Last activity timestamp
+  last_activity_time!: Date; // Last activity timestamp
 
   @CreateDateColumn({ name: "last_password_modify", type: "timestamp" })
-  last_password_modify!: Date ; 
+  last_password_modify!: Date;
 
   @CreateDateColumn({ name: "create_time", type: "timestamp" })
   create_time!: Date;
+
+  constructor(email: string, password: string) {
+    super();
+    this.email = email;
+    this.name = email;
+    this.password = password;
+  }
 }
