@@ -20,6 +20,7 @@ export interface IProjectService {
     projectId: number,
     command: ProjectUpdateCommand
   ): Promise<void>;
+  removeProject(projectId: number): Promise<void>;
 }
 
 @injectable()
@@ -90,7 +91,17 @@ export class ProjectService implements IProjectService {
     this._projectRepository.updateProject(project);
 
     await this._dbContext.save();
+  }
 
-    return;
+  async removeProject(projectId: number): Promise<void> {
+    const project = await this._projectRepository.getProject(projectId);
+
+    if (!project) {
+      throw new HttpBadRequestError("Project does not exist");
+    }
+
+    this._projectRepository.removeProject(project);
+
+    await this._dbContext.save();
   }
 }

@@ -8,6 +8,7 @@ export interface IProjectRepository {
   getAllProjects(): Promise<Project[]>;
   addProject(project: Project): void;
   updateProject(project: Project): void;
+  removeProject(project: Project): void;
 }
 
 @injectable()
@@ -32,5 +33,9 @@ export class ProjectRepository implements IProjectRepository {
 
   updateProject(project: Project): void {
     this._dbContext.needUpdate(project);
+  }
+
+  removeProject(project: Project): void {
+    this._dbContext.needRemove(project);
   }
 }

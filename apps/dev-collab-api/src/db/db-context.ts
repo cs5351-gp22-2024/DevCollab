@@ -6,6 +6,7 @@ export interface IDbContext {
   get projects(): Repository<Project>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
+  needRemove(entity: BaseEntity): void;
   save(): Promise<void>;
   rollback(): void;
 }
@@ -15,6 +16,8 @@ export class DbContext implements IDbContext {
   private _toCreate: BaseEntity[] = [];
 
   private _toUpdate: BaseEntity[] = [];
+
+  private _toRemove: BaseEntity[] = [];
 
   constructor(private _em: EntityManager) {}
 
@@ -30,13 +33,16 @@ export class DbContext implements IDbContext {
     this._toUpdate.push(entity);
   }
 
+  needRemove(entity: BaseEntity): void {
+    this._toRemove.push(entity);
+  }
+
   async save(): Promise<void> {
     await this._em.transaction(async (tx) => {
       const toSaved = [...this._toCreate, ...this._toUpdate];
 
-      for (const e of toSaved) {
-        await tx.save(e);
-      }
+      await tx.save(toSaved);
+      await tx.remove(this._toRemove);
     });
 
     this.clear();
@@ -49,5 +55,6 @@ export class DbContext implements IDbContext {
   clear() {
     this._toCreate = [];
     this._toUpdate = [];
+    this._toRemove = [];
   }
 }

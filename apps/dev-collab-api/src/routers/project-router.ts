@@ -41,3 +41,12 @@ projectRouter.patch("/api/projects/:projectId", async (req, res) => {
 
   res.send(200);
 });
+
+projectRouter.delete("/api/projects/:projectId", async (req, res) => {
+  const projectId = parseInt(req.params.projectId);
+  const service = appContainer.get(TYPES.IProjectService);
+
+  await service.removeProject(projectId);
+
+  res.send(200);
+});
