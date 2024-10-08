@@ -1,5 +1,8 @@
 import express from "express";
-import { ProjectCreateCommand } from "shared/models/project";
+import {
+  ProjectCreateCommand,
+  ProjectUpdateCommand,
+} from "shared/models/project";
 import { appContainer } from "../container/container";
 import { TYPES } from "../container/types";
 
@@ -27,4 +30,14 @@ projectRouter.post("/api/projects", async (req, res) => {
   const result = await service.createProject(command);
 
   res.send(result.toString());
+});
+
+projectRouter.patch("/api/projects/:projectId", async (req, res) => {
+  const command = req.body as ProjectUpdateCommand;
+  const projectId = parseInt(req.params.projectId);
+  const service = appContainer.get(TYPES.IProjectService);
+
+  await service.updateProject(projectId, command);
+
+  res.send(200);
 });

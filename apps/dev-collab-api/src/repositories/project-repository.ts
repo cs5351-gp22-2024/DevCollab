@@ -7,11 +7,13 @@ export interface IProjectRepository {
   getProject(projectId: number): Promise<Project | null>;
   getAllProjects(): Promise<Project[]>;
   addProject(project: Project): void;
+  updateProject(project: Project): void;
 }
 
 @injectable()
 export class ProjectRepository implements IProjectRepository {
   constructor(@inject(TYPES.IDbContext) private _dbContext: IDbContext) {}
+
   async getProject(projectId: number): Promise<Project | null> {
     return await this._dbContext.projects.findOne({
       where: {
@@ -26,5 +28,9 @@ export class ProjectRepository implements IProjectRepository {
 
   addProject(project: Project): void {
     this._dbContext.needCreate(project);
+  }
+
+  updateProject(project: Project): void {
+    this._dbContext.needUpdate(project);
   }
 }

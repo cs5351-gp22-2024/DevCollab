@@ -12,3 +12,9 @@ export interface ProjectCreateCommand {
   description: string | null;
   avatar: string | null;
 }
+
+export interface ProjectUpdateCommand {
+  name: string;
+  description: string | null;
+  avatar: string | null;
+}

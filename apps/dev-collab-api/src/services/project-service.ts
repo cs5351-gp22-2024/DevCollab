@@ -1,6 +1,10 @@
 import { inject, injectable } from "inversify";
 import { isEmpty } from "lodash";
-import { ProjectCreateCommand, ProjectModel } from "shared/models/project";
+import {
+  ProjectCreateCommand,
+  ProjectModel,
+  ProjectUpdateCommand,
+} from "shared/models/project";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Project } from "../entities/project";
@@ -12,6 +16,10 @@ export interface IProjectService {
   getProject(projectId: number): Promise<ProjectModel>;
   getAllProjects(): Promise<ProjectModel[]>;
   createProject(command: ProjectCreateCommand): Promise<number>;
+  updateProject(
+    projectId: number,
+    command: ProjectUpdateCommand
+  ): Promise<void>;
 }
 
 @injectable()
@@ -56,5 +64,33 @@ export class ProjectService implements IProjectService {
     await this._dbContext.save();
 
     return newProject.projectId;
+  }
+
+  async updateProject(
+    projectId: number,
+    command: ProjectUpdateCommand
+  ): Promise<void> {
+    const project = await this._projectRepository.getProject(projectId);
+
+    if (!project) {
+      throw new HttpBadRequestError("Project does not exist");
+    }
+
+    if (isEmpty(command.name)) {
+      throw new HttpBadRequestError("Project name is required");
+    }
+
+    const now = new Date();
+
+    project.name = command.name;
+    project.description = command.description;
+    project.avatar = command.avatar;
+    project.modified = now;
+
+    this._projectRepository.updateProject(project);
+
+    await this._dbContext.save();
+
+    return;
   }
 }
