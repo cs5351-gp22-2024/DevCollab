@@ -1,10 +1,13 @@
+// db-context.ts
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
 import { Project } from "../entities/project";
+import { UserStory } from "../entities/userStory";
 import { Sprint } from "../entities/sprint";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
+  get userStories(): Repository<UserStory>; 
   get sprints(): Repository<Sprint>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
@@ -25,6 +28,10 @@ export class DbContext implements IDbContext {
 
   get projects() {
     return this._em.getRepository(Project);
+  }
+
+  get userStories() {
+    return this._em.getRepository(UserStory);  
   }
 
   get sprints() {
