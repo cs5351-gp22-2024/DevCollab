@@ -1,5 +1,8 @@
 import { DataSource } from "typeorm";
 import { Project } from "../entities/project";
+import { Verification } from "../entities/verification"
+import { Sprint } from "../entities/sprint";
+
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -10,7 +13,7 @@ export const AppDataSource = new DataSource({
   database: "DevCollab",
   synchronize: false, // stop creating table automatically
   logging: true,
-  entities: [Project],
+  entities: [Project, Sprint,Verification],
   subscribers: [],
   migrations: [],
   timezone: "Z",
