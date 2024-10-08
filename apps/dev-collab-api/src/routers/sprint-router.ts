@@ -5,6 +5,15 @@ import { TYPES } from "../container/types";
 
 export const sprintRouter = express.Router();
 
+sprintRouter.get("/api/projects/:projectId/sprints", async (req, res) => {
+  const service = appContainer.get(TYPES.ISprintService);
+  const projectId = parseInt(req.params.projectId);
+
+  const result = await service.getProjectSprints(projectId);
+
+  res.send(result);
+});
+
 sprintRouter.post("/api/projects/:projectId/sprints", async (req, res) => {
   const command = req.body as SprintCreateCommand;
   const service = appContainer.get(TYPES.ISprintService);

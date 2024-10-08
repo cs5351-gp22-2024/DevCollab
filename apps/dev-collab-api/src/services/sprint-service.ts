@@ -1,9 +1,11 @@
 import { inject, injectable } from "inversify";
-import { SprintCreateCommand } from "shared/models/sprint";
+import { sortBy } from "lodash";
+import { SprintCreateCommand, SprintModel } from "shared/models/sprint";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Sprint } from "../entities/sprint";
 import { HttpBadRequestError } from "../errors/http-errors";
+import { mapSprintToSprintModel } from "../mappers/sprint";
 import { IProjectRepository } from "../repositories/project-repository";
 import { ISprintRepository } from "../repositories/sprint-repository";
 
@@ -12,6 +14,7 @@ export interface ISprintService {
     projectId: number,
     command: SprintCreateCommand
   ): Promise<number>;
+  getProjectSprints(projectId: number): Promise<SprintModel[]>;
 }
 
 @injectable()
@@ -77,5 +80,14 @@ export class SprintService implements ISprintService {
     await this._dbContext.save();
 
     return newSprint.sprintId;
+  }
+
+  async getProjectSprints(projectId: number): Promise<SprintModel[]> {
+    const project = await this._projectRepository.getProject(projectId);
+    const curSprints = project?.sprints || [];
+
+    return sortBy(curSprints, (s) => s.startDate).map((s, i) =>
+      mapSprintToSprintModel(s, i + 1)
+    );
   }
 }
