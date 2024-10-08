@@ -1,9 +1,12 @@
+// db-context.ts
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
 import { Project } from "../entities/project";
+import { UserStory } from "../entities/userStory";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
+  get userStories(): Repository<UserStory>; 
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
@@ -23,6 +26,10 @@ export class DbContext implements IDbContext {
 
   get projects() {
     return this._em.getRepository(Project);
+  }
+
+  get userStories() {
+    return this._em.getRepository(UserStory);  
   }
 
   needCreate(entity: BaseEntity): void {

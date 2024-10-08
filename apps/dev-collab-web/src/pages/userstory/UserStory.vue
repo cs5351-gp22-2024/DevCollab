@@ -1,43 +1,40 @@
-<!-- src/pages/userstory/UserStory.vue -->
 <template>
   <v-container>
 
-    
-<!-- Search, Sort, and Add New User Story -->
-<v-row class="mb-4" align="center">
-  <!-- Search Field -->
-  <v-col cols="12" sm="4" md="4">
-    <v-text-field
-      v-model="search"
-      label="Search stories"
-      prepend-inner-icon="mdi-magnify"
-      clearable
-      @input="filterStories"
-    ></v-text-field>
-  </v-col>
+    <!-- Search, Sort, and Add New User Story -->
+    <v-row class="mb-4" align="center">
+      <!-- Search Field -->
+      <v-col cols="12" sm="4" md="4">
+        <v-text-field
+          v-model="search"
+          label="Search stories"
+          prepend-inner-icon="mdi-magnify"
+          clearable
+          @input="filterStories"
+        ></v-text-field>
+      </v-col>
 
-  <!-- Sort By Select -->
-  <v-col cols="12" sm="4" md="4">
-    <v-select
-      v-model="sortBy"
-      :items="sortOptions"
-      item-title="text"
-      item-value="value"
-      label="Sort by"
-      @change="sortStories"
-    ></v-select>
-  </v-col>
+      <!-- Sort By Select -->
+      <v-col cols="12" sm="4" md="4">
+        <v-select
+          v-model="sortBy"
+          :items="sortOptions"
+          item-title="text"
+          item-value="value"
+          label="Sort by"
+          @change="sortStories"
+        ></v-select>
+      </v-col>
 
-  <!-- Add New User Story Button -->
-  <v-col cols="12" sm="4" md="4" class="text-sm-end">
-    <v-btn color="success" @click="showAddDialog">Add New User Story</v-btn>
-  </v-col>
-</v-row>
-
+      <!-- Add New User Story Button -->
+      <v-col cols="12" sm="4" md="4" class="text-sm-end">
+        <v-btn color="success" @click="showAddDialog">Add New User Story</v-btn>
+      </v-col>
+    </v-row>
 
     <!-- User stories list -->
     <v-row>
-      <v-col cols="12" md="4" v-for="story in sortedAndFilteredStories" :key="story.id">
+      <v-col cols="12" md="4" v-for="story in sortedAndFilteredStories" :key="story.userStoryId">
         <v-card :elevation="2" class="mb-4">
           <v-card-title class="text-h6">
             {{ story.title }}
@@ -49,7 +46,7 @@
             <p><strong>As a:</strong> {{ story.asA }}</p>
             <p><strong>I want to:</strong> {{ story.iWantTo }}</p>
             <p><strong>So that:</strong> {{ story.soThat }}</p>
-            <p><strong>Due Date:</strong> {{ formatDate(story.dueDate) }}</p>
+
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="editStory(story)">Edit</v-btn>
@@ -58,7 +55,6 @@
         </v-card>
       </v-col>
     </v-row>
-
 
     <!-- Add/Edit Dialog -->
     <v-dialog v-model="dialog" max-width="500px">
@@ -82,22 +78,12 @@
                 <v-text-field v-model="editedItem.soThat" label="So that"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="editedItem.title" label="Title"></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <v-select
                   v-model="editedItem.priority"
                   :items="['Low', 'Medium', 'High']"
                   label="Priority"
                 ></v-select>
               </v-col>
-              <v-col cols="12">
-            <v-text-field
-              v-model="editedItem.dueDate"
-              label="Due Date"
-              type="date"
-            ></v-text-field>
-          </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -125,49 +111,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
 interface UserStory {
-  id: number;
+  userStoryId: number;
   title: string;
   asA: string;
   iWantTo: string;
   soThat: string;
   priority: 'Low' | 'Medium' | 'High';
-  dueDate: string; 
 }
 
+const userStories = ref<UserStory[]>([]);
 
-const userStories = ref<UserStory[]>([
-  {
-    id: 1,
-    title: "User Registration",
-    asA: "New User",
-    iWantTo: "create an account",
-    soThat: "I can access the application's features",
-    priority: 'High',
-    dueDate: '2023-12-31',
-  },
-  {
-    id: 2,
-    title: "Task Creation",
-    asA: "Project Manager",
-    iWantTo: "create new tasks",
-    soThat: "I can assign work to team members",
-    priority: 'Medium',
-    dueDate: '2024-01-15',
-  },
-  {
-    id: 3,
-    title: "View Dashboard",
-    asA: "Team Member",
-    iWantTo: "view project dashboard",
-    soThat: "I can see an overview of project progress",
-    priority: 'Low',
-    dueDate: '2024-02-28',
-  },
-  // Add more sample user stories here
-]);
+// Fetch all user stories from the backend
+const fetchUserStories = async () => {
+  try {
+    const response = await axios.get('/api/userstories');
+    userStories.value = response.data;
+  } catch (error) {
+    console.error('Error fetching user stories:', error);
+  }
+};
+
+onMounted(fetchUserStories);
 
 const formatDate = (dateStr: string) => {
   if (!dateStr) return 'No due date';
@@ -180,23 +148,22 @@ const dialog = ref(false)
 const deleteDialog = ref(false)
 const editedIndex = ref(-1)
 const editedItem = ref<UserStory>({
-  id: 0,
+  userStoryId: 0,
   title: '',
   asA: '',
   iWantTo: '',
   soThat: '',
   priority: 'Medium',
-  dueDate: '', // Initialize with an empty string
 });
 
 const defaultItem: UserStory = {
-  id: 0,
+  userStoryId: 0,
   title: '',
   asA: '',
   iWantTo: '',
   soThat: '',
   priority: 'Medium',
-  dueDate: '',
+
 };
 
 
@@ -206,8 +173,7 @@ const sortOptions = [
   { text: 'Priority (Low to High)', value: 'priority-asc' },
   { text: 'Title (A-Z)', value: 'title-asc' },
   { text: 'Title (Z-A)', value: 'title-desc' },
-  { text: 'Due Date (Soonest First)', value: 'dueDate-asc' },
-  { text: 'Due Date (Latest First)', value: 'dueDate-desc' },
+
 ]
 
 const sortBy = ref('priority-desc')
@@ -229,76 +195,88 @@ const sortedAndFilteredStories = computed(() => {
 
   // Apply sorting
   stories.sort((a, b) => {
-  switch (sortBy.value) {
-    case 'priority-desc':
-      return getPriorityValue(b.priority) - getPriorityValue(a.priority);
-    case 'priority-asc':
-      return getPriorityValue(a.priority) - getPriorityValue(b.priority);
-    case 'title-asc':
-      return a.title.localeCompare(b.title);
-    case 'title-desc':
-      return b.title.localeCompare(a.title);
-    case 'dueDate-asc':
-      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-    case 'dueDate-desc':
-      return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
-    default:
-      return 0;
-  }
-});
+    switch (sortBy.value) {
+      case 'priority-desc':
+        return getPriorityValue(b.priority) - getPriorityValue(a.priority);
+      case 'priority-asc':
+        return getPriorityValue(a.priority) - getPriorityValue(b.priority);
+      case 'title-asc':
+        return a.title.localeCompare(b.title);
+      case 'title-desc':
+        return b.title.localeCompare(a.title);
+
+      default:
+        return 0;
+    }
+  });
 
   return stories
 })
 
+// Show dialog for adding new user story
 const showAddDialog = () => {
   editedIndex.value = -1
   editedItem.value = { ...defaultItem }
   dialog.value = true
 }
 
+// Edit existing user story
 const editStory = (item: UserStory) => {
   editedIndex.value = userStories.value.indexOf(item)
   editedItem.value = { ...item }
   dialog.value = true
 }
 
-const deleteStory = (item: UserStory) => {
+// Delete user story confirmation
+const confirmDelete = (item: UserStory) => {
   editedIndex.value = userStories.value.indexOf(item)
   editedItem.value = { ...item }
   deleteDialog.value = true
 }
 
-const deleteItemConfirm = () => {
-  userStories.value.splice(editedIndex.value, 1)
-  closeDelete()
+// Confirm deletion of user story
+const deleteItemConfirm = async () => {
+  try {
+    await axios.delete(`/api/userstories/${editedItem.value.userStoryId}`);
+    userStories.value.splice(editedIndex.value, 1);
+    closeDelete();
+  } catch (error) {
+    console.error('Error deleting user story:', error);
+  }
 }
 
+// Save new or edited user story
+const save = async () => {
+  if (editedIndex.value > -1) {
+    try {
+      const response = await axios.put(`/api/userstories/${editedItem.value.userStoryId}`, editedItem.value);
+      Object.assign(userStories.value[editedIndex.value], response.data);
+    } catch (error) {
+      console.error('Error updating user story:', error);
+    }
+  } else {
+    try {
+      const response = await axios.post('/api/userstories', editedItem.value);
+      userStories.value.push(response.data);
+    } catch (error) {
+      console.error('Error creating user story:', error);
+    }
+  }
+  close();
+}
+
+// Close the Add/Edit dialog
 const close = () => {
   dialog.value = false
   editedIndex.value = -1
   editedItem.value = { ...defaultItem }
 }
 
+// Close the Delete dialog
 const closeDelete = () => {
   deleteDialog.value = false
   editedIndex.value = -1
   editedItem.value = { ...defaultItem }
-}
-
-const save = () => {
-  if (editedIndex.value > -1) {
-    Object.assign(userStories.value[editedIndex.value], editedItem.value)
-  } else {
-    editedItem.value.id = userStories.value.length + 1
-    userStories.value.push(editedItem.value)
-  }
-  close()
-}
-
-const confirmDelete = (item: UserStory) => {
-  editedIndex.value = userStories.value.indexOf(item)
-  editedItem.value = { ...item }
-  deleteDialog.value = true
 }
 
 const getPriorityColor = (priority: string) => {
