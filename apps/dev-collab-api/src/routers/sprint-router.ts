@@ -1,5 +1,5 @@
 import express from "express";
-import { SprintCreateCommand } from "shared/models/sprint";
+import { SprintCreateCommand, SprintUpdateCommand } from "shared/models/sprint";
 import { appContainer } from "../container/container";
 import { TYPES } from "../container/types";
 
@@ -22,4 +22,14 @@ sprintRouter.post("/api/projects/:projectId/sprints", async (req, res) => {
   const result = await service.createSprint(projectId, command);
 
   res.send(result.toString());
+});
+
+sprintRouter.patch("/api/sprints/:sprintId", async (req, res) => {
+  const command = req.body as SprintUpdateCommand;
+  const sprintId = parseInt(req.params.sprintId);
+  const service = appContainer.get(TYPES.ISprintService);
+
+  await service.updateSprint(sprintId, command);
+
+  res.send(200);
 });

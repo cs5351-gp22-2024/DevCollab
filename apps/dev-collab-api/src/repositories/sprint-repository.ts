@@ -5,6 +5,8 @@ import { Sprint } from "../entities/sprint";
 
 export interface ISprintRepository {
   addSprint(sprint: Sprint): void;
+  updateSprint(sprint: Sprint): void;
+  getSprint(sprintId: number): Promise<Sprint | null>;
 }
 
 @injectable()
@@ -13,5 +15,20 @@ export class SprintRepository implements ISprintRepository {
 
   addSprint(sprint: Sprint): void {
     this._dbContext.needCreate(sprint);
+  }
+
+  updateSprint(sprint: Sprint): void {
+    this._dbContext.needUpdate(sprint);
+  }
+
+  async getSprint(sprintId: number): Promise<Sprint | null> {
+    return await this._dbContext.sprints.findOne({
+      where: {
+        sprintId,
+      },
+      relations: {
+        project: true,
+      },
+    });
   }
 }

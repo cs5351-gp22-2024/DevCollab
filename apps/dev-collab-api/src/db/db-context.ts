@@ -1,9 +1,11 @@
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
 import { Project } from "../entities/project";
+import { Sprint } from "../entities/sprint";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
+  get sprints(): Repository<Sprint>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
@@ -23,6 +25,10 @@ export class DbContext implements IDbContext {
 
   get projects() {
     return this._em.getRepository(Project);
+  }
+
+  get sprints() {
+    return this._em.getRepository(Sprint);
   }
 
   needCreate(entity: BaseEntity): void {

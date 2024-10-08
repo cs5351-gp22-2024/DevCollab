@@ -1,6 +1,10 @@
 import { inject, injectable } from "inversify";
 import { sortBy } from "lodash";
-import { SprintCreateCommand, SprintModel } from "shared/models/sprint";
+import {
+  SprintCreateCommand,
+  SprintModel,
+  SprintUpdateCommand,
+} from "shared/models/sprint";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Sprint } from "../entities/sprint";
@@ -15,6 +19,7 @@ export interface ISprintService {
     command: SprintCreateCommand
   ): Promise<number>;
   getProjectSprints(projectId: number): Promise<SprintModel[]>;
+  updateSprint(sprintId: number, command: SprintUpdateCommand): Promise<void>;
 }
 
 @injectable()
@@ -89,5 +94,54 @@ export class SprintService implements ISprintService {
     return sortBy(curSprints, (s) => s.startDate).map((s, i) =>
       mapSprintToSprintModel(s, i + 1)
     );
+  }
+
+  async updateSprint(
+    sprintId: number,
+    command: SprintUpdateCommand
+  ): Promise<void> {
+    const sprint = await this._sprintRepository.getSprint(sprintId);
+    const curSprints = sprint?.project?.sprints || [];
+    const { startDate, endDate } = command;
+
+    if (!sprint) {
+      throw new HttpBadRequestError("Sprint does not exist");
+    }
+
+    if (!startDate) {
+      throw new HttpBadRequestError("Start date is missing");
+    }
+
+    if (!endDate) {
+      throw new HttpBadRequestError("End date is missing");
+    }
+
+    if (startDate > endDate) {
+      throw new HttpBadRequestError(
+        "Start date should be at or before the end date"
+      );
+    }
+
+    if (
+      curSprints &&
+      curSprints.some(
+        (s) =>
+          s.startDate &&
+          s.endDate &&
+          s.endDate.toISOString() >= startDate &&
+          s.startDate.toISOString() <= endDate
+      )
+    ) {
+      throw new HttpBadRequestError(
+        "Start/end date should not overlap with other sprints"
+      );
+    }
+
+    sprint.startDate = new Date(startDate);
+    sprint.endDate = new Date(endDate);
+
+    this._sprintRepository.updateSprint(sprint);
+
+    await this._dbContext.save();
   }
 }

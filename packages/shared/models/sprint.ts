@@ -10,3 +10,8 @@ export interface SprintCreateCommand {
   startDate: string | null;
   endDate: string | null;
 }
+
+export interface SprintUpdateCommand {
+  startDate: string | null;
+  endDate: string | null;
+}
