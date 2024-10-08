@@ -28,7 +28,9 @@ export class SprintRepository implements ISprintRepository {
         sprintId,
       },
       relations: {
-        project: true,
+        project: {
+          sprints: true,
+        },
       },
     });
   }

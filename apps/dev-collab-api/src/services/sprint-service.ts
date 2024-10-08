@@ -41,6 +41,7 @@ export class SprintService implements ISprintService {
     const project = await this._projectRepository.getProject(projectId);
     const curSprints = project?.sprints || [];
     const { startDate, endDate } = command;
+    const now = new Date();
 
     if (!project) {
       throw new HttpBadRequestError("Project does not exist");
@@ -57,6 +58,12 @@ export class SprintService implements ISprintService {
     if (startDate > endDate) {
       throw new HttpBadRequestError(
         "Start date should be at or before the end date"
+      );
+    }
+
+    if (startDate < now.toISOString()) {
+      throw new HttpBadRequestError(
+        "Start date should not be happened before now"
       );
     }
 
@@ -104,6 +111,7 @@ export class SprintService implements ISprintService {
     const sprint = await this._sprintRepository.getSprint(sprintId);
     const curSprints = sprint?.project?.sprints || [];
     const { startDate, endDate } = command;
+    const now = new Date();
 
     if (!sprint) {
       throw new HttpBadRequestError("Sprint does not exist");
@@ -127,6 +135,7 @@ export class SprintService implements ISprintService {
       curSprints &&
       curSprints.some(
         (s) =>
+          s.sprintId !== sprint.sprintId && // do not check overlapping on itself
           s.startDate &&
           s.endDate &&
           s.endDate.toISOString() >= startDate &&
@@ -135,6 +144,12 @@ export class SprintService implements ISprintService {
     ) {
       throw new HttpBadRequestError(
         "Start/end date should not overlap with other sprints"
+      );
+    }
+
+    if (startDate < now.toISOString()) {
+      throw new HttpBadRequestError(
+        "Start date should not be happened before now"
       );
     }
 
