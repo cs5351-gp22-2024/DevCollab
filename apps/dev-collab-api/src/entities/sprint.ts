@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -13,6 +14,7 @@ export class Sprint extends BaseEntity {
   sprintId: number = 0;
 
   @ManyToOne(() => Project, (project) => project.sprints)
+  @JoinColumn({ name: "projectId" })
   project: Project | null = null;
 
   @Column({ type: "timestamp" })

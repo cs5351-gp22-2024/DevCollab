@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Sprint } from "./sprint";
 
 @Entity("Project")
 export class Project extends BaseEntity {
@@ -20,6 +27,6 @@ export class Project extends BaseEntity {
   @Column({ type: "timestamp" })
   modified: Date | null = null;
 
-  // @OneToMany(() => Sprint, (sprint) => sprint.project)
-  // sprints: Sprint[] = [];
+  @OneToMany(() => Sprint, (sprint) => sprint.project)
+  sprints: Sprint[] | null = null;
 }
