@@ -1,44 +1,30 @@
 <template>
   <div class="container mx-auto p-4">
     <h1 class="text-4xl font-bold mb-6">Automation - Github Webhook</h1>
-    <h2 class="text-2xl font-semibold mb-4">Select an option:</h2>
-    <section class="mb-8">
-      <div class="row">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
-          <div @click="githubCreateNewPage" class="bg-gray-100 p-4 rounded-lg hover-div">
-            <div class="block">
-              <div class="icon">
-                <img :src="github" alt="Github Icon" />
-              </div>
-              <div class="text">
-                <p>Create New</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
-          <div class="bg-gray-100 p-4 rounded-lg hover-div">
-            <div class="block">
-              <div class="icon">
-                <img :src="github" alt="Github Icon" />
-              </div>
-              <div class="text">
-                <p>Manage Existing Webhook(s)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <h2 class="text-2xl font-semibold mb-4">Create New WebHook</h2>
+    <div v-if="currentStep === 1">
+      <WebhookUrl @next="nextStep" />
+    </div>
+    <div v-if="currentStep === 2">
+      <CreateRules @next="nextStep" @previous="previousStep" />
+    </div>
+    <div v-if="currentStep === 3">
+      <Confirmation :url="webhookUrl" :rules="rules" @save="saveWebhook" @previous="previousStep" />
+    </div>
   </div>
 </template>
 
 // For icons
 <script lang="ts">
+import { ref } from 'vue';
+import _ from 'lodash'
 import { defineComponent } from 'vue'
-import type { Router } from 'vue-router'
 import github from '@/assets/icons/Icon_github.svg'
 import gitlab from '@/assets/icons/Icon_gitlab.svg'
+
+import WebhookUrl from '@/components/automation/GithubWebhookUrl.vue';
+import CreateRules from '@/components/automation/GithubCreateRules.vue';
+import Confirmation from '@/components/automation/GithubConfirm.vue';
 
 export default defineComponent({
   data() {
@@ -47,18 +33,35 @@ export default defineComponent({
       gitlab: gitlab
     }
   },
-  methods: {
-    githubCreateNewPage(): void {
-      const router: Router = this.$router
-      router.push('/automation/github/new-webhook') // Navigate to a sub-page
-    }
+  components: { WebhookUrl, CreateRules, Confirmation },
+  setup() {
+    const currentStep = ref(1);
+    const webhookUrl = ref('');
+    const rules = ref([]);
+
+    const nextStep = (data: any) => {
+      if (currentStep.value === 1) {
+        webhookUrl.value = data.url;
+      } else if (currentStep.value === 2) {
+        rules.value = data.rules;
+      }
+      currentStep.value++;
+      console.log('value:', currentStep.value);
+    };
+
+    const previousStep = () => {
+      currentStep.value--;
+      console.log('value:', currentStep.value);
+    };
+
+    const saveWebhook = () => {
+      console.log('Webhook URL:', webhookUrl.value);
+      console.log('Rules:', rules.value);
+    };
+
+    return { currentStep, webhookUrl, rules, nextStep, previousStep, saveWebhook };
   }
 })
-</script>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import _ from 'lodash'
 </script>
 
 <style lang="scss" scoped>
