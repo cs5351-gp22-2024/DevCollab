@@ -27,6 +27,11 @@
             title="Automation"
             :to="{ name: 'automation' }"
           ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-human-greeting-variant"
+            title="User Management"
+            :to="{ name: 'usermanagement' }"
+          ></v-list-item>
         </v-list>
 
         <template v-slot:append>
