@@ -20,6 +20,9 @@ export class ProjectRepository implements IProjectRepository {
       where: {
         projectId,
       },
+      relations: {
+        sprints: true,
+      },
     });
   }
 
