@@ -10071,7 +10071,7 @@ if (diff.length === 0) {
 } else {
   console.error(
     `Make sure you have run the following sqls in your local database:${import_os.EOL}${(0, import_lodash.join)(
-      (0, import_lodash.map)(diff, () => "- " + diff),
+      (0, import_lodash.map)(diff, (d) => "- " + d),
       import_os.EOL
     )}`
   );
