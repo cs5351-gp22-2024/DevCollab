@@ -34,18 +34,20 @@ export class ProjectService implements IProjectService {
 
   async getProject(projectId: number): Promise<ProjectModel> {
     const project = await this._projectRepository.getProject(projectId);
+    const now = new Date().toISOString();
 
     if (!project) {
       throw new HttpBadRequestError("Project does not exist");
     }
 
-    return mapProjectToProjectModel(project);
+    return mapProjectToProjectModel(project, now);
   }
 
   async getAllProjects(): Promise<ProjectModel[]> {
     const projects = await this._projectRepository.getAllProjects();
+    const now = new Date().toISOString();
 
-    return projects.map((p) => mapProjectToProjectModel(p));
+    return projects.map((p) => mapProjectToProjectModel(p, now));
   }
 
   async createProject(command: ProjectCreateCommand) {

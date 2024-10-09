@@ -5,6 +5,7 @@ export interface ProjectModel {
   avatar: string | null;
   created: string | null;
   modified: string | null;
+  currentSprintNos: number[];
 }
 
 export interface ProjectCreateCommand {

@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import { sortBy } from "lodash";
 import {
   SprintCreateCommand,
   SprintModel,
@@ -91,11 +90,15 @@ export class SprintService implements ISprintService {
 
   async getProjectSprints(projectId: number): Promise<SprintModel[]> {
     const project = await this._projectRepository.getProject(projectId);
-    const curSprints = project?.sprints || [];
 
-    return sortBy(curSprints, (s) => s.startDate).map((s, i) =>
-      mapSprintToSprintModel(s, i + 1)
-    );
+    if (!project) {
+      throw new HttpBadRequestError("Project does not exist");
+    }
+
+    const sprints = project.orderedSprints || [];
+    const sprintsNos = project.calculateSprintNos(sprints);
+
+    return sprints.map((s, i) => mapSprintToSprintModel(s, sprintsNos[i]));
   }
 
   async updateSprint(

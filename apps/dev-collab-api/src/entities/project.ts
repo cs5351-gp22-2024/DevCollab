@@ -1,3 +1,4 @@
+import { chunk, flatten, fromPairs, sortBy } from "lodash";
 import {
   BaseEntity,
   Column,
@@ -29,4 +30,55 @@ export class Project extends BaseEntity {
 
   @OneToMany(() => Sprint, (sprint) => sprint.project)
   sprints: Sprint[] | null = null;
+
+  get orderedSprints() {
+    return sortBy(this.sprints, (s) => s.startDate);
+  }
+
+  calculateSprintNos(sprints: Sprint[]): (number | null)[] {
+    const map = fromPairs(
+      this.orderedSprints.map((s, i) => [s.sprintId, i + 1])
+    );
+
+    return sprints.map((s) => map[s.sprintId] || null);
+  }
+
+  /**
+   * Sprints are not consecutive, there maybe some days (gap) in between.
+   * In such case, the current sprint is null, but we will show the transition from sprint n to n + 1
+   * instead using an array.
+   */
+  getCurrentSprint(now: string): Sprint[] {
+    const sprints = this.orderedSprints;
+    const currentSprint = sprints.filter((s) => s.isCurrent(now));
+
+    if (currentSprint.length > 1) {
+      throw new Error("Should not have multiple current sprints");
+    }
+
+    if (currentSprint.length === 1) {
+      return [...currentSprint];
+    }
+
+    const sprintTransitions = chunk(sprints, 2);
+    const betweenSprint = sprintTransitions.filter(
+      (t) =>
+        t[0] &&
+        t[1] &&
+        t[0].endDate &&
+        t[1].startDate &&
+        now > t[0].endDate.toISOString() &&
+        now < t[1].startDate.toISOString()
+    );
+
+    if (betweenSprint.length > 1) {
+      throw new Error("Should not have multiple current sprint transitions");
+    }
+
+    if (betweenSprint.length === 1) {
+      return flatten(betweenSprint);
+    }
+
+    return [];
+  }
 }

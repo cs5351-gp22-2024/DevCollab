@@ -13,6 +13,9 @@ export class Sprint extends BaseEntity {
   @PrimaryGeneratedColumn()
   sprintId: number = 0;
 
+  @Column({ type: "integer" })
+  projectId: number | null = null;
+
   @ManyToOne(() => Project, (project) => project.sprints)
   @JoinColumn({ name: "projectId" })
   project: Project | null = null;
@@ -34,5 +37,14 @@ export class Sprint extends BaseEntity {
 
   isEnded(now: string) {
     return this.endDate && now > this.endDate.toISOString();
+  }
+
+  isCurrent(now: string) {
+    return (
+      this.startDate &&
+      this.endDate &&
+      now >= this.startDate.toISOString() &&
+      now <= this.endDate.toISOString()
+    );
   }
 }

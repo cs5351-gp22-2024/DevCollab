@@ -3,7 +3,7 @@ export interface SprintModel {
   projectId: number | null;
   startDate: string | null;
   endDate: string | null;
-  sprintNo: number;
+  sprintNo: number | null;
 }
 
 export interface SprintCreateCommand {
