@@ -69,13 +69,7 @@ export class SprintService implements ISprintService {
 
     if (
       curSprints &&
-      curSprints.some(
-        (s) =>
-          s.startDate &&
-          s.endDate &&
-          s.endDate.toISOString() >= startDate &&
-          s.startDate.toISOString() <= endDate
-      )
+      curSprints.some((s) => s.isOverlaped(startDate, endDate))
     ) {
       throw new HttpBadRequestError(
         "Start/end date should not overlap with other sprints"
@@ -136,10 +130,7 @@ export class SprintService implements ISprintService {
       curSprints.some(
         (s) =>
           s.sprintId !== sprint.sprintId && // do not check overlapping on itself
-          s.startDate &&
-          s.endDate &&
-          s.endDate.toISOString() >= startDate &&
-          s.startDate.toISOString() <= endDate
+          s.isOverlaped(startDate, endDate)
       )
     ) {
       throw new HttpBadRequestError(
@@ -169,7 +160,7 @@ export class SprintService implements ISprintService {
       throw new HttpBadRequestError("Sprint does not exist");
     }
 
-    if (sprint.endDate && now.toISOString() > sprint.endDate.toISOString()) {
+    if (sprint.isEnded(now.toISOString())) {
       throw new HttpBadRequestError("Past sprint cannot be removed");
     }
 

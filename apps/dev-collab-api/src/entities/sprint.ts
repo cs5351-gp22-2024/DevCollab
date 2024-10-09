@@ -22,4 +22,17 @@ export class Sprint extends BaseEntity {
 
   @Column({ type: "timestamp" })
   endDate: Date | null = null;
+
+  isOverlaped(startDate: string, endDate: string) {
+    return (
+      this.startDate &&
+      this.endDate &&
+      this.endDate.toISOString() >= startDate &&
+      this.startDate.toISOString() <= endDate
+    );
+  }
+
+  isEnded(now: string) {
+    return this.endDate && now > this.endDate.toISOString();
+  }
 }
