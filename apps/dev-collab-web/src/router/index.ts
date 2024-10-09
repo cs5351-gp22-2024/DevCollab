@@ -13,6 +13,7 @@ import { createAutomationRoutes } from '@/pages/automation/automation-routes'
 import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
 import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
+import { createReportRoutes } from '@/pages/report/report-route'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,7 +30,9 @@ const router = createRouter({
       ...creategithubRoutes(),
       ...createComponentRoutes(),
       ...creategithubNewWebhookRoutes(),
-      ...createUserStoryRoutes() // Add this line
+      ...createUserStoryRoutes(),
+      ...createReportRoutes()
+      // Add your route here
     ])
   ]
 })

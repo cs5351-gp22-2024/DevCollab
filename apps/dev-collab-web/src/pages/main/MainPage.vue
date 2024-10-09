@@ -137,6 +137,7 @@ const menuItems = [
   { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
   { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
+  { title: "Report", icon: "mdi-chart-areaspline", to: { name: "report" }}
 ]
 
 const currentPageTitle = computed(() => {
