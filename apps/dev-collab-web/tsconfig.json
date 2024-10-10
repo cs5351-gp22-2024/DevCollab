@@ -19,12 +19,12 @@
         "./src/*"
       ]
     },
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "types": [
       "node",
       "vue"
-    ]
+    ],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   }
 }
