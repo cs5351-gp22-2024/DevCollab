@@ -105,7 +105,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType, computed, ref, watch } from 'vue'
+import { type PropType, computed, ref, watch } from 'vue'
 
 interface Task {
   name: string
@@ -113,8 +113,7 @@ interface Task {
   deadline: string
 }
 
-export default defineComponent({
-  name: 'TaskTable',
+export default {
   props: {
     tasks: {
       type: Array as PropType<Task[]>,
@@ -203,5 +202,5 @@ export default defineComponent({
       setSortBy
     }
   }
-})
+}
 </script>

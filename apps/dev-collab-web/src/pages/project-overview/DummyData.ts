@@ -38,6 +38,38 @@ export const progressCards: ProgressData[] = [
   }
 ]
 
+// Add this to your existing DummyData.ts file
+
+export interface ChartDataPoint {
+  date: string
+  tasks: number
+}
+
+interface CFDDataPoint {
+  date: string
+  todo: number
+  inProgress: number
+  done: number
+}
+
+export const chartData: CFDDataPoint[] = [
+  { date: '2024-09-01', todo: 30, inProgress: 0, done: 0 },
+  { date: '2024-09-08', todo: 25, inProgress: 5, done: 3 },
+  { date: '2024-09-15', todo: 22, inProgress: 7, done: 8 },
+  { date: '2024-09-22', todo: 20, inProgress: 8, done: 12 },
+  { date: '2024-09-29', todo: 18, inProgress: 9, done: 18 },
+  { date: '2024-10-06', todo: 15, inProgress: 10, done: 25 },
+  { date: '2024-10-13', todo: 12, inProgress: 11, done: 32 },
+  { date: '2024-10-20', todo: 10, inProgress: 10, done: 40 },
+  { date: '2024-10-27', todo: 8, inProgress: 9, done: 48 },
+  { date: '2024-11-03', todo: 6, inProgress: 8, done: 56 },
+  { date: '2024-11-10', todo: 4, inProgress: 7, done: 64 },
+  { date: '2024-11-17', todo: 2, inProgress: 6, done: 72 },
+  { date: '2024-11-24', todo: 0, inProgress: 5, done: 80 },
+  { date: '2024-11-30', todo: 0, inProgress: 0, done: 85 },
+  { date: '2024-12-1', todo: 0, inProgress: 0, done: 85 }
+]
+
 export interface Task {
   name: string
   priority: 'High' | 'Medium' | 'Low'

@@ -8,7 +8,9 @@
           <div class="col-span-1 bg-white rounded-lg shadow-md h-[270px]"></div>
           <div class="col-span-1 bg-white rounded-lg shadow-md h-[270px]"></div>
         </div>
-        <div class="mt-4 bg-white rounded-lg shadow-md h-[580px]"></div>
+        <div class="mt-4 bg-white rounded-lg shadow-md h-[580px]">
+          <CumulativeFlowDiagram :chartData="chartData" />
+        </div>
       </div>
       <div class="col-span-5">
         <div class="bg-white rounded-lg shadow-md">
@@ -23,23 +25,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
 import TaskTable from '@/components/project-overview/TaskTable.vue'
 import NestedDataTable from '@/components/project-overview/NestedDataTable.vue'
-import { tasks as dummyTasks, story as dummyStories } from './DummyData'
+import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowDiagram.vue'
+import {
+  tasks as dummyTasks,
+  story as dummyStories,
+  chartData as dummyChartData
+} from './DummyData'
 
-export default defineComponent({
+export default {
   components: {
     TaskTable,
-    NestedDataTable
+    NestedDataTable,
+    CumulativeFlowDiagram
   },
   setup() {
     const tasks = ref(dummyTasks)
     const stories = ref(dummyStories)
+    const chartData = ref(dummyChartData)
     return {
       tasks,
-      stories
+      stories,
+      chartData
     }
   }
-})
+}
 </script>

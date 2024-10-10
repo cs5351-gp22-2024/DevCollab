@@ -3,7 +3,9 @@
   "include": [
     "env.d.ts",
     "src/**/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/**/*.ts",
+    "src/**/*.d.ts"
   ],
   "exclude": [
     "src/**/__tests__/*"
@@ -21,10 +23,15 @@
     },
     "types": [
       "node",
-      "vue"
+      "vue",
+      "vite/client"
     ],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true
   }
 }

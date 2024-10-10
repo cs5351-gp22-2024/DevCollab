@@ -157,11 +157,10 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { type PropType } from 'vue'
 import type { Story } from '~/pages/project-overview/DummyData'
 
-export default defineComponent({
-  name: 'NestedDataTable',
+export default {
   props: {
     stories: {
       type: Array as PropType<Story[]>,
@@ -177,5 +176,5 @@ export default defineComponent({
       toggleExpand
     }
   }
-})
+}
 </script>
