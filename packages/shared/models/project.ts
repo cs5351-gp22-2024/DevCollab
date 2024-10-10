@@ -6,6 +6,7 @@ export interface ProjectModel {
   created: string | null;
   modified: string | null;
   currentSprintNos: number[];
+  isActive: boolean;
 }
 
 export interface ProjectCreateCommand {

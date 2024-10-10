@@ -1,4 +1,4 @@
-import { chunk, flatten, fromPairs, sortBy } from "lodash";
+import { chunk, compact, flatten, fromPairs, sortBy } from "lodash";
 import {
   BaseEntity,
   Column,
@@ -80,5 +80,18 @@ export class Project extends BaseEntity {
     }
 
     return [];
+  }
+
+  /**
+   * [n] means the current sprint no is n
+   * [n, n + 1] means the sprint is transiting from n to n + 1
+   * [] means either no sprint is planned or all sprint is ended
+   */
+  getCurrentSprintNo(now: string): number[] {
+    return compact(this.calculateSprintNos(this.getCurrentSprint(now)));
+  }
+
+  getIsActive(now: string): boolean {
+    return this.getCurrentSprintNo(now).length > 0;
   }
 }
