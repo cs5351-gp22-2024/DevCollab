@@ -92,7 +92,7 @@ export default {
                 borderColor: 'rgb(255, 99, 132)',
                 fill: true
               },
-                            {
+              {
                 label: 'In Progress',
                 data: [],
                 backgroundColor: 'rgba(255, 206, 86, 0.5)',
@@ -105,7 +105,7 @@ export default {
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
                 borderColor: 'rgb(75, 192, 192)',
                 fill: true
-              },
+              }
             ]
           },
           options: {
@@ -137,7 +137,7 @@ export default {
                 position: 'top'
               },
               title: {
-                display: false,
+                display: true,
                 text: 'Cumulative Flow Diagram'
               }
             }

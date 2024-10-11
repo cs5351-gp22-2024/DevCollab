@@ -1,56 +1,44 @@
 export interface ProgressData {
-  id: number
   title: string
-  percent: number
-  fillColor: string
-  borderColor: string
-  timeframe: string
+  progress: number[]
   options: string[]
 }
-
-export const progressCards: ProgressData[] = [
-  {
-    id: 1,
-    title: 'TODO',
-    percent: 25,
-    fillColor: '#FF4136',
-    borderColor: '#f0f0f0',
-    timeframe: 'Daily',
-    options: ['Daily', 'Weekly', 'Monthly']
-  },
-  {
-    id: 2,
-    title: 'IN PROGRESS',
-    percent: 79,
-    fillColor: '#2ECC40',
-    borderColor: '#f0f0f0',
-    timeframe: 'Weekly',
-    options: ['Daily', 'Weekly', 'Monthly']
-  },
-  {
-    id: 3,
-    title: 'DONE',
-    percent: 52,
-    fillColor: '#FF851B',
-    borderColor: '#f0f0f0',
-    timeframe: 'Weekly',
-    options: ['Daily', 'Weekly', 'Monthly']
-  }
-]
-
-// Add this to your existing DummyData.ts file
 
 export interface ChartDataPoint {
   date: string
   tasks: number
 }
 
-interface CFDDataPoint {
+export interface CFDDataPoint {
   date: string
   todo: number
   inProgress: number
   done: number
 }
+
+export interface Task {
+  name: string
+  priority: 'High' | 'Medium' | 'Low'
+  deadline: string
+}
+
+export const progressCards: ProgressData[] = [
+  {
+    title: 'TODO',
+    progress: [25, 10, 55],
+    options: ['Daily', 'Weekly', 'Monthly']
+  },
+  {
+    title: 'IN PROGRESS',
+    progress: [60, 70, 30],
+    options: ['Daily', 'Weekly', 'Monthly']
+  },
+  {
+    title: 'DONE',
+    progress: [15, 20, 80],
+    options: ['Daily', 'Weekly', 'Monthly']
+  }
+]
 
 export const chartData: CFDDataPoint[] = [
   { date: '2024-09-01', todo: 30, inProgress: 0, done: 0 },
@@ -66,15 +54,9 @@ export const chartData: CFDDataPoint[] = [
   { date: '2024-11-10', todo: 4, inProgress: 7, done: 64 },
   { date: '2024-11-17', todo: 2, inProgress: 6, done: 72 },
   { date: '2024-11-24', todo: 0, inProgress: 5, done: 80 },
-  { date: '2024-11-30', todo: 0, inProgress: 0, done: 85 },
-  { date: '2024-12-1', todo: 0, inProgress: 0, done: 85 }
+  { date: '2024-11-30', todo: 0, inProgress: 0, done: 85 }
+  // { date: '2024-12-1', todo: 0, inProgress: 0, done: 85 }
 ]
-
-export interface Task {
-  name: string
-  priority: 'High' | 'Medium' | 'Low'
-  deadline: string
-}
 
 export const tasks: Task[] = [
   { name: 'Task1', priority: 'High', deadline: '2025-11-20' },
