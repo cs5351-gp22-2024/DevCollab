@@ -5,6 +5,7 @@ import { Sprint } from "../entities/sprint";
 import { UserStory } from "../entities/userStory";
 import { User } from "../entities/user";
 import { Group } from "../entities/group";
+import { GroupMember } from "../entities/groupMember";
 
 
 // AppDataSource: TypeORM configuration
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
   database: "DevCollab",
   synchronize: false, 
   logging: true, // Enable logging for debugging purposes
-  entities: [Project, Sprint, Verification, UserStory, User, Group],  // Your entity classes
+  entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember],  // Your entity classes
   subscribers: [],
   migrations: [],
   timezone: "Z", 
