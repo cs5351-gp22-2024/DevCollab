@@ -40,7 +40,7 @@
           <v-list-item
             prepend-icon="mdi-logout"
             :title="rail ? '' : 'Logout'"
-            :to="{ name: 'login' }"
+            :to="{ name: 'logout' }"
           ></v-list-item>
         </v-list>
       </template>

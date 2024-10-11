@@ -16,7 +16,7 @@ export default {
   },
 
   setup() {
-    const Username = ref('CODE MONKEY')
+    const Username = ref('Username')
     const defaultTeamId = ref(1001) // ref(0)
 
     return {
@@ -38,6 +38,9 @@ export default {
     },
     updateSelectedTeam(id) {
       this.$refs.ConnectBtn.updateSelectedTeam(id)
+    },
+    goHomePage() {
+      window.location.href = '/home'
     }
   }
 }
@@ -100,6 +103,7 @@ export default {
         class="my-auto"
         LoginState="EXISTING_USER"
         :defaultTeamId="defaultTeamId"
+        @click="goHomePage"
       ></ConnectBtn>
       <CoverFooter></CoverFooter>
       <SideLogo></SideLogo>

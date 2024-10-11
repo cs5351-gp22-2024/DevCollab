@@ -14,6 +14,7 @@ import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
 import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
 import { createReportRoutes } from '@/pages/report/report-route'
+import { createLogoutRoutes } from '@/pages/logout/logout-routes'
 import { createProjectOverviewRoutes } from '@/pages/project-overview/project-overview-routes'
 
 const router = createRouter({
@@ -23,6 +24,7 @@ const router = createRouter({
     ...createWelcomeRoutes(),
     ...createWelcomebackRoutes(),
     ...createSignupRoutes(),
+    ...createLogoutRoutes(),
     ...createMainRoutes([
       ...createHomeRoutes(),
       ...createProjectsRoutes(),
