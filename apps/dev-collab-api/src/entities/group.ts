@@ -9,7 +9,7 @@ import {
 @Entity("group") // Table name in the database
 export class Group extends BaseEntity {
   @PrimaryGeneratedColumn({ name: "group_id" })
-  userId!: number; // Primary key that starts from 1000
+  group_id!: number; // Primary key that starts from 1000
 
   @Column({ type: "varchar", length: 1000 })
   group_name!: string;
