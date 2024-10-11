@@ -9,17 +9,9 @@
       theme="dark"
     >
       <template v-slot:prepend>
-        <v-list-item
-          :prepend-avatar="`${baseUrl}logo.png`"
-          :title="rail ? '' : 'DevCollab'"
-          nav
-        >
+        <v-list-item :prepend-avatar="`${baseUrl}logo.png`" :title="rail ? '' : 'DevCollab'" nav>
           <template v-slot:append>
-            <v-btn
-              variant="text"
-              icon="mdi-chevron-left"
-              @click.stop="rail = !rail"
-            ></v-btn>
+            <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
           </template>
         </v-list-item>
       </template>
@@ -48,7 +40,7 @@
           <v-list-item
             prepend-icon="mdi-logout"
             :title="rail ? '' : 'Logout'"
-            :to="{ name: 'login' }"
+            :to="{ name: 'logout' }"
           ></v-list-item>
         </v-list>
       </template>
@@ -94,9 +86,7 @@
       </v-container>
     </v-main>
 
-    <v-footer app>
-      © {{ new Date().getFullYear() }} DevCollab. All rights reserved.
-    </v-footer>
+    <v-footer app> © {{ new Date().getFullYear() }} DevCollab. All rights reserved. </v-footer>
 
     <v-dialog v-model="settingsDialog" max-width="500px">
       <v-card>
@@ -137,18 +127,21 @@ const menuItems = [
   { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
   { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
-  { title: "Report", icon: "mdi-chart-areaspline", to: { name: "report" }}
+  { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } }
 ]
 
 const currentPageTitle = computed(() => {
-  const currentRoute = menuItems.find(item => item.to.name === route.name)
+  const currentRoute = menuItems.find((item) => item.to.name === route.name)
   return currentRoute ? currentRoute.title : 'DevCollab'
 })
 
 const userInitials = computed(() => {
   // Replace with actual user data
   const name = 'John Doe'
-  return name.split(' ').map(n => n[0]).join('')
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
 })
 
 const toggleTheme = () => {
