@@ -86,6 +86,7 @@ import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
 import InputEditText from '@/components/cover_page_components/InputEditText.vue'
 import SignUpBtn from '@/components/cover_page_components/SignUpBtn.vue'
 import SignUpTextView from '@/components/cover_page_components/SignUpTextView.vue'
+import SignupAPI from '@/api/signup.api'
 import { ref } from 'vue'
 
 export default {
@@ -104,19 +105,48 @@ export default {
     const password = ref('')
     const invitationCode = ref('')
     const verificationCode = ref('')
-    const getVerificationCode = () => {
-      console.log('GET Verification')
-
-      signupState.value = 'VERIFY'
+    const getVerificationCode = async () => {
+      //console.log('GET Verification')
+      const data = await SignupAPI.getVCode(email.value)
+      try {
+        if (data.success === true) {
+          signupState.value = 'VERIFY'
+          //FOR DEBUG
+          alert('USE `535153` to bypass the Verification code')
+          return
+        } else {
+          alert('Request Verification Code failed. Invalid email. Please try again.')
+        }
+      } catch (error) {
+        console.log(error)
+        alert('Request Verification Code failed.[EXCEPTION]')
+      }
     }
 
-    const submitVerification = () => {
-      console.log('Checking Verification')
+    const submitVerification = async () => {
+      /*       console.log('Checking Verification')
       console.log(verificationCode.value)
-      console.log('Email:', email)
-      console.log('Password:', password)
-      console.log('Invitation Code:', invitationCode)
-      console.log('Verification Code:', verificationCode)
+      console.log('Email:', email.value)
+      console.log('Password:', password.value)
+      console.log('Invitation Code:', invitationCode.value)
+      console.log('Verification Code:', verificationCode.value) */
+      const data = await SignupAPI.createAccount(
+        email.value,
+        password.value,
+        verificationCode.value,
+        invitationCode.value
+      )
+      try {
+        if (data.success === true) {
+          location.href = '/home'
+          return
+        } else {
+          alert('Create Account failed. Please try again.')
+        }
+      } catch (error) {
+        console.log(error)
+        alert('Create Account failed.[EXCEPTION]')
+      }
     }
 
     return {

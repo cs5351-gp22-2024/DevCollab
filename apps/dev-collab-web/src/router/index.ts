@@ -1,4 +1,4 @@
-// src/router/index.ts 
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import { createProjectsRoutes } from '@/pages/projects/projects-routes'
 import { createHomeRoutes } from '@/pages/home/home.routes'
@@ -14,6 +14,7 @@ import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
 import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
 import { createReportRoutes } from '@/pages/report/report-route'
+import { createLogoutRoutes } from '@/pages/logout/logout-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +23,7 @@ const router = createRouter({
     ...createWelcomeRoutes(),
     ...createWelcomebackRoutes(),
     ...createSignupRoutes(),
+    ...createLogoutRoutes(),
     ...createMainRoutes([
       ...createHomeRoutes(),
       ...createProjectsRoutes(),

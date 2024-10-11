@@ -51,7 +51,7 @@ export default {
     }
   },
   setup(props, { emit }) {
-    const inputValue = props.value // Create a local ref for input value
+    const inputValue = ref(props.value) // Create a local ref for input value
 
     // Emit the input value change to parent
     const onInputChange = (event) => {
@@ -60,7 +60,7 @@ export default {
     }
 
     const handleSubmit = () => {
-      console.log('Form submitted!')
+      //console.log('Form submitted!')
       if (props.SubmitAction) {
         props.SubmitAction(inputValue.value) // Pass the input value to the SubmitAction
       }

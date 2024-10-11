@@ -40,7 +40,7 @@ export class UserAccount {
       // Create a new user account if the verification is successful
       const user = new User(email, hashedPw);
       const savedUser = (await user.save());
-      const token = this.generateJWT(savedUser);
+      const token = await this.generateJWT(savedUser);
       
       return { result: "SUCCESS", token: token };
     } else {
