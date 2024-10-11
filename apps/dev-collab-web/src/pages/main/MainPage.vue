@@ -48,7 +48,9 @@
 
     <v-app-bar :elevation="2">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ currentPageTitle }}</v-toolbar-title>
+      <v-toolbar-title class="min-w-36 text-sm md:text-lg lg:text-xl font-bold">{{
+        currentPageTitle
+      }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click="toggleTheme">
         <v-icon>{{ isDarkTheme ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
@@ -97,7 +99,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="settingsDialog = false">Close</v-btn>
+          <v-btn color="primary" @click="settingsDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -105,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTheme } from 'vuetify'
 import { env } from '@/utils/env/env'
@@ -124,10 +126,15 @@ const menuItems = [
   { title: 'Home', icon: 'mdi-home-account', to: { name: 'home' } },
   { title: 'Projects', icon: 'mdi-file-table-box-multiple', to: { name: 'projects' } },
   { title: 'Automation', icon: 'mdi-refresh-auto', to: { name: 'automation' } },
-  { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
-  { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
-  { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } }
+  { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } },
+  {
+    title: 'Project Overview(temp)',
+    icon: 'mdi-chart-areaspline',
+    to: { name: 'project-overview' }
+  },
+  { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
+  { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } }
 ]
 
 const currentPageTitle = computed(() => {
@@ -162,6 +169,23 @@ const openProfile = () => {
   // Implement profile opening logic
   console.log('Open profile')
 }
+
+// Function to update drawer based on window width
+const updateDrawer = () => {
+  drawer.value = window.innerWidth >= 1280
+  rail.value = window.innerWidth <= 1280
+}
+
+// Set up event listener on mount
+onMounted(() => {
+  updateDrawer() // Initial check
+  window.addEventListener('resize', updateDrawer)
+})
+
+// Clean up event listener on unmount
+onUnmounted(() => {
+  window.removeEventListener('resize', updateDrawer)
+})
 </script>
 
 <style scoped>

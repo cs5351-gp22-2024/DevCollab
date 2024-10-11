@@ -15,6 +15,7 @@ import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNe
 import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
 import { createReportRoutes } from '@/pages/report/report-route'
 import { createLogoutRoutes } from '@/pages/logout/logout-routes'
+import { createProjectOverviewRoutes } from '@/pages/project-overview/project-overview-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,14 +28,14 @@ const router = createRouter({
     ...createMainRoutes([
       ...createHomeRoutes(),
       ...createProjectsRoutes(),
-      ...createGuideRoutes(),
       ...createAutomationRoutes(),
       ...creategithubRoutes(),
-      ...createComponentRoutes(),
       ...creategithubNewWebhookRoutes(),
       ...createUserStoryRoutes(),
-      ...createReportRoutes()
-      // Add your route here
+      ...createReportRoutes(),
+      ...createProjectOverviewRoutes(),
+      ...createGuideRoutes(),
+      ...createComponentRoutes()
     ])
   ]
 })

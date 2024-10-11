@@ -224,6 +224,17 @@
         <p>Check the console for Lodash examples.</p>
       </div>
     </section>
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">6. Icon</h2>
+      <div class="bg-gray-100 p-4 rounded-lg">
+        <p>
+          <a href="https://pictogrammers.github.io/@mdi/font/1.1.34/">Click me to see resource</a>
+        </p>
+
+        <i class="mdi mdi-account"></i><i class="mdi mdi-chart-histogram"></i
+        ><i class="mdi mdi-account-box"></i>
+      </div>
+    </section>
   </div>
 </template>
 
