@@ -1,18 +1,23 @@
 import { inject, injectable } from "inversify";
 import { isEmpty } from "lodash";
-import { ProjectCreateCommand } from "shared/models/project";
-import { TaskCreateCommand } from "shared/models/task";
+import {
+    TaskCreateCommand,
+    TaskModel,
+    TaskUpdateCommand,
+} from "shared/models/task";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
-import { Project } from "../entities/project";
 import { Task } from "../entities/task";
 import { HttpBadRequestError } from "../errors/http-errors";
+import { mapTaskModel } from "../mappers/task";
 import { IProjectRepository } from "../repositories/project-repository";
-import { TaskRepository } from "../repositories/task-repository";
+import { ITaskRepository } from "../repositories/task-repository";
 
 
 export interface ITaskService {
     createTask(command: TaskCreateCommand): Promise<number>;
+
+
 }
 
 @injectable()
@@ -20,8 +25,8 @@ export class TaskService implements ITaskService {
     constructor(
         @inject(TYPES.IDbContext)
         private _dbContext: IDbContext,
-        @inject(TYPES.TaskRepository)
-        private _taskRepository: TaskRepository
+        @inject(TYPES.ITaskRepository)
+        private _taskRepository: ITaskRepository
     ) { }
 
     async createTask(command: TaskCreateCommand) {
@@ -34,12 +39,19 @@ export class TaskService implements ITaskService {
 
         newTask.name = command.name;
         newTask.description = command.description;
-        newTask
+        newTask.status = command.status;
 
-        this._projectRepository.addProject(newProject);
+        this._taskRepository.addTask(newTask);
 
         await this._dbContext.save();
 
-        return newProject.projectId;
+        return newTask.taskId;
     }
+
+
 }
+
+
+
+
+

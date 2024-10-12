@@ -10,8 +10,14 @@ import {
   ISprintRepository,
   SprintRepository,
 } from "../repositories/sprint-repository";
+import {
+  ITaskRepository,
+  TaskRepository,
+} from "../repositories/task-repository";
 import { IProjectService, ProjectService } from "../services/project-service";
 import { ISprintService, SprintService } from "../services/sprint-service";
+import { ITaskService, TaskService } from "../services/Task_service";
+
 import { TYPES } from "./types";
 
 export const appContainer = new Container();
@@ -40,3 +46,14 @@ appContainer
   .bind<ISprintService>(TYPES.ISprintService)
   .to(SprintService)
   .inRequestScope();
+
+appContainer
+  .bind<ITaskService>(TYPES.ITaskService)
+  .to(TaskService)
+  .inRequestScope();
+
+appContainer
+  .bind<ITaskRepository>(TYPES.ITaskRepository)
+  .to(TaskRepository)
+  .inRequestScope();
+

@@ -14,12 +14,12 @@ export const AppDataSource = new DataSource({
   host: "127.0.0.1",
   port: 3306,
   username: "root",
-  password: "P@ssw0rd",  
+  password: "P@ssw0rd",
   database: "DevCollab",
-  synchronize: false, 
-  logging: true, // Enable logging for debugging purposes
-  entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember],  // Your entity classes
+  synchronize: true, // stop creating table automatically
+  logging: true,
+  entities: [Project],
   subscribers: [],
   migrations: [],
-  timezone: "Z", 
+  timezone: "Z",
 });
