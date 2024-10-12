@@ -35,7 +35,7 @@
           <v-list-item
             prepend-icon="mdi-cog"
             :title="rail ? '' : 'Settings'"
-            @click="openSettings"
+            :to="{ name: 'profile' }"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-logout"
@@ -72,10 +72,10 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item @click="openProfile">
-            <v-list-item-title>Profile</v-list-item-title>
+          <v-list-item @click="openSettings">
+            <v-list-item-title>Setting</v-list-item-title>
           </v-list-item>
-          <v-list-item :to="{ name: 'login' }">
+          <v-list-item :to="{ name: 'logout' }">
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -172,6 +172,7 @@ const showNotifications = () => {
 
 const openProfile = () => {
   // Implement profile opening logic
+
   console.log('Open profile')
 }
 
