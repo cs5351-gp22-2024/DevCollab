@@ -133,6 +133,11 @@ const menuItems = [
     icon: 'mdi-chart-areaspline',
     to: { name: 'project-overview' }
   },
+  {
+    title: 'User Management(temp)',
+    icon: 'mdi-human-greeting-variant',
+    to: { name: 'usermanagement' }
+  },
   { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
   { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } }
 ]
