@@ -17,6 +17,7 @@ import { createReportRoutes } from '@/pages/report/report-route'
 import { createLogoutRoutes } from '@/pages/logout/logout-routes'
 import { createProjectOverviewRoutes } from '@/pages/project-overview/project-overview-routes'
 import { createUsermanagementRoutes } from '@/pages/usermanagement/usermanagement-routes'
+import { createTaskManagementRoutes } from '@/pages/taskManagement/taskmanagement-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,7 @@ const router = createRouter({
       ...createGuideRoutes(),
       ...createComponentRoutes(),
       ...createUsermanagementRoutes(),
+      ...createTaskManagementRoutes()
     ])
   ]
 })
