@@ -4,23 +4,45 @@ import { IDbContext } from "../db/db-context";
 import { Project } from "../entities/project";
 
 export interface IProjectRepository {
+  getProject(projectId: number): Promise<Project | null>;
+  getAllProjects(): Promise<Project[]>;
   addProject(project: Project): void;
-  getLatestProjects(): Promise<Project[]>;
+  updateProject(project: Project): void;
+  removeProject(project: Project): void;
 }
 
 @injectable()
 export class ProjectRepository implements IProjectRepository {
   constructor(@inject(TYPES.IDbContext) private _dbContext: IDbContext) {}
 
+  async getProject(projectId: number): Promise<Project | null> {
+    return await this._dbContext.projects.findOne({
+      where: {
+        projectId,
+      },
+      relations: {
+        sprints: true,
+      },
+    });
+  }
+
+  async getAllProjects(): Promise<Project[]> {
+    return await this._dbContext.projects.find({
+      relations: {
+        sprints: true,
+      },
+    });
+  }
+
   addProject(project: Project): void {
     this._dbContext.needCreate(project);
   }
 
-  async getLatestProjects(): Promise<Project[]> {
-    return await this._dbContext.projects.find({
-      order: {
-        created: "desc",
-      },
-    });
+  updateProject(project: Project): void {
+    this._dbContext.needUpdate(project);
+  }
+
+  removeProject(project: Project): void {
+    this._dbContext.needRemove(project);
   }
 }
