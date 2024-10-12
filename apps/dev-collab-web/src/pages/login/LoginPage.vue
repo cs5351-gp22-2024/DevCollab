@@ -14,7 +14,13 @@
       <div class="container-sm">
         <div v-if="showEmailInput" class="large-text p-3 red-text-1">LOGIN</div>
         <div v-if="!showEmailInput" class="large-text p-3 red-text-1">WELCOME BACK</div>
-        <div v-if="!showEmailInput" class="fs-3 p-1 red-text-1 fw-bolder">#{{ username }}</div>
+        <div v-if="!showEmailInput" class="fs-3 red-text-1 fw-bolder">#{{ username }}</div>
+        <div
+          v-if="!showEmailInput"
+          class="fs-6 pb-1 red-text-1 fw-bolder text-decoration-underline"
+        >
+          <span @click="refresh" class="cursor-pointer">(Change)</span>
+        </div>
         <div class="h2 p-1 color-gray-2">Connect Your</div>
         <div class="h2 p-1 red-text-1">#Team #Task #Project</div>
 
@@ -72,6 +78,7 @@ import SideLogo from '@/components/cover_page_components/SideLogo.vue'
 import GitHubBtn from '@/components/cover_page_components/GitHubBtn.vue'
 import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
 import InputEditText from '@/components/cover_page_components/InputEditText.vue'
+import LoginApi from '@/api/login.api'
 import { ref } from 'vue'
 
 export default {
@@ -105,16 +112,15 @@ export default {
     }
 
     const checkEmail = () => {
-      console.log('Checking Email')
-      console.log(email.value) // Use the email data property
+      //console.log(email.value) // Use the email data property
       const data = {
-        email: 'codeMonkey001@gmail.com',
-        username: 'CodeMokey001@gmail.com',
+        //email: 'test41321@gmail.com',
+        //username: 'test41321@gmail.com',
         mfa: false // Set this to true or false based on your logic
       }
 
       // Update visibility based on the mfa value
-      username.value = data.username
+      username.value = email.value
       showEmailInput.value = false // Hide email input
 
       if (data.mfa) {
@@ -126,14 +132,30 @@ export default {
       }
     }
 
-    const submitPassword = () => {
-      console.log('Checking Password')
-      console.log(password.value) // Use the password data property
+    const submitPassword = async () => {
+      //console.log(email.value)
+      //console.log(password.value) // Use the password data property
+      const data = await LoginApi.getLoginToken(email.value, password.value, null)
+      //console.log(data)
+      try {
+        if (data.success === true) {
+          window.location.href = '/home'
+        } else {
+          alert('Login Failed. Invalid email or password. Please try again.')
+        }
+      } catch (error) {
+        console.log(error)
+        alert('Login Failed. [EXCEPTION]')
+      }
     }
 
     const submitVerification = () => {
-      console.log('Checking Verification')
-      console.log(verificationCode.value) // Use the verification code data property
+      console.log(email.value)
+      //console.log(verificationCode.value) // Use the verification code data property
+    }
+
+    const refresh = () => {
+      window.location.reload()
     }
 
     /*   // Call checkEmail when the email input changes
@@ -154,7 +176,8 @@ export default {
       updateVerificationCode,
       checkEmail,
       submitPassword,
-      submitVerification
+      submitVerification,
+      refresh
     }
   }
 }

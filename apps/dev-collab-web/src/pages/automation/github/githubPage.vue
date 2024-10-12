@@ -5,7 +5,7 @@
     <section class="mb-8">
       <div class="row">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
-          <div @click="availableSoon = true" class="bg-gray-100 p-4 rounded-lg hover-div">
+          <div @click="githubCreateNewPage" class="bg-gray-100 p-4 rounded-lg hover-div">
             <div class="block">
               <div class="icon">
                 <img :src="github" alt="Github Icon" />
@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
-          <div @click="availableSoon = true" class="bg-gray-100 p-4 rounded-lg hover-div">
+          <div class="bg-gray-100 p-4 rounded-lg hover-div">
             <div class="block">
               <div class="icon">
                 <img :src="github" alt="Github Icon" />
@@ -25,20 +25,6 @@
               <div class="text">
                 <p>Manage Existing Webhook(s)</p>
               </div>
-            </div>
-          </div>
-          <div
-            v-if="availableSoon"
-            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
-          >
-            <div class="bg-white p-5 rounded-lg shadow-xl w-96">
-              <h3 class="text-lg font-semibold mb-4">Available Soon</h3>
-              <button
-                @click="availableSoon = false"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>
@@ -50,6 +36,7 @@
 // For icons
 <script lang="ts">
 import { defineComponent } from 'vue'
+import type { Router } from 'vue-router'
 import github from '@/assets/icons/Icon_github.svg'
 import gitlab from '@/assets/icons/Icon_gitlab.svg'
 
@@ -59,6 +46,12 @@ export default defineComponent({
       github: github,
       gitlab: gitlab
     }
+  },
+  methods: {
+    githubCreateNewPage(): void {
+      const router: Router = this.$router
+      router.push('/automation/github/new-webhook') // Navigate to a sub-page
+    }
   }
 })
 </script>
@@ -66,8 +59,6 @@ export default defineComponent({
 <script setup lang="ts">
 import { ref } from 'vue'
 import _ from 'lodash'
-
-const availableSoon = ref(false)
 </script>
 
 <style lang="scss" scoped>

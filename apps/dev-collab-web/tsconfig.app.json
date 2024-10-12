@@ -23,6 +23,7 @@
       "shared/*": [
         "../../packages/shared/*"
       ]
-    }
+    },
+    "types":["node"]
   }
 }
