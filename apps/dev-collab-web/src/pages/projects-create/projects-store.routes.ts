@@ -3,7 +3,7 @@ import { defineRoutes } from '@/utils/route/route'
 export const createProjectsCreateRoutes = defineRoutes(() => [
   {
     path: '/projects-create',
-    name: 'projectsCreate',
+    name: 'projects-create',
     component: () => import('./ProjectsCreatePage.vue')
   }
 ])
