@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { makeBase64ImgToUrl } from '@/utils/base64-img/base64-img'
 import { formatDate } from '@/utils/data-format/date-format'
 import { filter, flatten, map, orderBy, take } from 'lodash'
 import { computed } from 'vue'
@@ -30,7 +29,7 @@ const recentUpdates = computed(() =>
       ),
       (p) => [
         {
-          prependAvatar: makeBase64ImgToUrl(p.avatar),
+          prependAvatar: p.avatar,
           title: `[PJ-${p.projectId}] ${p.name}`,
           subtitle: p.description
         },
@@ -63,7 +62,7 @@ const actives = computed(() =>
       10
     ),
     (p) => ({
-      prependAvatar: makeBase64ImgToUrl(p.avatar),
+      prependAvatar: p.avatar,
       title: `[PJ-${p.projectId}] ${p.name}`,
       subtitle: `Created ${formatDate(p.created)} • ${formatSprintNos(p.currentSprintNos)}`
     })

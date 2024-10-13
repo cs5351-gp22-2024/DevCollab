@@ -19,6 +19,8 @@ import { createProjectOverviewRoutes } from '@/pages/project-overview/project-ov
 import { createUsermanagementRoutes } from '@/pages/usermanagement/usermanagement-routes'
 import { createProfileRoutes } from '@/pages/profile/profile-route'
 import { createTaskManagementRoutes } from '@/pages/taskManagement/taskmanagement-routes'
+import { createProjectsCreateRoutes } from '@/pages/projects-create/projects-store.routes'
+import { concat } from 'lodash'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +32,7 @@ const router = createRouter({
     ...createLogoutRoutes(),
     ...createMainRoutes([
       ...createHomeRoutes(),
-      ...createProjectsRoutes(),
+      ...concat(createProjectsRoutes(), createProjectsCreateRoutes()),
       ...createAutomationRoutes(),
       ...creategithubRoutes(),
       ...creategithubNewWebhookRoutes(),

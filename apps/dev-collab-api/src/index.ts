@@ -20,7 +20,7 @@ const app = express(); // Create Express app instance
 const port = 3000; // Set port number for the server
 
 // Middleware
-app.use(bodyParser.json()); // Middleware to parse incoming JSON requests
+app.use(bodyParser.json({limit: '50mb'})); // Middleware to parse incoming JSON requests
 
 // Simple Home route for test
 app.get("/api/home/messages", (req, res) => {
