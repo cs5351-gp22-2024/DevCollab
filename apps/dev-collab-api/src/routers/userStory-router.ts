@@ -35,6 +35,23 @@ export class UserStoryRouter {
       res.status(204).send();
     });
 
+    this.router.post("/:id/upvote", async (req, res) => {
+      const updatedUserStory = await this.userStoryService.upvoteUserStory(Number(req.params.id));
+      if (updatedUserStory) {
+        res.json(updatedUserStory);
+      } else {
+        res.status(404).json({ message: "User story not found" });
+      }
+    });
+    
+    this.router.post("/:id/downvote", async (req, res) => {
+      const updatedUserStory = await this.userStoryService.downvoteUserStory(Number(req.params.id));
+      if (updatedUserStory) {
+        res.json(updatedUserStory);
+      } else {
+        res.status(404).json({ message: "User story not found" });
+      }
+    });
     return this.router;
   }
 }

@@ -46,4 +46,27 @@ export class UserStoryService {
       await this.dbContext.save();
     }
   }
+  // Upvote a user story
+  async upvoteUserStory(id: number): Promise<UserStory | null> {
+    const userStory = await this.getUserStoryById(id);
+    if (userStory) {
+      userStory.upvoteCount += 1; // Increment upvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null;
+  }
+
+  // Downvote a user story
+  async downvoteUserStory(id: number): Promise<UserStory | null> {
+    const userStory = await this.getUserStoryById(id);
+    if (userStory) {
+      userStory.downvoteCount += 1; // Increment downvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null;
+  }
 }
