@@ -66,7 +66,17 @@ export class UserAccount {
     });
     return record;
   }
+  static async getRecordById(
+    userId: number,
 
+  ): Promise<User | null> {
+
+    const record = await AppDataSource.getRepository(User).findOne({
+      where: { userId },
+      order: { create_time: "DESC" },
+    });
+    return record;
+  }
   /**
    * Checks and verifies a JWT.
    *
