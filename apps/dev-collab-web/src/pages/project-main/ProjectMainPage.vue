@@ -3,6 +3,7 @@
     <v-tabs fixed-tabs>
       <v-tab :to="{ name: 'project-overview' }">Overview</v-tab>
       <v-tab :to="{ name: 'project-detail' }">Detail</v-tab>
+      <v-tab :to="{ name: 'project-sprint' }">Sprint</v-tab>
     </v-tabs>
     <router-view></router-view>
   </div>
