@@ -3,5 +3,9 @@ export const usePrompt = () => {
     window.alert(msg)
   }
 
-  return { alert }
+  const confirm = async (msg: string) => {
+    return window.confirm(msg)
+  }
+
+  return { alert, confirm }
 }
