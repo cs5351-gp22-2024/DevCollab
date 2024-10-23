@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Sprint } from "./sprint";
 
+
 @Entity("Project")
 export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()

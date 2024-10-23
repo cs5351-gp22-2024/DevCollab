@@ -2,7 +2,7 @@ import { interfaces } from "inversify";
 import { IDbContext } from "../db/db-context";
 import { IProjectRepository } from "../repositories/project-repository";
 import { ITaskRepository } from "../repositories/task-repository";
-import { ITaskService } from "../services/Task_service";
+import { ITaskService } from "../services/Task-service";
 import { IProjectService } from "../services/project-service";
 import { ISprintService } from "../services/sprint-service";
 import { ISprintRepository } from "../repositories/sprint-repository";

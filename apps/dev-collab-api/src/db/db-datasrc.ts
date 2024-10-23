@@ -17,7 +17,7 @@ export const AppDataSource = new DataSource({
   username: "root",
   password: "P@ssw0rd",
   database: "DevCollab",
-  synchronize: true,
+  synchronize: false,
   logging: true, // Enable logging for debugging purposes
   entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember, Task],  // Your entity classes
   subscribers: [],

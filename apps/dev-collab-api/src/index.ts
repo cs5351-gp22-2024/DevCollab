@@ -5,6 +5,7 @@ import "express-async-errors"; // Middleware for handling async errors
 import { HomeMessageModel } from "shared/models/home"; // Your shared model for Home message response
 import { AppDataSource } from "./db/db-datasrc"; // TypeORM DataSource instance for connecting to MySQL
 import { createHttpErrorHandler } from "./errors/http-error-handler"; // Custom error handler middleware
+import { taskRouter } from "./routers/task-router"; // Project router
 import { projectRouter } from "./routers/project-router"; // Project router
 import { userRouter } from "./routers/user-router"; // User router
 import { sprintRouter } from "./routers/sprint-router"; // Sprint router
@@ -37,6 +38,7 @@ const userStoryService = new UserStoryService(dbContext); // Pass dbContext to U
 app.use("/", projectRouter); // Project-related routes
 app.use("/", userRouter); // User-related routes
 app.use("/", sprintRouter); // Sprint-related routes
+app.use("/", taskRouter); // Task-related routes
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();

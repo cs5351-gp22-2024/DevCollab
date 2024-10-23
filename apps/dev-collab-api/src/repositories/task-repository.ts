@@ -7,6 +7,7 @@ export interface ITaskRepository {
     addTask(task: Task): void;
     updateTask(task: Task): void;
     removeTask(task: Task): void;
+    getTask(taskid: number): Promise<Task | null>;
 }
 
 @injectable()
@@ -25,4 +26,11 @@ export class TaskRepository implements ITaskRepository {
         this._dbContext.needRemove(task);
     }
 
+
+    async getTask(taskid: number): Promise<Task | null> {
+        return await this._dbContext.tasks.findOne({
+            where: { taskid: taskid },
+            relations: ["project", "sprint"], // Include relationships 
+        });
+    }
 }

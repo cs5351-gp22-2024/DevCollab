@@ -3,12 +3,14 @@ CREATE TABLE Task (
         `name` varchar(1000),
         `description` varchar(1000),
         `priority` ENUM('Low', 'Medium', 'High') NOT NULL DEFAULT 'Medium',
-        `assignee` varchar(1000),
+        `assignee` varchar(1000)  DEFAULT 'None',
         `status` varchar(1000),
-        `duedate` DATETIME ,
+        `duedate` DATE,
         `created` DATETIME ,
         `modified` DATETIME ,
-        `projectId` INT NULL ,
+        `projectId` INT  NULL ,
+        `sprintId` INT  NULL , 
         PRIMARY KEY (`taskid`),
-        CONSTRAINT `FK_Task_Project` FOREIGN KEY (`projectId`) REFERENCES `Project`(`projectId`) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT `FK_Task_Project` FOREIGN KEY (`projectId`) REFERENCES `Project`(`projectId`)  ,
+        CONSTRAINT `FK_Task_Sprint` FOREIGN KEY (`sprintId`) REFERENCES `Sprint`(`sprintId`) 
 );
