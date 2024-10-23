@@ -27,7 +27,11 @@
           <v-col cols="12">
             <v-data-table :items="store.projects" :headers="headers" :search="searchKeywords">
               <template #item.name="{ value, item }">
-                {{ value }}
+                <router-link
+                  :to="{ name: 'project', params: { projectId: toProject(item).projectId } }"
+                >
+                  {{ value }}
+                </router-link>
                 <v-badge
                   color="info"
                   content="Inactive"
