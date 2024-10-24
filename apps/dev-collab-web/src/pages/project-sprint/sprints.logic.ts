@@ -1,7 +1,6 @@
 import { useSprintApi } from '@/api/sprint.api'
 import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
-import { last } from 'lodash'
 import moment from 'moment'
 import type { SprintModel } from 'shared/models/sprint'
 import { computed, reactive, ref } from 'vue'
@@ -28,19 +27,11 @@ export const useSprints = () => {
     throw new Error('project is missing')
   }
 
-  const resetForm = () => {
-    form.sprintId = null
-    form.duration = []
-    mode.value = null
-  }
-
   const prepareInput = (modeUpdate: SprintUpdateMode | null, sprint: SprintModel | null) => {
-    const endDate = last(store.sprints)?.endDate
-    const newStartDate = endDate ? moment(endDate).add(1, 'day').toDate() : new Date()
-    const newStartDateIso = newStartDate.toISOString()
+    const now = new Date().toISOString()
 
     form.sprintId = sprint?.sprintId || null
-    form.duration = [sprint?.startDate || newStartDateIso, sprint?.endDate || newStartDateIso]
+    form.duration = [sprint?.startDate || now, sprint?.endDate || now]
 
     mode.value = modeUpdate
   }
@@ -70,10 +61,6 @@ export const useSprints = () => {
     await sprintApi.removeSprint(sprint.sprintId)
 
     await refreshSprints()
-
-    if (sprint.sprintId === form.sprintId) {
-      resetForm()
-    }
 
     prompt.alert('Sprint is removed')
   }
