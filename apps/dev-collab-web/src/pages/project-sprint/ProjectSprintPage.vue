@@ -35,12 +35,6 @@
                   </v-btn>
                 </template>
               </v-list-item>
-              <v-list-item v-if="store.sprints.length === 0">
-                <v-empty-state
-                  text="You haven't created any sprint for your projects yet."
-                  title="No sprint created"
-                ></v-empty-state>
-              </v-list-item>
               <v-list-item>
                 <v-btn variant="flat" block @click="prepareInput('create', null)">
                   + New Sprint
