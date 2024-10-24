@@ -4,7 +4,7 @@ import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
 import { useBase64 } from '@vueuse/core'
 import type { ProjectUpdateCommand } from 'shared/models/project'
-import { reactive, ref, type Ref } from 'vue'
+import { computed, reactive, ref, type Ref } from 'vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
 
 export const useForm = () => {
@@ -35,5 +35,7 @@ export const useForm = () => {
     prompt.alert('The project is updated')
   })
 
-  return { form, submit, avatarFile }
+  const avatarPreview = computed(() => avatarBase64.base64.value || project.avatar)
+
+  return { form, submit, avatarFile, avatarPreview }
 }
