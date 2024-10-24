@@ -54,28 +54,16 @@
                     showNow: false,
                     showPreview: true
                   }"
-                >
-                  <template #action-buttons>
-                    <v-btn
-                      color="primary"
-                      size="small"
-                      @click="addSprint()"
-                      v-if="mode === 'create'"
-                    >
-                      Create
-                    </v-btn>
-                    <v-btn
-                      color="primary"
-                      size="small"
-                      @click="updateSprint()"
-                      v-else-if="mode === 'edit'"
-                    >
-                      Save
-                    </v-btn>
-                  </template>
-                </vue-date-picker>
+                ></vue-date-picker>
               </v-list-item>
             </v-list>
+
+            <div class="flex justify-end">
+              <v-btn color="primary" @click="addSprint()" v-if="mode === 'create'">Create</v-btn>
+              <v-btn color="primary" @click="updateSprint()" v-else-if="mode === 'edit'">
+                Save
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
       </v-container>
