@@ -1,5 +1,4 @@
 import { useSprintApi } from '@/api/sprint.api'
-import { startPipeline } from '@/utils/pipeline/pipeline'
 import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
 import { last } from 'lodash'
@@ -50,7 +49,7 @@ export const useSprints = () => {
     store.sprints = await sprintApi.getProjectSprints(project.projectId)
   }
 
-  const addSprint = startPipeline(async () => {
+  const addSprint = async () => {
     await sprintApi.createSprint(project.projectId, {
       startDate: moment(form.duration[0]).startOf('day').toISOString(),
       endDate: moment(form.duration[1]).endOf('day').toISOString()
@@ -59,9 +58,9 @@ export const useSprints = () => {
     await refreshSprints()
 
     prompt.alert('Sprint is created')
-  })
+  }
 
-  const removeSprint = startPipeline(async (sprint: SprintModel) => {
+  const removeSprint = async (sprint: SprintModel) => {
     const confirm = await prompt.confirm('Confirm?')
 
     if (!confirm) {
@@ -77,9 +76,9 @@ export const useSprints = () => {
     }
 
     prompt.alert('Sprint is removed')
-  })
+  }
 
-  const updateSprint = startPipeline(async () => {
+  const updateSprint = async () => {
     if (!form.sprintId) {
       throw new Error('Sprint id is missing')
     }
@@ -92,7 +91,7 @@ export const useSprints = () => {
     await refreshSprints()
 
     prompt.alert('Sprint is updated')
-  })
+  }
 
   return {
     form,

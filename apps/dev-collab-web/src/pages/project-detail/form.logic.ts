@@ -1,8 +1,8 @@
 import { useProjectApi } from '@/api/project.api'
-import { startPipeline } from '@/utils/pipeline/pipeline'
 import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
 import { useBase64 } from '@vueuse/core'
+import { AxiosError } from 'axios'
 import type { ProjectUpdateCommand } from 'shared/models/project'
 import { reactive, ref, type Ref } from 'vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
@@ -27,13 +27,21 @@ export const useForm = () => {
   const avatarFile = ref<File>() as Ref<File>
   const avatarBase64 = useBase64(avatarFile)
 
-  const submit = startPipeline(async () => {
-    form.avatar = await avatarBase64.promise.value
+  const submit = async () => {
+    try {
+      form.avatar = await avatarBase64.promise.value
 
-    await projectApi.updateProjects(project.projectId, form)
+      await projectApi.updateProjects(project.projectId, form)
 
-    prompt.alert('The project is updated')
-  })
+      prompt.alert('The project is updated')
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        prompt.alert(err.response?.data)
+      }
+
+      throw err
+    }
+  }
 
   return { form, submit, avatarFile }
 }
