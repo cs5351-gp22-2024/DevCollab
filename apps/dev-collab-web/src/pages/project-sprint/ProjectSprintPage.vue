@@ -10,18 +10,10 @@
 
             <v-list lines="one">
               <v-list-item
-                class="mb-2"
                 v-for="sprint of store.sprints"
                 :title="`Sprint ${sprint.sprintNo}`"
-                :disabled="sprint.isEnded === true"
+                :subtitle="`${formatDate(sprint.startDate)} - ${formatDate(sprint.endDate)}`"
               >
-                <template #subtitle>
-                  <div class="flex gap-1">
-                    <v-chip v-for="c of formatSprintSubtitle(sprint)" density="compact">
-                      {{ c }}
-                    </v-chip>
-                  </div>
-                </template>
                 <template v-slot:append>
                   <v-btn
                     color="grey-lighten-1"
@@ -46,7 +38,7 @@
             <div class="text-subtitle-1 text-medium-emphasis">Duration</div>
 
             <v-list lines="one">
-              <v-list-item class="mb-2">
+              <v-list-item>
                 <vue-date-picker
                   ref="dp"
                   class="justify-center"
@@ -93,8 +85,6 @@
 
 <script setup lang="ts">
 import { formatDate } from '@/utils/data-format/date-format'
-import { compact } from 'lodash'
-import type { SprintModel } from 'shared/models/sprint'
 import { nextTick, ref } from 'vue'
 import { useProjectSprintStore } from './project-sprint.store'
 import { useSprints } from './sprints.logic'
@@ -107,13 +97,5 @@ const dp = ref()
 const selectDate = async () => {
   await nextTick()
   dp.value.selectDate()
-}
-
-const formatSprintSubtitle = (sprint: SprintModel) => {
-  const duration = `${formatDate(sprint.startDate)} - ${formatDate(sprint.endDate)}`
-  const isCurrent = sprint.isCurrent ? 'Current Sprint' : null
-  const isEnded = sprint.isEnded ? 'Ended' : null
-
-  return compact([duration, isEnded, isCurrent])
 }
 </script>

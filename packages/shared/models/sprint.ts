@@ -4,8 +4,6 @@ export interface SprintModel {
   startDate: string | null;
   endDate: string | null;
   sprintNo: number | null;
-  isEnded: boolean | null;
-  isCurrent: boolean | null;
 }
 
 export interface SprintCreateCommand {
