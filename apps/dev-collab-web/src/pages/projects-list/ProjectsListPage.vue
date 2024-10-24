@@ -30,9 +30,6 @@
                 <router-link
                   :to="{ name: 'project', params: { projectId: toProject(item).projectId } }"
                 >
-                  <v-avatar v-if="toProject(item).avatar" class="mr-2">
-                    <v-img :src="toProject(item).avatar || ''"></v-img>
-                  </v-avatar>
                   {{ value }}
                 </router-link>
                 <v-badge
