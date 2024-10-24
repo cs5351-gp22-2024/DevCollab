@@ -3,28 +3,11 @@
     <v-card title="Projects" :subtitle="`Total ${store.projects.length}`"></v-card>
 
     <v-card title="Recent Updates" class="mt-4">
-      <v-container fluid>
-        <v-empty-state
-          v-if="recentUpdates.length === 0"
-          text="You haven't assigned into any projects yet. When you do, they'll appear here."
-          title="No recent projects"
-        ></v-empty-state>
-        <v-list :items="recentUpdates" lines="two" item-props></v-list>
-      </v-container>
+      <v-list :items="recentUpdates" lines="two" item-props></v-list>
     </v-card>
 
     <v-card title="Active" class="mt-4">
-      <v-container fluid>
-        <v-empty-state
-          v-if="actives.length === 0"
-          text="You haven't assigned into any projects yet. When you do, they'll appear here."
-          title="No active projects"
-        ></v-empty-state>
-        <v-list :items="actives" lines="two" item-props></v-list>
-        <div class="flex justify-end">
-          <v-btn variant="text" :to="{ name: 'projects-list' }"> View all projects </v-btn>
-        </div>
-      </v-container>
+      <v-list :items="actives" lines="two" item-props></v-list>
     </v-card>
   </div>
 </template>
