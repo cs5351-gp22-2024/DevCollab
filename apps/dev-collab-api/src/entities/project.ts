@@ -19,14 +19,7 @@ export class Project extends BaseEntity {
   @Column({ type: "varchar", nullable: true })
   description: string | null = null;
 
-  @Column({
-    type: "blob",
-    nullable: true,
-    transformer: {
-      to: (value: string) => Buffer.from(value),
-      from: (value: Buffer) => value.toString(),
-    },
-  })
+  @Column({ type: "varchar", nullable: true })
   avatar: string | null = null;
 
   @Column({ type: "timestamp" })
