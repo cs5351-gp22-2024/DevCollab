@@ -28,7 +28,7 @@ export const useForm = () => {
   const avatarBase64 = useBase64(avatarFile)
 
   const submit = startPipeline(async () => {
-    form.avatar = await avatarBase64.promise.value
+    form.avatar = (await avatarBase64.promise.value) || project.avatar
 
     await projectApi.updateProjects(project.projectId, form)
 

@@ -10,6 +10,9 @@
           title="No recent projects"
         ></v-empty-state>
         <v-list :items="recentUpdates" lines="two" item-props></v-list>
+        <div class="flex justify-end">
+          <v-btn variant="text" :to="{ name: 'projects-list' }"> View all projects </v-btn>
+        </div>
       </v-container>
     </v-card>
 
@@ -41,14 +44,15 @@ const recentUpdates = computed(() =>
   flatten(
     map(
       take(
-        orderBy(store.projects, (p) => p.modified, 'desc'),
+        orderBy(store.projects, (p) => p.modified || '', 'desc'),
         10
       ),
       (p) => [
         {
           prependAvatar: p.avatar,
           title: `[PJ-${p.projectId}] ${p.name}`,
-          subtitle: p.description
+          subtitle: p.description,
+          to: { name: 'project', params: { projectId: p.projectId } }
         },
         { type: 'divider', inset: true }
       ]
@@ -81,7 +85,8 @@ const actives = computed(() =>
     (p) => ({
       prependAvatar: p.avatar,
       title: `[PJ-${p.projectId}] ${p.name}`,
-      subtitle: `Created ${formatDate(p.created)} • ${formatSprintNos(p.currentSprintNos)}`
+      subtitle: `Created ${formatDate(p.created)} • ${formatSprintNos(p.currentSprintNos)}`,
+      to: { name: 'project', params: { projectId: p.projectId } }
     })
   )
 )
