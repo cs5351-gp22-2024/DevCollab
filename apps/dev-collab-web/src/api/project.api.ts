@@ -22,7 +22,7 @@ export const useProjectApi = (axios: AxiosInstance) => ({
     return data
   },
   async updateProjects(projectId: number, command: ProjectUpdateCommand): Promise<void> {
-    const { data } = await axios.patch(`/projects/${projectId}`, command)
+    const { data } = await axios.post(`/projects/${projectId}`, command)
 
     return data
   },
