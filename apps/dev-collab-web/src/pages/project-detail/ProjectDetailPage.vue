@@ -32,13 +32,6 @@
               <v-btn color="primary" @click="submit()">Save</v-btn>
             </div>
           </v-col>
-          <v-col cols="6" v-if="avatarPreview">
-            <div class="text-subtitle-1 text-medium-emphasis">Avatar Preview</div>
-
-            <div class="flex justify-center h-full">
-              <v-img max-width="50%" :src="avatarPreview"></v-img>
-            </div>
-          </v-col>
         </v-row>
       </v-container>
     </v-card>
@@ -48,5 +41,5 @@
 <script setup lang="ts">
 import { useForm } from './form.logic'
 
-const { form, submit, avatarFile, avatarPreview } = useForm()
+const { form, submit, avatarFile } = useForm()
 </script>
