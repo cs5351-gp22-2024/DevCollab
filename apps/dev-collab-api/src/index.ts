@@ -10,7 +10,6 @@ import { userRouter } from "./routers/user-router"; // User router
 import { sprintRouter } from "./routers/sprint-router"; // Sprint router
 import { UserStoryRouter } from "./routers/userStory-router"; // Import UserStoryRouter
 import { UserStoryService } from "./services/userStory-service"; // Import UserStoryService
-import { groupRouter } from "./routers/group-router";// Import Group Router
 import { DbContext } from "./db/db-context"; // Import DbContext
 
 // For Automation with GitHub WebSocket setup
@@ -38,7 +37,6 @@ const userStoryService = new UserStoryService(dbContext); // Pass dbContext to U
 app.use("/", projectRouter); // Project-related routes
 app.use("/", userRouter); // User-related routes
 app.use("/", sprintRouter); // Sprint-related routes
-app.use("/", groupRouter); 
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();

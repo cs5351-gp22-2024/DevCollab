@@ -4,9 +4,7 @@ import {
   Column,
   CreateDateColumn,
   BaseEntity,
-
 } from "typeorm";
-import { User } from "./user";
 
 @Entity("group") // Table name in the database
 export class Group extends BaseEntity {
@@ -16,16 +14,14 @@ export class Group extends BaseEntity {
   @Column({ type: "varchar", length: 1000 })
   group_name!: string;
 
-
-  @Column({ type: "varchar", length: 255 , }) 
+  @Column({ type: "varchar", length: 255 }) // Adjust length as needed
   creator_id!: string;
 
   @CreateDateColumn({ name: "create_time", type: "timestamp" })
   create_time!: Date;
 
-  constructor(name: string, userid:string) {
+  constructor(name: string) {
     super();
     this.group_name = name;
-    this.creator_id = userid;
   }
 }
