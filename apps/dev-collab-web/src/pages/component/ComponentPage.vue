@@ -8,10 +8,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
 import CommentSection from '@/components/Comment/CommentSection.vue'
 
-export default defineComponent({
+export default {
   components: {
     CommentSection
   },
@@ -45,7 +45,7 @@ export default defineComponent({
       dummyCommentList
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
