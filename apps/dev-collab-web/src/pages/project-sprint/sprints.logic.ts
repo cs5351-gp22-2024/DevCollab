@@ -1,6 +1,7 @@
 import { useSprintApi } from '@/api/sprint.api'
 import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
+import moment from 'moment'
 import type { SprintModel } from 'shared/models/sprint'
 import { computed, reactive, ref } from 'vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
@@ -41,8 +42,8 @@ export const useSprints = () => {
 
   const addSprint = async () => {
     await sprintApi.createSprint(project.projectId, {
-      startDate: form.duration[0],
-      endDate: form.duration[1]
+      startDate: moment(form.duration[0]).startOf('day').toISOString(),
+      endDate: moment(form.duration[1]).endOf('day').toISOString()
     })
 
     await refreshSprints()
@@ -70,8 +71,8 @@ export const useSprints = () => {
     }
 
     await sprintApi.updateSprint(form.sprintId, {
-      startDate: form.duration[0],
-      endDate: form.duration[1]
+      startDate: moment(form.duration[0]).startOf('day').toISOString(),
+      endDate: moment(form.duration[1]).endOf('day').toISOString()
     })
 
     await refreshSprints()
