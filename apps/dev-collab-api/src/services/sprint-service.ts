@@ -89,6 +89,7 @@ export class SprintService implements ISprintService {
   }
 
   async getProjectSprints(projectId: number): Promise<SprintModel[]> {
+    const now = new Date().toISOString();
     const project = await this._projectRepository.getProject(projectId);
 
     if (!project) {
@@ -98,7 +99,7 @@ export class SprintService implements ISprintService {
     const sprints = project.orderedSprints || [];
     const sprintsNos = project.calculateSprintNos(sprints);
 
-    return sprints.map((s, i) => mapSprintToSprintModel(s, sprintsNos[i]));
+    return sprints.map((s, i) => mapSprintToSprintModel(s, sprintsNos[i], now));
   }
 
   async updateSprint(
