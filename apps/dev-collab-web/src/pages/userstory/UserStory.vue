@@ -5,14 +5,25 @@
     <v-row class="mb-4" align="center">
       <!-- Search Field -->
       <v-col cols="12" sm="4" md="4">
-        <v-text-field v-model="search" label="Search stories" prepend-inner-icon="mdi-magnify" clearable
-          @input="filterStories"></v-text-field>
+        <v-text-field
+          v-model="search"
+          label="Search stories"
+          prepend-inner-icon="mdi-magnify"
+          clearable
+          @input="filterStories"
+        ></v-text-field>
       </v-col>
 
       <!-- Sort By Select -->
       <v-col cols="12" sm="4" md="4">
-        <v-select v-model="sortBy" :items="sortOptions" item-title="text" item-value="value" label="Sort by"
-          @change="sortStories"></v-select>
+        <v-select
+          v-model="sortBy"
+          :items="sortOptions"
+          item-title="text"
+          item-value="value"
+          label="Sort by"
+          @change="sortStories"
+        ></v-select>
       </v-col>
 
       <!-- Add New User Story Button -->
@@ -38,17 +49,6 @@
 
           </v-card-text>
           <v-card-actions>
-            <v-btn icon @click="upvote(story)">
-              <v-icon color="green">mdi-thumb-up</v-icon>
-            </v-btn>
-            <span>{{ story.upvoteCount }}</span> <!-- Show upvote count -->
-
-            <v-btn icon @click="downvote(story)">
-              <v-icon color="red">mdi-thumb-down</v-icon>
-            </v-btn>
-            <span>{{ story.downvoteCount }}</span> <!-- Show downvote count -->
-
-            <v-spacer></v-spacer>
             <v-btn color="primary" @click="editStory(story)">Edit</v-btn>
             <v-btn color="error" @click="confirmDelete(story)">Delete</v-btn>
           </v-card-actions>
@@ -78,7 +78,11 @@
                 <v-text-field v-model="editedItem.soThat" label="So that"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-select v-model="editedItem.priority" :items="['Low', 'Medium', 'High']" label="Priority"></v-select>
+                <v-select
+                  v-model="editedItem.priority"
+                  :items="['Low', 'Medium', 'High']"
+                  label="Priority"
+                ></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -117,8 +121,6 @@ interface UserStory {
   iWantTo: string;
   soThat: string;
   priority: 'Low' | 'Medium' | 'High';
-  upvoteCount: number;  // Add upvote count
-  downvoteCount: number;  // Add downvote count
 }
 
 const userStories = ref<UserStory[]>([]);
@@ -152,8 +154,6 @@ const editedItem = ref<UserStory>({
   iWantTo: '',
   soThat: '',
   priority: 'Medium',
-  upvoteCount: 0,  // Add upvote count
-  downvoteCount: 0,  // Add downvote count
 });
 
 const defaultItem: UserStory = {
@@ -163,8 +163,7 @@ const defaultItem: UserStory = {
   iWantTo: '',
   soThat: '',
   priority: 'Medium',
-  upvoteCount: 0,  // Add upvote count
-  downvoteCount: 0,  // Add downvote count
+
 };
 
 
@@ -187,8 +186,8 @@ const sortedAndFilteredStories = computed(() => {
   // Apply search filter
   if (search.value) {
     const searchLower = search.value.toLowerCase()
-    stories = stories.filter(story =>
-      Object.values(story).some(value =>
+    stories = stories.filter(story => 
+      Object.values(story).some(value => 
         typeof value === 'string' && value.toLowerCase().includes(searchLower)
       )
     )
@@ -307,24 +306,6 @@ const sortStories = () => {
   // This function is called when sort option changes
   // The actual sorting is done in the computed property 'sortedAndFilteredStories'
 }
-
-const upvote = async (story: UserStory) => {
-  try {
-    const response = await axios.post(`/api/userstories/${story.userStoryId}/upvote`);
-    story.upvoteCount = response.data.upvoteCount;  // Update upvote count locally
-  } catch (error) {
-    console.error('Error upvoting story:', error);
-  }
-};
-
-const downvote = async (story: UserStory) => {
-  try {
-    const response = await axios.post(`/api/userstories/${story.userStoryId}/downvote`);
-    story.downvoteCount = response.data.downvoteCount;  // Update downvote count locally
-  } catch (error) {
-    console.error('Error downvoting story:', error);
-  }
-};
 </script>
 
 <style scoped>

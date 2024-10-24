@@ -33,17 +33,11 @@ import {
     @Column({ type: "timestamp" })
     dueDate: Date | null = null;
   
-    @Column({ type: "int", default: 0 })
-    upvoteCount: number = 0; // Track upvotes
-  
-    @Column({ type: "int", default: 0 })
-    downvoteCount: number = 0; // Track downvotes
-  
-    @ManyToOne(() => Project, (project) => project.sprints)
+    @ManyToOne(() => Project, (project) => project.sprints) // Relationship with Project
     @JoinColumn({ name: "projectId" })
     project: Project | null = null;
   
-    @ManyToOne(() => Sprint, (sprint) => sprint.project)
+    @ManyToOne(() => Sprint, (sprint) => sprint.project) // Optional: if related to a Sprint
     @JoinColumn({ name: "sprintId" })
     sprint: Sprint | null = null;
   }
