@@ -24,7 +24,6 @@ import { concat } from 'lodash'
 import { createProjectsListRoutes } from '@/pages/projects-list/projects-list.routes'
 import { createProjectMainRoutes } from '@/pages/project-main/project-main-routes'
 import { createProjectDetailRoutes } from '@/pages/project-detail/project-detail-routes'
-import { createProjectSprintRoutes } from '@/pages/project-sprint/project-sprint-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,7 +36,7 @@ const router = createRouter({
     ...createMainRoutes([
       ...createHomeRoutes(),
       ...concat(createProjectsRoutes(), createProjectsCreateRoutes(), createProjectsListRoutes()),
-      ...createProjectMainRoutes(concat(createProjectDetailRoutes(), createProjectSprintRoutes())),
+      ...createProjectMainRoutes(concat(createProjectDetailRoutes())),
       ...createAutomationRoutes(),
       ...creategithubRoutes(),
       ...creategithubNewWebhookRoutes(),
