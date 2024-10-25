@@ -34,28 +34,30 @@
 
 <script setup lang="ts">
 import { formatDate } from '@/utils/data-format/date-format'
-import { filter, flatten, map, orderBy, take } from 'lodash'
+import { dropRight, filter, flatten, map, orderBy, take } from 'lodash'
 import { computed } from 'vue'
 import { useProjectsStore } from './projects.store'
 
 const store = useProjectsStore()
 
 const recentUpdates = computed(() =>
-  flatten(
-    map(
-      take(
-        orderBy(store.projects, (p) => p.modified || '', 'desc'),
-        10
-      ),
-      (p) => [
-        {
-          prependAvatar: p.avatar,
-          title: `[PJ-${p.projectId}] ${p.name}`,
-          subtitle: p.description,
-          to: { name: 'project', params: { projectId: p.projectId } }
-        },
-        { type: 'divider', inset: true }
-      ]
+  dropRight(
+    flatten(
+      map(
+        take(
+          orderBy(store.projects, (p) => p.modified || '', 'desc'),
+          10
+        ),
+        (p) => [
+          {
+            prependAvatar: p.avatar,
+            title: `[PJ-${p.projectId}] ${p.name}`,
+            subtitle: p.description,
+            to: { name: 'project', params: { projectId: p.projectId } }
+          },
+          { type: 'divider', inset: true }
+        ]
+      )
     )
   )
 )
@@ -73,21 +75,28 @@ const formatSprintNos = (sprintNos: number[]) => {
 }
 
 const actives = computed(() =>
-  map(
-    take(
-      orderBy(
-        filter(store.projects, (p) => p.isActive),
-        (p) => p.created,
-        'desc'
-      ),
-      10
-    ),
-    (p) => ({
-      prependAvatar: p.avatar,
-      title: `[PJ-${p.projectId}] ${p.name}`,
-      subtitle: `Created ${formatDate(p.created)} • ${formatSprintNos(p.currentSprintNos)}`,
-      to: { name: 'project', params: { projectId: p.projectId } }
-    })
+  dropRight(
+    flatten(
+      map(
+        take(
+          orderBy(
+            filter(store.projects, (p) => p.isActive),
+            (p) => p.created,
+            'desc'
+          ),
+          10
+        ),
+        (p) => [
+          {
+            prependAvatar: p.avatar,
+            title: `[PJ-${p.projectId}] ${p.name}`,
+            subtitle: `Created ${formatDate(p.created)} • ${formatSprintNos(p.currentSprintNos)}`,
+            to: { name: 'project', params: { projectId: p.projectId } }
+          },
+          { type: 'divider', inset: true }
+        ]
+      )
+    )
   )
 )
 </script>
