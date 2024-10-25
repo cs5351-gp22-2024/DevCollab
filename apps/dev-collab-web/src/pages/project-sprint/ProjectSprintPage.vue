@@ -13,7 +13,7 @@
                 class="mb-2"
                 v-for="sprint of store.sprints"
                 :title="`Sprint ${sprint.sprintNo}`"
-                :disabled="sprint.isEnded === true"
+                :disabled="sprint.isEnded === true || sprint.isCurrent === true"
               >
                 <template #subtitle>
                   <div class="flex gap-1">
@@ -47,6 +47,22 @@
                 </v-btn>
               </v-list-item>
             </v-list>
+          </v-col>
+          <v-col cols="6" v-show="!mode">
+            <v-alert title="Sprints" type="info">
+              <p>Some rules on managing the sprints:</p>
+              <ul>
+                <li>You cannot create a sprint that's start from today</li>
+                <li>You cannot edit the sprint that's ended or currently running</li>
+                <li>
+                  No overlapping duration between any of the sprints, but the duration can be
+                  non-consecutive
+                </li>
+                <li>
+                  There is no actual ending of the project as long as there is a sprint to be run
+                </li>
+              </ul>
+            </v-alert>
           </v-col>
           <v-col cols="6" v-show="mode !== null">
             <div class="text-subtitle-1 text-medium-emphasis">Duration</div>
