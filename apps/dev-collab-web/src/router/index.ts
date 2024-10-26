@@ -27,6 +27,7 @@ import { createProjectsListRoutes } from '@/pages/projects-list/projects-list.ro
 import { createProjectMainRoutes } from '@/pages/project-main/project-main-routes'
 import { createProjectDetailRoutes } from '@/pages/project-detail/project-detail-routes'
 import { createProjectSprintRoutes } from '@/pages/project-sprint/project-sprint-routes'
+import { createNotificationRoutes } from '@/pages/notification/notification-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,7 +55,8 @@ const router = createRouter({
       ...creategithubRoutes(),
       ...createComponentRoutes(),
       ...creategithubShowWebhookRoutes(),
-      ...creategithubManageWebhookRoutes()
+      ...creategithubManageWebhookRoutes(),
+      ...createNotificationRoutes()
     ])
   ]
 })

@@ -25,6 +25,11 @@ export class NotificationRouter {
       res.status(200).json(notification);
     });
 
+    this.router.get("/api/notification/updateReadStatus/:notificationId", async (req, res) => {
+      const notification = await this.notificationService.updateNotificationStatus(Number(req.params.notificationId));
+      res.status(200).json(notification);
+    });
+
     return this.router;
   }
 }
