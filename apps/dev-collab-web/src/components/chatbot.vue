@@ -1,7 +1,7 @@
 <template>
     <div class="chatbot" v-if="isOpen">
         <div class="header" @click="toggleChat">
-            <h4>DevCollab Chatbot</h4>
+            <h4>DevCollab Chatbot 🤖</h4>
             <hr>
         </div>
         <div class="messages">
@@ -60,7 +60,7 @@ export default {
 }
 
 .messages {
-    padding: 0px 10px;
+    padding: 0px 5px;
     margin-bottom: 10px;
     line-height: 20px;
     overflow-y: auto; /* Enable vertical scrolling */
@@ -77,7 +77,7 @@ export default {
 
 .chatbot {
     position: fixed;
-    bottom: 30px; 
+    bottom: 60px; 
     right: 30px; 
     width: 300px;
     min-height: 350px; 
@@ -91,7 +91,7 @@ export default {
 
 .chatbot-icon {
     position: fixed;
-    bottom: 30px;
+    bottom: 60px;
     right: 30px;
     cursor: pointer;
     z-index: 1000; 
@@ -112,17 +112,17 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 40px); /* Adjust the height to accommodate the textarea and button */
+    height: calc(100% - 40px);
 }
 
 textarea {
-    flex: 1; /* Allow the textarea to grow with the container */
-    resize: none; /* Disable resizing of the textarea */
+    flex: 1;
+    resize: none;
 }
 
 .send-button {
-    align-self: flex-end; /* Align the button to the end of the flex container (bottom) */
-    margin-top: 10px; /* Adjust the top margin as needed */
-    width: auto; /* Allow the button to adjust its width based on content */
+    align-self: flex-end;
+    margin-top: 15px; 
+    width: auto;
 } 
 </style>
