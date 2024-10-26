@@ -40,6 +40,15 @@ const LoginApi = {
     } catch (error) {
       return { success: false, message: 'TOKEN_FAILED' }
     }
+  },
+
+  getLocalToken() {
+    const token = localStorage.getItem('auth_token')
+    if (token != null) {
+      return token
+    } else {
+      return ''
+    }
   }
 }
 

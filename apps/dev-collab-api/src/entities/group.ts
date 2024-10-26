@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { User } from "./user";
 
+
 @Entity("group") // Table name in the database
 export class Group extends BaseEntity {
   @PrimaryGeneratedColumn({ name: "group_id" })
