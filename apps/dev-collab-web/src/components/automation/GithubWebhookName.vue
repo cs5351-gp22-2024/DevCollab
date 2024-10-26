@@ -1,8 +1,10 @@
 <template>
+  <hr>
+  <br>
     <div>
-      <h3>Step 2: Create Rules</h3>
+      <h4><span class="font-weight-bold">Step 2:</span> Set Name for Webhook</h4>
       <div class="mb-4 space-y-2">
-        <input type="text" placeholder="Placeholder" class="form-control" />
+        <input v-model="name" type="text" placeholder="Input custom name for Webhook here (E.g. Issue notification)" class="form-control"/>
       </div>
       <div class="space-x-2 mb-4">
         <button @click="previous" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
@@ -12,6 +14,7 @@
             Next
         </button>
       </div>
+      <div v-if="showEmptyNotification" class="notification">Please provide a name for the Webhook.</div>
     </div>
   </template>
   
@@ -21,12 +24,19 @@
   export default defineComponent({
     data() {
       return {
-        rules: []
+        name: '',
+        showEmptyNotification: false,
       };
     },
     methods: {
       next() {
-        this.$emit('next', { rules: this.rules });
+        if (this.name === ''){
+          this.showEmptyNotification = true;
+              setTimeout(() => {
+                this.showEmptyNotification = false;
+              }, 3000);
+        }else{
+        this.$emit('next', { name: this.name });}
       },
       previous() {
         this.$emit('previous');
@@ -105,8 +115,8 @@
 
 .notification {
     position: fixed;
-    left: 50%;
-    background-color: #4caf50;
+    left: 40%;
+    background-color: #de5252;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;

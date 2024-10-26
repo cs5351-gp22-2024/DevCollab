@@ -11,19 +11,31 @@
                 <img :src="github" alt="Github Icon" />
               </div>
               <div class="text">
-                <p>Create New</p>
+                <p class="font-weight-bold">Create New</p>
               </div>
             </div>
           </div>
         </div>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
-          <div class="bg-gray-100 p-4 rounded-lg hover-div">
+          <div @click="githubManageWebhook" class="bg-gray-100 p-4 rounded-lg hover-div">
             <div class="block">
               <div class="icon">
                 <img :src="github" alt="Github Icon" />
               </div>
               <div class="text">
-                <p>Manage Existing Webhook(s)</p>
+                <p class="font-weight-bold">Manage Existing Webhook(s)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
+          <div @click="githubViewWebhook" class="bg-gray-100 p-4 rounded-lg hover-div">
+            <div class="block">
+              <div class="icon">
+                <img :src="github" alt="Github Icon" />
+              </div>
+              <div class="text">
+                <p class="font-weight-bold">View Webhook Notifications</p>
               </div>
             </div>
           </div>
@@ -51,6 +63,14 @@ export default defineComponent({
     githubCreateNewPage(): void {
       const router: Router = this.$router
       router.push('/automation/github/new-webhook') // Navigate to a sub-page
+    },
+    githubViewWebhook(): void {
+      const router: Router = this.$router
+      router.push('/automation/github/view-webhooks') // Navigate to a sub-page
+    },
+    githubManageWebhook(): void {
+      const router: Router = this.$router
+      router.push('/automation/github/manage-webhooks') // Navigate to a sub-page
     }
   }
 })

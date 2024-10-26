@@ -9,12 +9,15 @@ import { projectRouter } from "./routers/project-router";
 import http from "http"; // For Automation Github
 import { createServer } from "http"; // For Automation Github
 import { Server as WebSocketServer } from "ws"; // For Automation Github
+import { webhookRouter } from './routers/webhook-router'; // For Automation Github
+const cors = require('cors'); // For Automation Github
 import { userRouter } from "./routers/user-router";
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
+app.use(cors()); // For Automation Github - Allow requests from all origins
 
 app.get("/api/home/messages", (req, res) => {
   res.send(["Hello World!", "Test from Home"] satisfies HomeMessageModel);
@@ -22,9 +25,10 @@ app.get("/api/home/messages", (req, res) => {
 
 app.use("/", projectRouter);
 app.use("/", userRouter);
+app.use("/", webhookRouter); // For Automation Github
 app.use(createHttpErrorHandler());
 
-// For Automation Github
+// For Chatbot
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 wss.on("connection", (ws) => {
