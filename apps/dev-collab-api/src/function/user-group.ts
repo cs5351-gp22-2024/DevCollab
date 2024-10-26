@@ -29,7 +29,7 @@ export class UserGroup {
       },
       relations: ["group", "user"],
     });
- 
+
     return groupMembers;
   }
   static async getMemberList(userid: number, group_id: number) {
@@ -52,7 +52,12 @@ export class UserGroup {
           group_role: member.group_role,
         };
       }
-      return { result: "SUCCESS", memberList: memberList };
+      return {
+        result: "SUCCESS",
+        memberList: memberList,
+        group_name: groupMembers[0].group.group_name,
+        group_id: groupMembers[0].group.group_id,
+      };
     } else {
       return { result: "UNSUCCESS", error: "NOT_FOUND_GROUPMATE" };
     }
@@ -150,5 +155,65 @@ export class UserGroup {
       return null;
     }
   }
-  
+  static async removeMember(
+    user: number,
+    group: number,
+    targetMember_id: number
+  ) {
+    const user_record = await UserAccount.getRecordById(user);
+    const group_record = await this.getGroup(group);
+    const right_checker = await this.isGroupMember(
+      null,
+      group_record,
+      user_record
+    );
+    if (!right_checker) {
+      return { result: "UNSUCCESS", error: "NOT_IN_GROUP" };
+    }
+    if (right_checker.group_role != "ADMIN") {
+      return { result: "UNSUCCESS", error: "NOT_ADMIN" };
+    }
+
+    const target = this.isGroupMember(targetMember_id);
+    if (!target) {
+      return { result: "UNSUCCESS", error: "TARGET_NOT_IN_GROUP" };
+    }
+    (await (await target).remove()).save();
+    return { result: "SUCCESS", message: "TARGET_REMOVED" };
+  }
+  static async deleteGroup(user: number, group: number) {
+    const user_record = await UserAccount.getRecordById(user);
+    const group_record = await this.getGroup(group);
+    const right_checker = await this.isGroupMember(
+      null,
+      group_record,
+      user_record
+    );
+    if (!right_checker) {
+      return { result: "UNSUCCESS", error: "NOT_IN_GROUP" };
+    }
+    if (right_checker.group_role != "ADMIN") {
+      return { result: "UNSUCCESS", error: "NOT_ADMIN" };
+    }
+
+    (await group_record.remove()).save();
+    return { result: "SUCCESS", message: "GROUP_REMOVED" };
+  }
+  static async leaveGroup(user: number, group: number) {
+    const user_record = await UserAccount.getRecordById(user);
+    const group_record = await this.getGroup(group);
+    const right_checker = await this.isGroupMember(
+      null,
+      group_record,
+      user_record
+    );
+    if (!right_checker) {
+      return { result: "UNSUCCESS", error: "NOT_IN_GROUP" };
+    }
+    if (right_checker.group_role == "ADMIN") {
+      return { result: "UNSUCCESS", error: "ADMIN_CANNOT_LEAVE" };
+    }
+    (await (await right_checker).remove()).save();
+    return { result: "SUCCESS", message: "LEVEA_THE_GROUP" };
+  }
 }
