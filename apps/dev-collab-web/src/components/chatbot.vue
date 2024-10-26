@@ -1,7 +1,7 @@
 <template>
     <div class="chatbot" v-if="isOpen">
         <div class="header" @click="toggleChat">
-            <h4>DevCollab Chatbot 🤖</h4>
+            <h4>DevCollab Chatbot 🤖 v0.1</h4>
             <hr>
         </div>
         <div class="messages">
