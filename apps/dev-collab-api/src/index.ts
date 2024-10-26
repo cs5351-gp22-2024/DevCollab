@@ -10,6 +10,8 @@ import { userRouter } from "./routers/user-router"; // User router
 import { sprintRouter } from "./routers/sprint-router"; // Sprint router
 import { UserStoryRouter } from "./routers/userStory-router"; // Import UserStoryRouter
 import { UserStoryService } from "./services/userStory-service"; // Import UserStoryService
+import { CommentRouter } from "./routers/comment-router"; // Import CommentRouter
+import { CommentService } from "./services/comment-service"; // Import CommentService
 import { groupRouter } from "./routers/group-router";// Import Group Router
 import { DbContext } from "./db/db-context"; // Import DbContext
 import { createServer } from "http"; // For Automation Github
@@ -40,6 +42,8 @@ const dbContext = new DbContext(AppDataSource.manager);
 
 // Instantiate UserStoryService with DbContext
 const userStoryService = new UserStoryService(dbContext); // Pass dbContext to UserStoryService
+const commentService = new CommentService(dbContext); 
+const commentRouter = new CommentRouter(commentService).initializeRoutes();
 
 // Register Routers (APIs)
 app.use("/", projectRouter); // Project-related routes
@@ -47,10 +51,12 @@ app.use("/", userRouter); // User-related routes
 app.use("/", sprintRouter); // Sprint-related routes
 app.use("/", groupRouter); 
 app.use("/", webhookRouter); // For Automation Github
+app.use("/", commentRouter); 
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();
 app.use("/api/userstories", userStoryRouter); // Register the user stories routes
+
 
 // Register error handling middleware for HTTP errors
 app.use(createHttpErrorHandler());

@@ -62,6 +62,7 @@ export class ProjectService implements IProjectService {
     newProject.description = command.description;
     newProject.avatar = command.avatar;
     newProject.created = now;
+    newProject.modified = now;
 
     this._projectRepository.addProject(newProject);
 
