@@ -1,9 +1,11 @@
 import { interfaces } from "inversify";
 import { IDbContext } from "../db/db-context";
 import { IProjectRepository } from "../repositories/project-repository";
-import { ISprintRepository } from "../repositories/sprint-repository";
+import { ITaskRepository } from "../repositories/task-repository";
+import { ITaskService } from "../services/Task-service";
 import { IProjectService } from "../services/project-service";
 import { ISprintService } from "../services/sprint-service";
+import { ISprintRepository } from "../repositories/sprint-repository";
 
 const TYPES = {
   IDbContext: Symbol.for(
@@ -12,6 +14,12 @@ const TYPES = {
   IProjectRepository: Symbol.for(
     "IProjectRepository"
   ) as interfaces.ServiceIdentifier<IProjectRepository>,
+  ITaskRepository: Symbol.for(
+    "ITaskRepository"
+  ) as interfaces.ServiceIdentifier<ITaskRepository>,
+  ITaskService: Symbol.for(
+    "ITaskService"
+  ) as interfaces.ServiceIdentifier<ITaskService>,
   IProjectService: Symbol.for(
     "IProjectService"
   ) as interfaces.ServiceIdentifier<IProjectService>,

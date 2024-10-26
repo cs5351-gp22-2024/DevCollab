@@ -6,6 +6,7 @@ import { UserStory } from "../entities/userStory";
 import { User } from "../entities/user";
 import { Group } from "../entities/group";
 import { GroupMember } from "../entities/groupMember";
+import { Task } from "../entities/task";
 import { Invitation } from "../entities/Invitation";
 import { Comment } from "../entities/comment";
 
@@ -19,17 +20,7 @@ export const AppDataSource = new DataSource({
   database: "DevCollab",
   synchronize: false,
   logging: true, // Enable logging for debugging purposes
-  entities: [
-    Project,
-    Sprint,
-    Verification,
-    UserStory,
-    User,
-    Group,
-    GroupMember,
-    Invitation,
-    Comment
-  ], // Your entity classes
+  entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember, Task, Invitation, Comment],  // Your entity classes
   subscribers: [],
   migrations: [],
   timezone: "Z",

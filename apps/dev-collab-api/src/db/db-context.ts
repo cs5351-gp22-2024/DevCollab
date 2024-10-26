@@ -2,21 +2,25 @@
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
 import { Project } from "../entities/project";
+import { Task } from "../entities/task"
 import { UserStory } from "../entities/userStory";
 import { Sprint } from "../entities/sprint";
 import { Comment } from "../entities/comment";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
-  get userStories(): Repository<UserStory>; 
+  get tasks(): Repository<Task>;
+  get userStories(): Repository<UserStory>;
   get sprints(): Repository<Sprint>;
-  get comments(): Repository<Comment>; 
+  get comments(): Repository<Comment>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
   save(): Promise<void>;
   rollback(): void;
 }
+
+
 
 @injectable()
 export class DbContext implements IDbContext {
@@ -26,22 +30,26 @@ export class DbContext implements IDbContext {
 
   private _toRemove: BaseEntity[] = [];
 
-  constructor(private _em: EntityManager) {}
+  constructor(private _em: EntityManager) { }
 
   get projects() {
     return this._em.getRepository(Project);
   }
 
   get userStories() {
-    return this._em.getRepository(UserStory);  
+    return this._em.getRepository(UserStory);
   }
 
   get sprints() {
     return this._em.getRepository(Sprint);
   }
+  get tasks() {
+    return this._em.getRepository(Task);
+  }
+
 
   get comments() {
-    return this._em.getRepository(Comment);  
+    return this._em.getRepository(Comment);
   }
 
   needCreate(entity: BaseEntity): void {

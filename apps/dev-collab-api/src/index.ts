@@ -5,6 +5,7 @@ import "express-async-errors"; // Middleware for handling async errors
 import { HomeMessageModel } from "shared/models/home"; // Your shared model for Home message response
 import { AppDataSource } from "./db/db-datasrc"; // TypeORM DataSource instance for connecting to MySQL
 import { createHttpErrorHandler } from "./errors/http-error-handler"; // Custom error handler middleware
+import { taskRouter } from "./routers/task-router"; // Project router
 import { projectRouter } from "./routers/project-router"; // Project router
 import { userRouter } from "./routers/user-router"; // User router
 import { sprintRouter } from "./routers/sprint-router"; // Sprint router
@@ -29,7 +30,7 @@ const port = 3000; // Set port number for the server
 app.use(cors()); // For Automation Github - Allow requests from all origins
 
 // Middleware
-app.use(bodyParser.json({limit: '50mb'})); // Middleware to parse incoming JSON requests
+app.use(bodyParser.json({ limit: '50mb' })); // Middleware to parse incoming JSON requests
 
 // Simple Home route for test
 app.get("/api/home/messages", (req, res) => {
@@ -42,7 +43,7 @@ const dbContext = new DbContext(AppDataSource.manager);
 
 // Instantiate UserStoryService with DbContext
 const userStoryService = new UserStoryService(dbContext); // Pass dbContext to UserStoryService
-const commentService = new CommentService(dbContext); 
+const commentService = new CommentService(dbContext);
 const commentRouter = new CommentRouter(commentService).initializeRoutes();
 
 // Register Routers (APIs)
@@ -52,6 +53,7 @@ app.use("/", sprintRouter); // Sprint-related routes
 app.use("/", groupRouter); 
 app.use("/", webhookRouter); // For Automation Github
 app.use("/", commentRouter); 
+app.use("/", taskRouter); // Task-related routes
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();
