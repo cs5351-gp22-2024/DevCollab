@@ -18,7 +18,7 @@
             <div class="d-flex">
               <div class="fs-6">User ID</div>
             </div>
-            <div class="fw-bolder red-text-1 fs-5">{{ user_Id }}</div>
+            <div class="fw-bolder red-text-1 fs-5">{{ user_id }}</div>
           </div>
         </div>
         <div class="d-flex align-item-center my-4">
@@ -57,12 +57,12 @@
           </div>
           <div><div class="red-text-1">OFF</div></div>
         </div>
-        <div class="bg-red-1 rounded-4 p-3 white-text-1 text-center my-4">Delete My Account</div>
+        <!-- <div class="bg-red-1 rounded-4 p-3 white-text-1 text-center my-4">Delete My Account</div> -->
       </div>
     </div>
 
     <div class="right-panel">
-      <div class="mx-5 h-100 rounded-5 px-5 shadow overflow-auto">
+      <div class="mx-5 h-100 rounded-5 px-5 shadow overflow-auto" style="max-height: 720px">
         <div class="d-flex mb-auto pt-4">
           <div class="red-text-1 fs-4 fw-bolder">Team Management</div>
           <button
@@ -82,11 +82,11 @@
           >
             <div class="d-flex justify-content-center align-items-center">
               <div class="w-100">Team</div>
-              <button
+              <!-- <button
                 class="bg-red-1 white-text-1 px-3 rounded-4 fs-sm ms-auto d-flex justify-content-center align-items-center"
               >
                 <i class="mdi mdi-logout me-2"></i> Leaves
-              </button>
+              </button> -->
             </div>
             <div class="d-flex pb-2 justify-content-center align-items-center">
               <div class="d-flex align-items-center justify-content-center">
@@ -190,9 +190,9 @@
           <div class="w-50 bg-red-1 white-text-1 h-100 rounded-start-4 d-flex flex-column py-4">
             <div class="py-4 mt-4">
               <div class="d-inline px-6 py-2 large-text bg-color-white red-text-1 rounded-circle">
-                <div class="px-3 d-inline">T</div>
+                <div class="px-3 d-inline">{{ firstCharOfFocusTeamName }}</div>
               </div>
-              <div class="py-2 fs-2 fw-bolder">Team Name</div>
+              <div class="py-2 fs-2 fw-bolder">{{ focusTeamName }}</div>
             </div>
 
             <div class="my-auto">
@@ -213,8 +213,21 @@
                 </div>
               </div>
               <div class="mt-4">
-                <button class="bg-color-white red-text-1 fs-4 w-75 px-5 py-2 rounded-4 shadow">
+                <button
+                  v-if="focusGroupRight === 'ADMIN'"
+                  class="bg-color-white red-text-1 fs-4 w-75 px-5 py-2 rounded-4 shadow"
+                  @click="deleteGroup"
+                >
                   <i class="mdi mdi-trash-can"></i> Delete Team
+                </button>
+
+                <button
+                  v-if="focusGroupRight === 'MEMBER'"
+                  class="bg-color-white red-text-1 fs-4 w-75 px-5 py-2 rounded-4 shadow"
+                  @click="leaveGroup"
+                >
+                  <i class="mdi mdi-logout"></i>
+                  Leave Team
                 </button>
               </div>
             </div>
@@ -235,7 +248,11 @@
                     <td>{{ member.email }}</td>
                     <td>{{ member.group_role }}</td>
                     <td class="d-flex align-items-center justify-content-center p-2">
-                      <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
+                      <div
+                        v-if="member.user_id !== user_id && focusGroupRight.value === 'ADMIN'"
+                        class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2"
+                        @click="removeMember(member.member_id)"
+                      >
                         <i class="mdi mdi-account-minus"></i>
                       </div>
                       <!-- <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
@@ -261,11 +278,14 @@ import { onMounted, ref } from 'vue'
 export default {
   setup() {
     const focusGroup = ref(-1)
+    const focusGroupRight = ref('MEMBER')
+    const focusTeamName = ref('')
+    const firstCharOfFocusTeamName = ref('')
     const show_create_modal = ref(false)
     const show_team_modal = ref(false)
     const group_list = ref([])
     const invitation_code_display = ref('NOT_READY')
-    const user_Id = ref()
+    const user_id = ref()
     const email = ref()
     const verify_2fa = ref(false)
     const firstEmailCharacter = ref('U')
@@ -275,7 +295,8 @@ export default {
     }
     const getGroupList = async () => {
       try {
-        group_list.value = await GroupApi.getGroupList() // Fetching the group list
+        group_list.value = await GroupApi.getGroupList()
+        // Fetching the group list
       } catch (error) {
         console.error('Error fetching group list:', error) // Error handling
       }
@@ -283,11 +304,27 @@ export default {
     const toggleTeamModal = async (group_id) => {
       show_team_modal.value = !show_team_modal.value
       focusGroup.value = group_id
+
       if (group_id != -1) {
-        const res = await GroupApi.getCode(group_id)
+        loadTeamDetail(group_id)
+      }
+    }
+    const loadTeamDetail = async (group_id) => {
+      const res = await GroupApi.getCode(group_id)
+      if (res.code == null) {
+        invitation_code_display.value = 'WAITING FOR GENERATE'
+      } else {
         invitation_code_display.value = res.code
-        const members = await GroupApi.getMemberList(group_id)
-        focusGroupMemberList.value = members
+      }
+
+      focusTeamName.value = res.group_name
+      firstCharOfFocusTeamName.value = focusTeamName.value.toString().substring(0, 1)
+      const members = await GroupApi.getMemberList(group_id)
+
+      focusGroupMemberList.value = members
+
+      for (const member of focusGroupMemberList.value) {
+        if (member.user_id == user_id.value) focusGroupRight.value = member.group_role
       }
     }
     const createGroup = async () => {
@@ -314,10 +351,27 @@ export default {
     const getUserInfo = async () => {
       const info = await LoginApi.checkToken(LoginApi.getLocalToken())
       email.value = info.user.email
-      user_Id.value = info.user.userId
+      user_id.value = info.user.userId
       firstEmailCharacter.value = info.user.email.toString().substring(0, 1)
     }
-
+    const deleteGroup = async () => {
+      const res = await GroupApi.deleteGroup(focusGroup.value)
+      if (res.success == true) {
+        location.reload()
+      }
+    }
+    const leaveGroup = async () => {
+      const res = await GroupApi.leaveGroup(focusGroup.value)
+      if (res.success == true) {
+        location.reload()
+      }
+    }
+    const removeMember = async (member_id) => {
+      const res = await GroupApi.removeMember(focusGroup.value, member_id)
+      if (res.success == true) {
+        loadTeamDetail(focusGroup.value)
+      }
+    }
     onMounted(() => {
       getGroupList()
       getUserInfo()
@@ -336,11 +390,18 @@ export default {
       getUserInfo,
       group_list,
       focusGroup,
-      user_Id,
+      user_id,
+      loadTeamDetail,
       email,
       verify_2fa,
       firstEmailCharacter,
-      focusGroupMemberList
+      focusGroupMemberList,
+      focusTeamName,
+      firstCharOfFocusTeamName,
+      deleteGroup,
+      removeMember,
+      focusGroupRight,
+      leaveGroup
     }
   }
 }

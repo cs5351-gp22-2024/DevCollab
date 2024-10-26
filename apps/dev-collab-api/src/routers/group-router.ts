@@ -12,17 +12,16 @@ groupRouter.get("/api/:userid/group", async (req, res) => {
   const memberlist = await UserGroup.getGroupList(userid);
   let groupList = [];
   for (let member of memberlist) {
-    
-    groupList[groupList.length] = {
-      group:member.group,
-      group_role: member.group_role
-    }
- 
+    if (member.group != null)
+      groupList[groupList.length] = {
+        group: member.group,
+        group_role: member.group_role,
+      };
   }
   if (groupList != null) {
     res.status(201).send({ result: "SUCCESS", group: groupList });
-  }else{
-    res.status(404).send({ result: "UNSUCCESS", error:"GROUP_NOT_FOUND" });
+  } else {
+    res.status(404).send({ result: "UNSUCCESS", error: "GROUP_NOT_FOUND" });
   }
   return;
 });
@@ -44,6 +43,11 @@ groupRouter.post("/api/:userid/group/create", async (req, res) => {
         group_data.group_id!.toString(),
         userid,
         "ADMIN"
+      );
+
+      const result_json = await InvitationCode.updateGroupCode(
+        parseInt(userid),
+        group_data.group_id
       );
       if (member_data.result === "SUCCESS") {
         res.status(201).send({ result: "SUCCESS", member: member_data.member });
@@ -196,10 +200,10 @@ groupRouter.get("/api/:userid/:groupid/members", async (req, res) => {
   }
 });
 
-groupRouter.delete("/api/:userid/:groupid/member", async (req, res) => {
+groupRouter.delete("/api/member/:userid/:groupid/:target_id", async (req, res) => {
   const userid = parseInt(req.params.userid);
   const groupid = parseInt(req.params.groupid);
-  const {target_id} = req.body
+  const target_id = parseInt(req.params.target_id);
   const jwt_token = req.headers["authorization"];
 
   try {
@@ -209,9 +213,8 @@ groupRouter.delete("/api/:userid/:groupid/member", async (req, res) => {
         .json({ result: "UNSUCCESS", error: "USER_OR_GROUP_NOT_FOUND" });
       return;
     }
-  
-
-    res.status(404).json({message:"NOT_IMPLEMENTED"});
+    const result = await UserGroup.removeMember(userid, groupid, target_id);
+    res.status(201).json(result);
     return;
   } catch (error) {
     console.error(error);
@@ -219,4 +222,48 @@ groupRouter.delete("/api/:userid/:groupid/member", async (req, res) => {
     return;
   }
 });
+groupRouter.delete("/api/group/:userid/:groupid/", async (req, res) => {
+  const userid = parseInt(req.params.userid);
+  const groupid = parseInt(req.params.groupid);
+  const jwt_token = req.headers["authorization"];
 
+  try {
+    if (!userid || !groupid) {
+      res
+        .status(404)
+        .json({ result: "UNSUCCESS", error: "USER_OR_GROUP_NOT_FOUND" });
+      return;
+    }
+    const result = await UserGroup.deleteGroup(userid, groupid);
+    res.status(201).json(result);
+    return;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+});
+groupRouter.delete("/api/leave/:userid/:groupid/", async (req, res) => {
+  const userid = parseInt(req.params.userid);
+  const groupid = parseInt(req.params.groupid);
+  const jwt_token = req.headers["authorization"];
+  console.log(userid)
+  console.log(groupid)
+  try {
+    console.log("CHECK")
+    if (!userid || !groupid) {
+      res
+        .status(404)
+        .json({ result: "UNSUCCESS", error: "USER_OR_GROUP_NOT_FOUND"+groupid+"C" });
+      return;
+    }
+
+    const result = await UserGroup.leaveGroup(userid,groupid)
+    res.status(201).json(result);
+    return;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+});
