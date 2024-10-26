@@ -4,12 +4,31 @@ import SideLogo from '@/components/cover_page_components/SideLogo.vue'
 import ConnectBtn from '@/components/cover_page_components/ConnectBtn.vue'
 import GitHubBtn from '@/components/cover_page_components/GitHubBtn.vue'
 import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
-
+import LoginApi from '@/api/login.api'
 export default {
   data() {
     return {
       Logo: Logo
     }
+  },
+  setup() {
+    const checkToken = async () => {
+      const token = localStorage.getItem('auth_token')
+
+      if (token != '') {
+        try {
+          const data = await LoginApi.checkToken(token)
+          console.log(data)
+          if (data.success === true) {
+            console.log('Hello')
+            window.location.href = 'welcomeBack'
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    }
+    checkToken()
   },
   components: {
     GitHubBtn: GitHubBtn,

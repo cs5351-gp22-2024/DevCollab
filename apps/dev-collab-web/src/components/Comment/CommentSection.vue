@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, type PropType } from 'vue'
+import { ref, computed, type PropType } from 'vue'
 import CommentItem from './CommentItem.vue'
 import CommentInput from './CommentInput.vue'
 
@@ -50,7 +50,7 @@ interface Comment {
   content: string
 }
 
-export default defineComponent({
+export default {
   components: {
     CommentItem,
     CommentInput
@@ -115,5 +115,5 @@ export default defineComponent({
       addComment
     }
   }
-})
+}
 </script>

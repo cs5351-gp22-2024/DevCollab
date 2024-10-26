@@ -35,7 +35,7 @@ if (diff.length === 0) {
 } else {
   console.error(
     `Make sure you have run the following sqls in your local database:${EOL}${join(
-      map(diff, () => "- " + diff),
+      map(diff, (d) => "- " + d),
       EOL
     )}`
   );

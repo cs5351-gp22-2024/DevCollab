@@ -1,5 +1,6 @@
-import { createProjectsRoutes } from '@/pages/projects/projects-routes'
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
+import { createProjectsRoutes } from '@/pages/projects/projects-routes'
 import { createHomeRoutes } from '@/pages/home/home.routes'
 import { createLoginRoutes } from '@/pages/login/login-routes'
 import { createMainRoutes } from '@/pages/main/main-routes'
@@ -13,6 +14,19 @@ import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
 import { creategithubShowWebhookRoutes } from '@/pages/automation/github/githubShowWebhook-routes'
 import { creategithubManageWebhookRoutes } from '@/pages/automation/github/githubManageWebhook-routes'
+import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
+import { createReportRoutes } from '@/pages/report/report-route'
+import { createLogoutRoutes } from '@/pages/logout/logout-routes'
+import { createProjectOverviewRoutes } from '@/pages/project-overview/project-overview-routes'
+import { createUsermanagementRoutes } from '@/pages/usermanagement/usermanagement-routes'
+import { createProfileRoutes } from '@/pages/profile/profile-route'
+import { createTaskManagementRoutes } from '@/pages/taskManagement/taskmanagement-routes'
+import { createProjectsCreateRoutes } from '@/pages/projects-create/projects-store.routes'
+import { concat } from 'lodash'
+import { createProjectsListRoutes } from '@/pages/projects-list/projects-list.routes'
+import { createProjectMainRoutes } from '@/pages/project-main/project-main-routes'
+import { createProjectDetailRoutes } from '@/pages/project-detail/project-detail-routes'
+import { createProjectSprintRoutes } from '@/pages/project-sprint/project-sprint-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,17 +35,28 @@ const router = createRouter({
     ...createWelcomeRoutes(),
     ...createWelcomebackRoutes(),
     ...createSignupRoutes(),
+    ...createLogoutRoutes(),
     ...createMainRoutes([
+      ...createHomeRoutes(),
+      ...concat(createProjectsRoutes(), createProjectsCreateRoutes(), createProjectsListRoutes()),
+      ...createProjectMainRoutes(concat(createProjectDetailRoutes(), createProjectSprintRoutes())),
+      ...creategithubNewWebhookRoutes(),
+      ...createUserStoryRoutes(),
+      ...createReportRoutes(),
+      ...createProjectOverviewRoutes(),
+      ...createUsermanagementRoutes(),
+      ...createProfileRoutes(),
+      ...createTaskManagementRoutes(),
       ...createHomeRoutes(),
       ...createProjectsRoutes(),
       ...createGuideRoutes(),
       ...createAutomationRoutes(),
       ...creategithubRoutes(),
       ...createComponentRoutes(),
-      ...creategithubNewWebhookRoutes(),
       ...creategithubShowWebhookRoutes(),
-      ...creategithubManageWebhookRoutes()])
-    ]
+      ...creategithubManageWebhookRoutes()
+    ])
+  ]
 })
 
 export default router

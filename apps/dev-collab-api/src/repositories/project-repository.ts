@@ -20,11 +20,18 @@ export class ProjectRepository implements IProjectRepository {
       where: {
         projectId,
       },
+      relations: {
+        sprints: true,
+      },
     });
   }
 
   async getAllProjects(): Promise<Project[]> {
-    return await this._dbContext.projects.find();
+    return await this._dbContext.projects.find({
+      relations: {
+        sprints: true,
+      },
+    });
   }
 
   addProject(project: Project): void {
