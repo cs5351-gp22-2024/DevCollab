@@ -14,6 +14,10 @@ import { CommentRouter } from "./routers/comment-router"; // Import CommentRoute
 import { CommentService } from "./services/comment-service"; // Import CommentService
 import { groupRouter } from "./routers/group-router";// Import Group Router
 import { DbContext } from "./db/db-context"; // Import DbContext
+import { createServer } from "http"; // For Automation Github
+import { webhookRouter } from './routers/webhook-router'; // For Automation Github
+const cors = require('cors'); // For Automation Github
+const setupChatbot = require('./function/chatbot'); // For Chatbot
 
 // For Automation with GitHub WebSocket setup
 import http from "http"; // HTTP server from Node.js
@@ -22,6 +26,8 @@ import { Server as WebSocketServer } from "ws"; // WebSocket server implementati
 const app = express(); // Create Express app instance
 const port = 3000; // Set port number for the server
 
+app.use(cors()); // For Automation Github - Allow requests from all origins
+
 // Middleware
 app.use(bodyParser.json({limit: '50mb'})); // Middleware to parse incoming JSON requests
 
@@ -29,6 +35,7 @@ app.use(bodyParser.json({limit: '50mb'})); // Middleware to parse incoming JSON 
 app.get("/api/home/messages", (req, res) => {
   res.send(["Hello World!", "Test from Home"] satisfies HomeMessageModel); // Home message model (ensure that `HomeMessageModel` is defined in your project)
 });
+
 
 // Initialize DbContext with TypeORM manager
 const dbContext = new DbContext(AppDataSource.manager);
@@ -43,8 +50,8 @@ app.use("/", projectRouter); // Project-related routes
 app.use("/", userRouter); // User-related routes
 app.use("/", sprintRouter); // Sprint-related routes
 app.use("/", groupRouter); 
+app.use("/", webhookRouter); // For Automation Github
 app.use("/", commentRouter); 
-
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();
@@ -56,22 +63,9 @@ app.use(createHttpErrorHandler());
 
 // WebSocket setup for real-time communications (For Automation GitHub)
 const server = http.createServer(app); // Create HTTP server from Express app
-const wss = new WebSocketServer({ server }); // Create WebSocket server
 
-// WebSocket event listeners
-wss.on("connection", (ws) => {
-  console.log("WebSocket connection established");
-
-  // Handle incoming messages from clients
-  ws.on("message", (message) => {
-    console.log(`Received message: ${message}`);
-  });
-
-  // Handle WebSocket disconnection
-  ws.on("close", () => {
-    console.log("WebSocket connection closed");
-  });
-});
+// Initialize Chatbot
+const wss = setupChatbot(server);
 
 // Initialize TypeORM DataSource (Database Connection)
 AppDataSource.initialize()
