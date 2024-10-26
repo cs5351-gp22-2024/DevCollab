@@ -126,7 +126,6 @@ const unreadNotifications = ref(9)
 const menuItems = [
   { title: 'Home', icon: 'mdi-home-account', to: { name: 'home' } },
   { title: 'Projects', icon: 'mdi-file-table-box-multiple', to: { name: 'projects' } },
-  { title: 'Automation', icon: 'mdi-refresh-auto', to: { name: 'automation' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
   { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } },
   {
@@ -144,6 +143,7 @@ const menuItems = [
     icon: 'mdi-file-table-box-multiple',
     to: { name: 'taskmanagement' }
   },
+  { title: 'Automation', icon: 'mdi-refresh-auto', to: { name: 'automation' } },
   { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } },
   { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } }
 ]

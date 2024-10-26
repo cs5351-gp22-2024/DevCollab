@@ -1,7 +1,8 @@
 <template>
   <div class="container mx-auto p-4">
     <h1 class="text-4xl font-bold mb-6">Automation - Github Webhook</h1>
-    <h2 class="text-2xl font-semibold mb-4">Create New WebHook</h2>
+
+    <h3>Create New WebHook</h3>
     <div v-if="currentStep === 1">
       <WebhookUrl @next="nextStep" />
     </div>
@@ -9,7 +10,7 @@
       <CreateRules @next="nextStep" @previous="previousStep" />
     </div>
     <div v-if="currentStep === 3">
-      <Confirmation :url="webhookUrl" :rules="rules" @save="saveWebhook" @previous="previousStep" />
+      <Confirmation :url="webhookUrl" :name="name" @save="saveWebhook" @previous="previousStep" />
     </div>
   </div>
 </template>
@@ -23,7 +24,7 @@ import github from '@/assets/icons/Icon_github.svg'
 import gitlab from '@/assets/icons/Icon_gitlab.svg'
 
 import WebhookUrl from '@/components/automation/GithubWebhookUrl.vue';
-import CreateRules from '@/components/automation/GithubCreateRules.vue';
+import CreateRules from '@/components/automation/GithubWebhookName.vue';
 import Confirmation from '@/components/automation/GithubConfirm.vue';
 
 export default defineComponent({
@@ -37,13 +38,13 @@ export default defineComponent({
   setup() {
     const currentStep = ref(1);
     const webhookUrl = ref('');
-    const rules = ref([]);
+    const name = ref('');
 
     const nextStep = (data: any) => {
       if (currentStep.value === 1) {
         webhookUrl.value = data.url;
       } else if (currentStep.value === 2) {
-        rules.value = data.rules;
+        name.value = data.name;
       }
       currentStep.value++;
       console.log('value:', currentStep.value);
@@ -56,10 +57,10 @@ export default defineComponent({
 
     const saveWebhook = () => {
       console.log('Webhook URL:', webhookUrl.value);
-      console.log('Rules:', rules.value);
+      console.log('Name:', name.value);
     };
 
-    return { currentStep, webhookUrl, rules, nextStep, previousStep, saveWebhook };
+    return { currentStep, webhookUrl, name, nextStep, previousStep, saveWebhook };
   }
 })
 </script>

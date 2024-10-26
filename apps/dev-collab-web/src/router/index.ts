@@ -12,6 +12,8 @@ import { createWelcomebackRoutes } from '@/pages/welcomeBack/welcomeBack-routes'
 import { createAutomationRoutes } from '@/pages/automation/automation-routes'
 import { creategithubRoutes } from '@/pages/automation/github/github-routes'
 import { creategithubNewWebhookRoutes } from '@/pages/automation/github/githubNewWebhook-routes'
+import { creategithubShowWebhookRoutes } from '@/pages/automation/github/githubShowWebhook-routes'
+import { creategithubManageWebhookRoutes } from '@/pages/automation/github/githubManageWebhook-routes'
 import { createUserStoryRoutes } from '@/pages/userstory/userstory-routes'
 import { createReportRoutes } from '@/pages/report/report-route'
 import { createLogoutRoutes } from '@/pages/logout/logout-routes'
@@ -39,17 +41,21 @@ const router = createRouter({
       ...createHomeRoutes(),
       ...concat(createProjectsRoutes(), createProjectsCreateRoutes(), createProjectsListRoutes()),
       ...createProjectMainRoutes(concat(createProjectDetailRoutes(), createProjectSprintRoutes())),
-      ...createAutomationRoutes(),
-      ...creategithubRoutes(),
       ...creategithubNewWebhookRoutes(),
       ...createUserStoryRoutes(),
       ...createReportRoutes(),
       ...createProjectOverviewRoutes(),
-      ...createGuideRoutes(),
-      ...createComponentRoutes(),
       ...createUsermanagementRoutes(),
       ...createProfileRoutes(),
       ...createTaskManagementRoutes(),
+      ...createHomeRoutes(),
+      ...createProjectsRoutes(),
+      ...createGuideRoutes(),
+      ...createAutomationRoutes(),
+      ...creategithubRoutes(),
+      ...createComponentRoutes(),
+      ...creategithubShowWebhookRoutes(),
+      ...creategithubManageWebhookRoutes(),
       ...createNotificationRoutes()
     ])
   ]

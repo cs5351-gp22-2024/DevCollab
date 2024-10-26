@@ -11,6 +11,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 import './assets/styles.scss'
 
+// Import Bootstrap and its styles
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap'
+import './assets/styles.scss'
+
 const app = createApp(App)
 
 app.component('VueDatePicker', VueDatePicker);
