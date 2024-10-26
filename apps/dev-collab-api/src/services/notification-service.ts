@@ -26,7 +26,6 @@ export class NotificationService {
   }
 
   async getCurrentUserUnReadNotificationRecords(user_id: number) {
-
     const query = `
       SELECT 
         n.notification_id,
@@ -52,6 +51,17 @@ export class NotificationService {
     const notifications = await this.dbContext.notifications.query(query, [user_id]);
     return notifications;
   }
+
+  async updateNotificationStatus(notificationId: number) {
+    const query = `
+      UPDATE notification 
+      SET is_read = 1
+      WHERE notification_id = ?
+    `;
+
+    const result = await this.dbContext.notifications.query(query, [notificationId]);
+    return result;
+}
 
 
 }

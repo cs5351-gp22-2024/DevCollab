@@ -111,6 +111,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import { env } from '@/utils/env/env'
+import { NotificationApi } from '@/api/notification.api'
 
 const { baseUrl } = env()
 const route = useRoute()
@@ -121,7 +122,8 @@ const drawer = ref(true)
 const rail = ref(false)
 const settingsDialog = ref(false)
 const isDarkTheme = ref(theme.global.current.value.dark)
-const unreadNotifications = ref(9)
+const unreadNotifications = ref(0)
+const notificationApi = NotificationApi()
 
 const menuItems = [
   { title: 'Home', icon: 'mdi-home-account', to: { name: 'home' } },
@@ -187,10 +189,24 @@ const updateDrawer = () => {
   rail.value = window.innerWidth <= 1280
 }
 
+const fetchUnReadNotification = async () => {
+  try {
+    const data = await notificationApi.getCurrentUserUnReadNotificationCount(1000) // current user id
+    if (data) {
+      unreadNotifications.value = data
+    }
+  } catch (err) {
+    console.error('Error fetching:', err)
+  } finally {
+    // console.log(unreadNotifications.value)
+  }
+}
+
 // Set up event listener on mount
 onMounted(() => {
   updateDrawer() // Initial check
   window.addEventListener('resize', updateDrawer)
+  fetchUnReadNotification()
 })
 
 // Clean up event listener on unmount
