@@ -29,14 +29,14 @@ export class CommentService {
   // Find comment by project_id
   async getCommentsByProjectId(project_id: number): Promise<Comment[]> {
     return await this.dbContext.comments.findBy({
-      project_id: project_id.toString()
+      project_id: project_id
     });
   }
 
   // Find comment by task_id
   async getCommentsByTaskId(task_id: number): Promise<Comment[]> {
     return await this.dbContext.comments.findBy({
-      task_id: task_id.toString()
+      task_id: task_id
     });
   }
 
