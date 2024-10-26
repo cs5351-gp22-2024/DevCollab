@@ -9,7 +9,7 @@ import { GroupMember } from "../entities/groupMember";
 import { Task } from "../entities/task";
 import { Invitation } from "../entities/Invitation";
 import { Comment } from "../entities/comment";
-
+import { Notification } from "../entities/notification";
 // AppDataSource: TypeORM configuration
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -20,7 +20,7 @@ export const AppDataSource = new DataSource({
   database: "DevCollab",
   synchronize: false,
   logging: true, // Enable logging for debugging purposes
-  entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember, Task, Invitation, Comment],  // Your entity classes
+  entities: [Project, Sprint, Verification, UserStory, User, Group, GroupMember, Task, Invitation, Comment, Notification],  // Your entity classes
   subscribers: [],
   migrations: [],
   timezone: "Z",

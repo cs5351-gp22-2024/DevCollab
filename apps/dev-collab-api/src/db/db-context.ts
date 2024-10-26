@@ -6,6 +6,7 @@ import { Task } from "../entities/task"
 import { UserStory } from "../entities/userStory";
 import { Sprint } from "../entities/sprint";
 import { Comment } from "../entities/comment";
+import { Notification } from "../entities/notification";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
@@ -13,6 +14,7 @@ export interface IDbContext {
   get userStories(): Repository<UserStory>;
   get sprints(): Repository<Sprint>;
   get comments(): Repository<Comment>;
+  get notifications(): Repository<Notification>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
@@ -47,9 +49,12 @@ export class DbContext implements IDbContext {
     return this._em.getRepository(Task);
   }
 
-
   get comments() {
     return this._em.getRepository(Comment);
+  }
+
+  get notifications() {
+    return this._em.getRepository(Notification);
   }
 
   needCreate(entity: BaseEntity): void {
