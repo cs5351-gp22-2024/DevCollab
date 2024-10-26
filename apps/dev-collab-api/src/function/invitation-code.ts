@@ -45,7 +45,11 @@ export class InvitationCode {
     });
     return {
       result: "SUCCESS",
-      message: { group_id: group.group_id, code: code },
+      message: {
+        group_id: group.group_id,
+        group_name: group.group_name,
+        code: code,
+      },
     };
   }
   static async checkCode(code: string) {

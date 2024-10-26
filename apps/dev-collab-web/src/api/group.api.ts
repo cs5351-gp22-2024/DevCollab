@@ -1,5 +1,6 @@
 import { useAxios } from '@/vendors/axios'
 import LoginApi from './login.api'
+import { result } from 'lodash'
 
 const GroupApi = {
   async createGroup(group_name: string) {
@@ -66,6 +67,8 @@ const GroupApi = {
           return {
             success: true,
             code: response.data.message.code.invitation_code,
+            group_id: response.data.message.group_id,
+            group_name: response.data.message.group_name,
             message: 'CODE_FOUND'
           }
         } else {
@@ -112,7 +115,6 @@ const GroupApi = {
       const user = user_result.user!
       const response = await axios.get('/' + user.userId + '/group')
       if (response.data.result === 'SUCCESS') {
-        console.log(response.data)
         return response.data.group
       } else {
         return []
@@ -129,6 +131,49 @@ const GroupApi = {
         return response.data.memberList
       } else {
         return []
+      }
+    }
+  },
+  async deleteGroup(group_id: string) {
+    const user_result = await LoginApi.checkToken(LoginApi.getLocalToken())
+    const axios = useAxios()
+    if (user_result.success == true) {
+      const user = user_result.user!
+      const response = await axios.delete('/group/' + user.userId + '/' + group_id + '')
+      if (response.data.result === 'SUCCESS') {
+        return { success: true }
+      } else {
+        return { success: false }
+      }
+    }
+  },
+  async removeMember(group_id: string, target_member: string) {
+    const user_result = await LoginApi.checkToken(LoginApi.getLocalToken())
+    const axios = useAxios()
+    if (user_result.success == true) {
+      const user = user_result.user!
+      const response = await axios.delete(
+        '/member/' + user.userId + '/' + group_id + '/' + target_member
+      )
+      if (response.data.result === 'SUCCESS') {
+        return { success: true }
+      } else {
+        return { success: false }
+      }
+    }
+  },
+  async leaveGroup(group_id: string) {
+    const user_result = await LoginApi.checkToken(LoginApi.getLocalToken())
+    const axios = useAxios()
+    if (user_result.success == true) {
+      const user = user_result.user!
+
+      const response = await axios.delete('/leave/' + user.userId + '/' + group_id + '/')
+
+      if (response.data.result === 'SUCCESS') {
+        return { success: true }
+      } else {
+        return { success: false }
       }
     }
   }

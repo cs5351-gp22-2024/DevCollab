@@ -64,7 +64,7 @@ userRouter.post("/api/account/create", async (req, res) => {
       invitation
     );
     if (result.result == "SUCCESS") {
-      console.log(result)
+      
       res.status(200).send(result);
     } else {
       res.status(400).send(result);
