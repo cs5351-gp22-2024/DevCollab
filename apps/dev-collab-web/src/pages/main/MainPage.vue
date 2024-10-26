@@ -112,6 +112,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import { env } from '@/utils/env/env'
 import { NotificationApi } from '@/api/notification.api'
+import LoginApi from '@/api/login.api'
 
 const { baseUrl } = env()
 const route = useRoute()
@@ -191,7 +192,8 @@ const updateDrawer = () => {
 
 const fetchUnReadNotification = async () => {
   try {
-    const data = await notificationApi.getCurrentUserUnReadNotificationCount(1000) // current user id
+    const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+    const data = await notificationApi.getCurrentUserUnReadNotificationCount(info.user.userId) // current user id
     if (data) {
       unreadNotifications.value = data
     }

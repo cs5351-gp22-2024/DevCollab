@@ -76,6 +76,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { NotificationApi } from '@/api/notification.api'
+import LoginApi from '@/api/login.api'
 
 interface Notification {
   notification_id: number
@@ -98,7 +99,8 @@ export default defineComponent({
 
     const fetchUnReadNotification = async () => {
       try {
-        const data = await notificationApi.getCurrentUserUnReadNotificationRecords(1000) // current user id
+        const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+        const data = await notificationApi.getCurrentUserUnReadNotificationRecords(info.user.userId) // current user id
         if (data) {
           notificationsList.value = data
         }
