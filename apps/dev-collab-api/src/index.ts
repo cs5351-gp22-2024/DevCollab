@@ -8,9 +8,9 @@ import { createHttpErrorHandler } from "./errors/http-error-handler";
 import { projectRouter } from "./routers/project-router";
 import http from "http"; // For Automation Github
 import { createServer } from "http"; // For Automation Github
-import { Server as WebSocketServer } from "ws"; // For Automation Github
 import { webhookRouter } from './routers/webhook-router'; // For Automation Github
 const cors = require('cors'); // For Automation Github
+const setupChatbot = require('./function/chatbot'); // For Chatbot
 import { userRouter } from "./routers/user-router";
 
 const app = express();
@@ -28,19 +28,11 @@ app.use("/", userRouter);
 app.use("/", webhookRouter); // For Automation Github
 app.use(createHttpErrorHandler());
 
-// For Chatbot
+
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
-wss.on("connection", (ws) => {
-  console.log("WebSocket connection established");
-  ws.on("message", (message) => {
-    console.log(`Received message: ${message}`);
-  });
-  ws.on("close", () => {
-    console.log("WebSocket connection closed");
-  });
-});
-//
+
+// Initialize Chatbot
+const wss = setupChatbot(server);
 
 AppDataSource.initialize().then(() => {
   server.listen(port, () => {
