@@ -1,8 +1,8 @@
 div
 <template>
-  <div class="mx-auto p-4 md:p-6 bg-gray-50">
-    <h1 class="text-xl md:text-2xl font-bold mb-4">Projects Overview</h1>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+  <div class="mx-auto p-4 md:p-6">
+    <v-card title="Project Overview"></v-card>
+    <div class="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-7">
         <div class="lg:flex lg:justify-between lg:gap-4 overflow-auto">
           <div
@@ -44,6 +44,7 @@ import TaskTable from '@/components/project-overview/TaskTable.vue'
 import NestedDataTable from '@/components/project-overview/NestedDataTable.vue'
 import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowDiagram.vue'
 import ProgressChart from '@/components/project-overview/ProgressChart.vue'
+import { useProjectMainStore } from '../project-main/project-main.store'
 
 import {
   tasks as dummyTasks,
@@ -64,6 +65,15 @@ export default {
     ProgressChart
   },
   setup() {
+    const mainStore = useProjectMainStore()
+    const project = mainStore.project
+
+    if (!project) {
+      throw new Error('project is missing')
+    }
+
+    console.log('project', project?.projectId)
+
     const tasks = ref<Task[]>(dummyTasks)
     const stories = ref<Story[]>(dummyStories)
     const chartData = ref<CFDDataPoint[]>(dummyChartData)

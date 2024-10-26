@@ -40,11 +40,17 @@ const router = createRouter({
     ...createMainRoutes([
       ...createHomeRoutes(),
       ...concat(createProjectsRoutes(), createProjectsCreateRoutes(), createProjectsListRoutes()),
-      ...createProjectMainRoutes(concat(createProjectDetailRoutes(), createProjectSprintRoutes())),
+      ...createProjectMainRoutes(
+        concat(
+          createProjectOverviewRoutes(),
+          createProjectDetailRoutes(),
+          createProjectSprintRoutes()
+        )
+      ),
       ...creategithubNewWebhookRoutes(),
       ...createUserStoryRoutes(),
       ...createReportRoutes(),
-      ...createProjectOverviewRoutes(),
+      // ...createProjectOverviewRoutes(),
       ...createUsermanagementRoutes(),
       ...createProfileRoutes(),
       ...createTaskManagementRoutes(),
