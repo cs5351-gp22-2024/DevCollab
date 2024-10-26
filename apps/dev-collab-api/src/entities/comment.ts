@@ -11,16 +11,16 @@ export class Comment extends BaseEntity {
   comment_id: number = 0; 
 
   @Column({ type: "int", nullable: true })
-  project_id!: string;
+  project_id!: number;
 
   @Column({ type: "int", nullable: true })
-  task_id!: string;
+  task_id!: number;
 
   @Column({ type: "varchar" })
   comment!: string;
 
   @Column({ type: "int" })
-  author_user_id!: string;
+  author_user_id!: number;
 
   @Column({ type: "timestamp" })
   create_date!: Date;
