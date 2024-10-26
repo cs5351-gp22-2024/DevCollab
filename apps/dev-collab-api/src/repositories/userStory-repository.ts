@@ -53,4 +53,27 @@ export class UserStoryRepository {
       await this.dbContext.save(); // Commit deletion to the database
     }
   }
+  // Upvote a user story
+  public async upvote(id: number): Promise<UserStory | null> {
+    const userStory = await this.findById(id);
+    if (userStory) {
+      userStory.upvoteCount += 1; // Increment upvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null; // Return null if user story was not found
+  }
+
+  // Downvote a user story
+  public async downvote(id: number): Promise<UserStory | null> {
+    const userStory = await this.findById(id);
+    if (userStory) {
+      userStory.downvoteCount += 1; // Increment downvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null; // Return null if user story was not found
+  }
 }

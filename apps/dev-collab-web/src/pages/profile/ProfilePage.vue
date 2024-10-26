@@ -6,7 +6,7 @@
         <div
           class="bg-color-white d-inline rounded-circle profile-icon m-4 px-6 py-1 fw-bolder border border-5"
         >
-          U
+          {{ firstEmailCharacter }}
         </div>
       </div>
       <div class="p-4">
@@ -16,10 +16,9 @@
           </div>
           <div class="w-100">
             <div class="d-flex">
-              <div class="fs-6">Username</div>
-              <div class="ms-auto fs-sm">Change</div>
+              <div class="fs-6">User ID</div>
             </div>
-            <div class="fw-bolder red-text-1 fs-5">CodeMonkey</div>
+            <div class="fw-bolder red-text-1 fs-5">{{ user_Id }}</div>
           </div>
         </div>
         <div class="d-flex align-item-center my-4">
@@ -30,7 +29,7 @@
             <div>
               <div class="fs-6">E-Mail</div>
             </div>
-            <div class="fw-bolder red-text-1 fs-5 text-break">CodeMonkey@gmail.com</div>
+            <div class="fw-bolder red-text-1 fs-5 text-break">{{ email }}</div>
           </div>
         </div>
         <div class="d-flex align-item-center my-4">
@@ -56,14 +55,14 @@
             </div>
             <div class="fw-bolder red-text-1 fs-5">Email Sign-On</div>
           </div>
-          <div><div>Button</div></div>
+          <div><div class="red-text-1">OFF</div></div>
         </div>
         <div class="bg-red-1 rounded-4 p-3 white-text-1 text-center my-4">Delete My Account</div>
       </div>
     </div>
 
     <div class="right-panel">
-      <div class="mx-5 h-100 rounded-5 px-5 shadow">
+      <div class="mx-5 h-100 rounded-5 px-5 shadow overflow-auto">
         <div class="d-flex mb-auto pt-4">
           <div class="red-text-1 fs-4 fw-bolder">Team Management</div>
           <button
@@ -74,24 +73,29 @@
           </button>
         </div>
         <hr />
-        <div
-          class="border border-2 shadow px-4 pt-2 rounded-4 cursor-pointer"
-          @click="toggleTeamModal"
-        >
-          <div class="d-flex jusifiy-content-center align-items-center">
-            <div class="w-100">Team</div>
-            <button
-              class="bg-red-1 white-text-1 px-3 rounded-4 fs-sm ms-auto d-flex jusifiy-content-center align-items-center"
-            >
-              <i class="mdi mdi-logout me-2"></i> Leveas
-            </button>
-          </div>
-          <div class="d-flex pb-2 jusifiy-content-center align-items-center">
-            <div class="d-flex align-items-center jusifiy-content-center">
-              <div class="fs-3 fw-bolder red-text-1">Code Monkey</div>
-              <!--div class="fs-sm ms-4">[Group Admin]</div-->
+        <div>
+          <div
+            v-for="user_group in group_list"
+            :key="user_group.group_id"
+            class="border border-1 px-4 pt-2 rounded-4 cursor-pointer my-2"
+            @click="toggleTeamModal(user_group.group.group_id)"
+          >
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="w-100">Team</div>
+              <button
+                class="bg-red-1 white-text-1 px-3 rounded-4 fs-sm ms-auto d-flex justify-content-center align-items-center"
+              >
+                <i class="mdi mdi-logout me-2"></i> Leaves
+              </button>
             </div>
-            <div class="ms-auto fw-bolder">Group Admin</div>
+            <div class="d-flex pb-2 justify-content-center align-items-center">
+              <div class="d-flex align-items-center justify-content-center">
+                <div class="fs-3 fw-bolder red-text-1">{{ user_group.group.group_name }}</div>
+                <!-- Uncomment if needed -->
+                <!-- <div class="fs-sm ms-4">[Group Admin]</div> -->
+              </div>
+              <div class="ms-auto fw-bolder">{{ user_group.group_role }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -125,10 +129,14 @@
                 <input
                   class="bg-color-white red-text-1 fs-2 px-4 w-75 py-3 rounded-4"
                   placeholder="Team Name"
+                  id="group_name_input"
                 />
               </div>
               <div class="mt-4">
-                <button class="bg-color-white red-text-1 fs-4 w-75 px-5 py-2 rounded-4 shadow">
+                <button
+                  class="bg-color-white red-text-1 fs-4 w-75 px-5 py-2 rounded-4 shadow"
+                  @click="createGroup"
+                >
                   <i class="mdi mdi-plus"></i> Create
                 </button>
               </div>
@@ -147,10 +155,14 @@
                 <input
                   class="red-text-1 fs-2 px-4 w-75 py-3 rounded-4 red-border-1 border-2 border"
                   placeholder="Invitation Code"
+                  id="invitation_code_input"
                 />
               </div>
               <div class="mt-4">
-                <button class="fs-4 w-75 px-5 py-2 rounded-4 bg-red-1 white-text-1 shadow">
+                <button
+                  class="fs-4 w-75 px-5 py-2 rounded-4 bg-red-1 white-text-1 shadow"
+                  @click="joinGroup"
+                >
                   <i class="mdi mdi-plus"></i> Join
                 </button>
               </div>
@@ -169,7 +181,7 @@
       <div class="modal-content h-100 w-100">
         <!-- Add your form or other content here -->
         <button
-          @click="toggleTeamModal"
+          @click="toggleTeamModal(-1)"
           class="position-absolute me-4 mt-4 right-0 top-0 rounded-5 px-2 fs-4 bg-red-1 white-text-1"
         >
           <i class="mdi mdi-close"></i>
@@ -188,12 +200,13 @@
                 <div class="w-75 position-relative">
                   <input
                     class="bg-color-white red-text-1 fs-2 px-4 w-100 py-3 rounded-4 d-block"
-                    placeholder="Invitation Code"
-                    value="IaC128S@S"
+                    placeholder="Create Inivatation Code"
+                    :value="invitation_code_display"
                     readonly
                   />
                   <button
                     class="position-absolute right-0 top-0 me-4 h-100 d-flex align-items-center justify-content-center gray-text-2 fs-2"
+                    @click="RegenerateCode"
                   >
                     <i class="mdi mdi-refresh"></i>
                   </button>
@@ -211,23 +224,25 @@
             <div class="text-start px-4 w-100">
               <table class="w-100 text-break">
                 <thead class="bg-red-1 white-text-1 fw-bolder">
-                  <th class="p-2 text-start">Username</th>
+                  <th class="p-2 text-start">User ID</th>
                   <th class="p-2 text-center">Email</th>
                   <th class="p-2 text-center">Roles</th>
                   <th class="p-2 text-center">Action</th>
                 </thead>
                 <tbody class="gray-text-2">
-                  <td class="red-text-1 fw-bolder">CodeMonkey@gmail.com</td>
-                  <td>CodeMonkey@gmail.com</td>
-                  <td>Group Admin</td>
-                  <td class="d-flex align-items-center justify-content-center p-2">
-                    <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
-                      <i class="mdi mdi-account-minus"></i>
-                    </div>
-                    <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
-                      <i class="mdi mdi-chevron-up-circle"></i>
-                    </div>
-                  </td>
+                  <tr v-for="member in focusGroupMemberList" :key="member.member_id">
+                    <td class="red-text-1 fw-bolder">{{ member.user_id }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.group_role }}</td>
+                    <td class="d-flex align-items-center justify-content-center p-2">
+                      <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
+                        <i class="mdi mdi-account-minus"></i>
+                      </div>
+                      <!-- <div class="bg-red-1 white-text-1 fs-6 px-2 py-1 rounded-4 mx-2">
+                        <i class="mdi mdi-chevron-up-circle"></i>
+                      </div> -->
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -239,20 +254,94 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import GroupApi from '@/api/group.api'
+import LoginApi from '@/api/login.api'
+import { onMounted, ref } from 'vue'
 
 export default {
   setup() {
+    const focusGroup = ref(-1)
     const show_create_modal = ref(false)
     const show_team_modal = ref(false)
+    const group_list = ref([])
+    const invitation_code_display = ref('NOT_READY')
+    const user_Id = ref()
+    const email = ref()
+    const verify_2fa = ref(false)
+    const firstEmailCharacter = ref('U')
+    const focusGroupMemberList = ref([])
     const toggleCreateModal = () => {
       show_create_modal.value = !show_create_modal.value
     }
-    const toggleTeamModal = () => {
+    const getGroupList = async () => {
+      try {
+        group_list.value = await GroupApi.getGroupList() // Fetching the group list
+      } catch (error) {
+        console.error('Error fetching group list:', error) // Error handling
+      }
+    }
+    const toggleTeamModal = async (group_id) => {
       show_team_modal.value = !show_team_modal.value
+      focusGroup.value = group_id
+      if (group_id != -1) {
+        const res = await GroupApi.getCode(group_id)
+        invitation_code_display.value = res.code
+        const members = await GroupApi.getMemberList(group_id)
+        focusGroupMemberList.value = members
+      }
+    }
+    const createGroup = async () => {
+      const create_group_input = document.getElementById('group_name_input')
+      const res = await GroupApi.createGroup(create_group_input.value)
+      if (res.success == true) {
+        location.reload()
+      }
+    }
+    const joinGroup = async () => {
+      const invitation_code_input = document.getElementById('invitation_code_input')
+      const res = await GroupApi.joinGroup(invitation_code_input.value)
+      if (res.success == true) {
+        location.reload()
+      }
+    }
+    const RegenerateCode = async () => {
+      if (focusGroup.value != -1) {
+        const res = await GroupApi.regenereateCode(focusGroup.value)
+
+        if (res.success == true) invitation_code_display.value = res.code
+      }
+    }
+    const getUserInfo = async () => {
+      const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+      email.value = info.user.email
+      user_Id.value = info.user.userId
+      firstEmailCharacter.value = info.user.email.toString().substring(0, 1)
     }
 
-    return { show_create_modal, show_team_modal, toggleCreateModal, toggleTeamModal }
+    onMounted(() => {
+      getGroupList()
+      getUserInfo()
+    })
+
+    return {
+      show_create_modal,
+      show_team_modal,
+      invitation_code_display,
+      toggleCreateModal,
+      toggleTeamModal,
+      createGroup,
+      joinGroup,
+      getGroupList,
+      RegenerateCode,
+      getUserInfo,
+      group_list,
+      focusGroup,
+      user_Id,
+      email,
+      verify_2fa,
+      firstEmailCharacter,
+      focusGroupMemberList
+    }
   }
 }
 </script>

@@ -33,4 +33,11 @@ export class GroupMember extends BaseEntity {
 
   @Column({ length: 255 })
   group_role!: string; // group_role
+  constructor(group: Group, user:User,group_role:string) {
+    super();
+    this.group = group;
+    this.user = user;
+    this.group_role = group_role
+
+  }
 }

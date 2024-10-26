@@ -11,6 +11,8 @@ export class UserStoryService {
 
   // Create a new user story
   async createUserStory(data: Partial<UserStory>): Promise<UserStory> {
+ 
+    data.dueDate = new Date()
     const userStory = this.dbContext.userStories.create(data);
     this.dbContext.needCreate(userStory);
     await this.dbContext.save();  // Save transaction
@@ -45,5 +47,28 @@ export class UserStoryService {
       this.dbContext.needRemove(userStory);
       await this.dbContext.save();
     }
+  }
+  // Upvote a user story
+  async upvoteUserStory(id: number): Promise<UserStory | null> {
+    const userStory = await this.getUserStoryById(id);
+    if (userStory) {
+      userStory.upvoteCount += 1; // Increment upvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null;
+  }
+
+  // Downvote a user story
+  async downvoteUserStory(id: number): Promise<UserStory | null> {
+    const userStory = await this.getUserStoryById(id);
+    if (userStory) {
+      userStory.downvoteCount += 1; // Increment downvote count
+      this.dbContext.needUpdate(userStory);
+      await this.dbContext.save();
+      return userStory;
+    }
+    return null;
   }
 }

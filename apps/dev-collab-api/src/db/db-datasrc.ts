@@ -7,7 +7,8 @@ import { User } from "../entities/user";
 import { Group } from "../entities/group";
 import { GroupMember } from "../entities/groupMember";
 import { Task } from "../entities/task";
-
+import { Invitation } from "../entities/Invitation";
+import { Comment } from "../entities/comment";
 
 // AppDataSource: TypeORM configuration
 export const AppDataSource = new DataSource({
