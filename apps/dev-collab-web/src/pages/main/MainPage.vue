@@ -108,19 +108,20 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useTheme } from 'vuetify'
 import { env } from '@/utils/env/env'
 
 const { baseUrl } = env()
 const route = useRoute()
+const router = useRouter()
 const theme = useTheme()
 
 const drawer = ref(true)
 const rail = ref(false)
 const settingsDialog = ref(false)
 const isDarkTheme = ref(theme.global.current.value.dark)
-const unreadNotifications = ref(3)
+const unreadNotifications = ref(9)
 
 const menuItems = [
   { title: 'Home', icon: 'mdi-home-account', to: { name: 'home' } },
@@ -171,8 +172,7 @@ const openSettings = () => {
 }
 
 const showNotifications = () => {
-  // Implement notifications logic
-  console.log('Show notifications')
+  router.push({ name: 'notification' })
 }
 
 const openProfile = () => {
