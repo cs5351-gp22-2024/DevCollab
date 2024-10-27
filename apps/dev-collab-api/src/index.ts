@@ -50,9 +50,9 @@ const commentRouter = new CommentRouter(commentService).initializeRoutes();
 app.use("/", projectRouter); // Project-related routes
 app.use("/", userRouter); // User-related routes
 app.use("/", sprintRouter); // Sprint-related routes
-app.use("/", groupRouter); 
+app.use("/", groupRouter);
 app.use("/", webhookRouter); // For Automation Github
-app.use("/", commentRouter); 
+app.use("/", commentRouter);
 app.use("/", taskRouter); // Task-related routes
 
 // Initialize UserStoryRouter with userStoryService

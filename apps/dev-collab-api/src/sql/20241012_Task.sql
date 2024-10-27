@@ -4,7 +4,7 @@ CREATE TABLE Task (
         `description` varchar(1000),
         `priority` ENUM('Low', 'Medium', 'High') NOT NULL DEFAULT 'Medium',
         `assignee` varchar(1000)  DEFAULT 'None',
-        `status` varchar(1000),
+        `status` ENUM('To Do', 'In Progress', 'Done') NOT NULL DEFAULT 'To Do',
         `duedate` DATE,
         `created` DATETIME ,
         `modified` DATETIME ,
