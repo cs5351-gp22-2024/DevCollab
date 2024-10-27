@@ -69,7 +69,7 @@ export default {
         if (Array.isArray(data)) {
           const formattedComments = data.map((item: Comment) => ({
             id: Number(item.comment_id),
-            author: `User ${item.author_user_id}`,
+            author: `${item.author_user_id}`,
             role: 'User',
             date: formatDateToShort(new Date(item.create_date)),
             content: item.comment

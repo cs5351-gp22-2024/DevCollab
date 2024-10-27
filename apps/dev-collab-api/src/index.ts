@@ -17,6 +17,9 @@ import { groupRouter } from "./routers/group-router";// Import Group Router
 import { DbContext } from "./db/db-context"; // Import DbContext
 import { createServer } from "http"; // For Automation Github
 import { webhookRouter } from './routers/webhook-router'; // For Automation Github
+import { NotificationRouter } from "./routers/notification-router"; // Import NotificationRouter
+import { NotificationService } from "./services/notification-service"; // Import NotificationService
+
 const cors = require('cors'); // For Automation Github
 const setupChatbot = require('./function/chatbot'); // For Chatbot
 
@@ -45,6 +48,8 @@ const dbContext = new DbContext(AppDataSource.manager);
 const userStoryService = new UserStoryService(dbContext); // Pass dbContext to UserStoryService
 const commentService = new CommentService(dbContext);
 const commentRouter = new CommentRouter(commentService).initializeRoutes();
+const notificationService = new NotificationService(dbContext);
+const notificationRouter = new NotificationRouter(notificationService).initializeRoutes();
 
 // Register Routers (APIs)
 app.use("/", projectRouter); // Project-related routes
@@ -54,6 +59,7 @@ app.use("/", groupRouter);
 app.use("/", webhookRouter); // For Automation Github
 app.use("/", commentRouter);
 app.use("/", taskRouter); // Task-related routes
+app.use("/", notificationRouter); // Task-related routes
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();
