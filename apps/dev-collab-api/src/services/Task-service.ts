@@ -17,8 +17,10 @@ import { ISprintRepository } from "../repositories/sprint-repository";
 
 
 
-// The main method of 5 operations : 
+// The main method of 8 operations : 
 // create Task  by  Project ID , Sprint ID ,
+// Cal TotalStatus by Project ID 
+// Cal Total Priorty by Project ID
 // getTask by Project ID , getTask by Project ID and Sprint ID , getTask by Project ID , Sprint ID and Task ID
 // updated by roject ID, Sprint ID and Task ID
 // remove Task by  Project ID , Sprint ID and Task ID,
@@ -29,6 +31,8 @@ export interface ITaskService {
     getTaskbyProIdSprId(projectId: number, sprintId: number): Promise<Task[] | null>;
     getTaskbyProId(projectId: number): Promise<Task[] | null>;
     updateTask(projectId: number, sprintId: number, taskId: number, command: TaskUpdateCommand): Promise<void>;
+    CheckStatusnum(projectId: number): Promise<Record<string, number>>;
+    CheckPrioritynum(projectId: number): Promise<Record<string, number>>;
 }
 
 @injectable()
@@ -80,6 +84,7 @@ export class TaskService implements ITaskService {
         newTask.duedate = command.duedate;
         newTask.modified = now;
         newTask.created = now;
+        newTask.Author = command.author;
 
         this._taskRepository.addTask(newTask);
 
@@ -149,6 +154,51 @@ export class TaskService implements ITaskService {
             throw new HttpBadRequestError("Task does not exist");
         }
         return await this._dbContext.tasks.findOneBy({ taskid: taskId });
+    }
+
+    //  Cal Total Status  by Project ID
+    async CheckStatusnum(projectId: number): Promise<Record<string, number>> {
+        let status = { "To Do": 0, "In Progress": 0, "Done": 0 };
+        const tasks: Task[] | null = await this.getTaskbyProId(projectId);
+        const safeTasks = tasks || [];
+        const tasksLength = safeTasks.length || 0;
+
+        for (let i = 0; i < tasksLength; i++) {
+            if (tasks != undefined && tasks[i].status == "To Do") {
+                status["To Do"] += 1;
+
+            } else if (tasks != undefined && tasks[i].status == "In Progress") {
+                status["In Progress"] += 1;
+
+            } else if (tasks != undefined && tasks[i].status == "Done") {
+                status["Done"] += 1;
+
+            }
+        }
+        return status;
+    }
+
+    //  Cal Total Priority num by Project ID 
+    async CheckPrioritynum(projectId: number): Promise<Record<string, number>> {
+        const priority = { "Low": 0, "Medium": 0, "High": 0 };
+        const project = await this._projectRepository.getProject(projectId);
+        const tasks: Task[] | null = await this.getTaskbyProId(projectId);
+        const safeTasks = tasks || [];
+        const tasksLength = safeTasks.length || 0;
+
+        for (let i = 0; i < tasksLength; i++) {
+            if (tasks != undefined && tasks[i].priority == "Low") {
+                priority["Low"] += 1;
+
+            } else if (tasks != undefined && tasks[i].priority == "Medium") {
+                priority["Medium"] += 1;
+
+            } else if (tasks != undefined && tasks[i].priority == "High") {
+                priority["High"] += 1;
+
+            }
+        }
+        return priority;
     }
 
     //  updated by roject ID, Sprint ID and Task ID

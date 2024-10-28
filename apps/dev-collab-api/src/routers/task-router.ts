@@ -3,7 +3,33 @@ import { TaskCreateCommand, TaskUpdateCommand } from "shared/models/task";
 import { appContainer } from "../container/container";
 import { TYPES } from "../container/types";
 
+
 export const taskRouter = express.Router();
+
+
+// Aim : get the Total Staus Number
+// The router for the get task by ProjectID 
+// api url eg :  /api/task/status/{projectId}
+// Method : GET
+taskRouter.get("/api/task/status/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.CheckStatusnum(projectId);
+    res.send(result)
+});
+
+
+// Aim : get the Total Priority Number
+// The router for the get task by ProjectID 
+// api url eg :  /api/task/priority/{projectId}
+// Method : GET
+taskRouter.get("/api/task/priority/:projectId", async (req, res) => {
+    console.log("Test");
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.CheckPrioritynum(projectId);
+    res.send(result);
+});
 
 
 // Aim : get the colum from DB
@@ -43,6 +69,7 @@ taskRouter.get("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
     const result = await service.getTaskbyProIdSprIdTaskId(projectId, sprintId, taskId);
     res.send(result);
 });
+
 
 // Aim : Create the task 
 // The router for the post task by ProjectID ,SprintID

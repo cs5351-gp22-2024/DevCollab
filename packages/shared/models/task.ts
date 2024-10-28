@@ -10,6 +10,7 @@ export interface TaskModel {
     sprintId: number | null;
     created: string | null;
     modified: string | null;
+    author: number | null;
 }
 
 export interface TaskCreateCommand {
@@ -22,7 +23,7 @@ export interface TaskCreateCommand {
     projectId: number | null;
     created: string | null;
     sprintId: number | null;
-
+    author: number | null;
 }
 
 export interface TaskUpdateCommand {
