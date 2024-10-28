@@ -84,6 +84,7 @@ export class TaskService implements ITaskService {
         newTask.duedate = command.duedate;
         newTask.modified = now;
         newTask.created = now;
+        newTask.Author = command.author;
 
         this._taskRepository.addTask(newTask);
 

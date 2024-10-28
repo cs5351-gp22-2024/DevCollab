@@ -45,6 +45,9 @@ export class Task extends BaseEntity {
     @Column({ type: "integer" })
     sprintId: number | null = null;
 
+    @Column({ type: "integer", nullable: true })
+    Author: number | null = null;
+
     @ManyToOne(() => Project, (project) => project.sprints) // Relationship with Project
     @JoinColumn({ name: "projectId" })
     project: Project | null = null;
