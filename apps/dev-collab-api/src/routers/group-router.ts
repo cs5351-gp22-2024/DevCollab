@@ -47,7 +47,7 @@ groupRouter.post("/api/:userid/group/create", async (req, res) => {
 
       const result_json = await InvitationCode.updateGroupCode(
         parseInt(userid),
-        group_data.group_id
+        group_data.group_id!
       );
       if (member_data.result === "SUCCESS") {
         res.status(201).send({ result: "SUCCESS", member: member_data.member });

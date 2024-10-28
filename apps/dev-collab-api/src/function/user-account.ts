@@ -39,15 +39,29 @@ export class UserAccount {
       const hashedPw = this.hashPassword(password);
       // Create a new user account if the verification is successful
       const user = new User(email, hashedPw);
-      const savedUser = (await user.save());
+      const savedUser = await user.save();
       const token = await this.generateJWT(savedUser);
-      
-      return { result: "SUCCESS", token: token };
+
+      return { result: "SUCCESS", user_id: savedUser.userId, token: token };
     } else {
       return { result: "UNSUCCESS", error: "CODE_INVALID" };
     }
   }
+  static async updatePassword(user_id: number, password: string) {
+    if (password == "" || password == null) {
+      return { result: "UNSUCCESS", error: "PASSWORD_INVALID" };
+    }
+    const user = await this.getRecordById(user_id);
+    if (!user) {
+      return { result: "UNSUCCESS", error: "USER_NOT_FOUND" };
+    }
+    const hashedPw = this.hashPassword(password);
+    user.password = hashedPw;
+    await user.save();
 
+    const token = await this.generateJWT(user);
+    return { result: "SUCCESS", user_id: user.userId, token: token };
+  }
   /**
    * Retrieves a user record based on email and password.
    *
@@ -66,11 +80,7 @@ export class UserAccount {
     });
     return record;
   }
-  static async getRecordById(
-    userId: number,
-
-  ): Promise<User | null> {
-
+  static async getRecordById(userId: number): Promise<User | null> {
     const record = await AppDataSource.getRepository(User).findOne({
       where: { userId },
       order: { create_time: "DESC" },
@@ -87,9 +97,30 @@ export class UserAccount {
     try {
       // Verify the token using the secret
       const decoded = jwt.verify(token, this.JWT_SECRET);
-
-      // If verification is successful, return the decoded payload
-      return { result: "SUCCESS", "user": decoded };
+      if (
+        typeof decoded === "object" &&
+        decoded !== null &&
+        "userId" in decoded
+      ) {
+        const userId = decoded.userId;
+        const user_record = await this.getRecordById(userId);
+        if (user_record) {
+          return {
+            result: "SUCCESS",
+            user: decoded,
+            detail: {
+              user_id: user_record.userId,
+              name: user_record.name,
+              email: user_record.email,
+              email_2fa: user_record.email_2fa,
+            },
+          };
+        } else {
+          return { result: "UNSUCCESS", error: "USER_NOT_FOUND" };
+        }
+      } else {
+        return { result: "UNSUCCESS", error: "INVALID_TOKEN" };
+      }
     } catch (error) {
       // Handle errors and narrow the type of error
       if (error instanceof jwt.JsonWebTokenError) {
@@ -102,12 +133,43 @@ export class UserAccount {
     }
   }
 
-  static async generateJWT(user:User) {
-    const userId= user.userId;
+  static async generateJWT(user: User) {
+    const userId = user.userId;
     const email = user.email;
     const token = jwt.sign({ userId, email }, this.JWT_SECRET, {
       expiresIn: this.EXPIRED_DATE,
     });
-    return token
+    return token;
+  }
+
+  static async update2FA(userId: number, active: String) {
+    const user = await this.getRecordById(userId);
+    if (!user) {
+      return { result: "UNSUCCESS", error: "USER_NOT_FOUND" };
+    }
+    if (active == "ON") {
+      user.email_2fa = true;
+    } else if (active == "OFF") {
+      user.email_2fa = false;
+    } else {
+      return { result: "UNSUCCESS", error: "PARAM_ERROR" };
+    }
+    await user.save();
+    return { result: "SUCCESS", status: active };
+  }
+  static async updateUsername(user_id: number, username: string) {
+    if (username == "" || username == null) {
+      return { result: "UNSUCCESS", error: "USERNAME_INVALID" };
+    }
+    const user = await this.getRecordById(user_id);
+    if (!user) {
+      return { result: "UNSUCCESS", error: "USER_NOT_FOUND" };
+    }
+    
+    user.name = username;
+    await user.save();
+
+    const token = await this.generateJWT(user);
+    return { result: "SUCCESS", user_id: user.userId, token: token };
   }
 }

@@ -178,7 +178,7 @@ export class UserGroup {
     if (!target) {
       return { result: "UNSUCCESS", error: "TARGET_NOT_IN_GROUP" };
     }
-    (await (await target).remove()).save();
+    (await (await target)!.remove()).save();
     return { result: "SUCCESS", message: "TARGET_REMOVED" };
   }
   static async deleteGroup(user: number, group: number) {
@@ -196,7 +196,7 @@ export class UserGroup {
       return { result: "UNSUCCESS", error: "NOT_ADMIN" };
     }
 
-    (await group_record.remove()).save();
+    (await group_record!.remove()).save();
     return { result: "SUCCESS", message: "GROUP_REMOVED" };
   }
   static async leaveGroup(user: number, group: number) {
