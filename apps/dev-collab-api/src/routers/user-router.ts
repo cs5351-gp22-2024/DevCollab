@@ -103,11 +103,13 @@ userRouter.post("/api/account/login/password", async (req, res) => {
 });
 
 userRouter.post("/api/account/login/token", async (req, res) => {
-  const { token } = req.body; // Expecting email and code in the body
-
+  let { token } = req.body; // Expecting email and code in the body
   if (!token) {
-    res.status(400).send({ result: "UNSUCCESS", error: "INVALID_INPUT" });
-    return;
+    token = req.headers["authorization"];
+    if (!token) {
+      res.status(400).send({ result: "UNSUCCESS", error: "INVALID_INPUT" });
+      return;
+    }
   }
 
   try {
@@ -128,10 +130,12 @@ userRouter.post("/api/account/login/token", async (req, res) => {
 });
 
 userRouter.post("/api/account/2fa-setting", async (req, res) => {
-  const { token, active } = req.body; // Expecting email and code in the body
+  let { token, active } = req.body; // Expecting email and code in the body
 
   if (!token) {
-    res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
+    token = req.headers["authorization"];
+    if (!token)
+      res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
     return;
   }
 
@@ -155,10 +159,12 @@ userRouter.post("/api/account/2fa-setting", async (req, res) => {
 });
 
 userRouter.post("/api/account/password", async (req, res) => {
-  const { token, password } = req.body; // Expecting email and code in the body
+  let { token, password } = req.body; // Expecting email and code in the body
 
   if (!token) {
-    res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
+    token = req.headers["authorization"];
+    if (!token)
+      res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
     return;
   }
 
@@ -173,9 +179,9 @@ userRouter.post("/api/account/password", async (req, res) => {
       decoded.detail!.user_id,
       password
     );
-    if(result_password.result=="SUCCESS"){
+    if (result_password.result == "SUCCESS") {
       res.status(200).send(result_password);
-    }else{
+    } else {
       res.status(400).send(result_password);
     }
 
@@ -187,10 +193,12 @@ userRouter.post("/api/account/password", async (req, res) => {
 });
 
 userRouter.post("/api/account/username", async (req, res) => {
-  const { token, username } = req.body; // Expecting email and code in the body
+  let { token, username } = req.body; // Expecting email and code in the body
 
   if (!token) {
-    res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
+    token = req.headers["authorization"];
+    if (!token)
+      res.status(400).send({ result: "UNSUCCESS", error: "INVALID_TOKEN" });
     return;
   }
 
@@ -205,9 +213,9 @@ userRouter.post("/api/account/username", async (req, res) => {
       decoded.detail!.user_id,
       username
     );
-    if(result_username.result=="SUCCESS"){
+    if (result_username.result == "SUCCESS") {
       res.status(200).send(result_username);
-    }else{
+    } else {
       res.status(400).send(result_username);
     }
 

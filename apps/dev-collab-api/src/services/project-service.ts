@@ -15,8 +15,11 @@ import { IProjectRepository } from "../repositories/project-repository";
 
 export interface IProjectService {
   getProject(projectId: number): Promise<ProjectModel>;
-  getAllProjects(): Promise<ProjectModel[]>;
-  createProject(command: ProjectCreateCommand): Promise<number>;
+  getAllProjects(userToken: string | null): Promise<ProjectModel[]>;
+  createProject(
+    command: ProjectCreateCommand,
+    userToken: string | null
+  ): Promise<number>;
   updateProject(
     projectId: number,
     command: ProjectUpdateCommand
@@ -46,24 +49,24 @@ export class ProjectService implements IProjectService {
     return mapProjectToProjectModel(project, now);
   }
 
-  async getAllProjects(): Promise<ProjectModel[]> {
+  async getAllProjects(userToken: string): Promise<ProjectModel[]> {
     const projects = await this._projectRepository.getAllProjects();
     const now = new Date().toISOString();
-    const me = await this._contextUser.getUserId();
+    const me = await this._contextUser.getUserId(userToken);
 
     return projects
       .filter((p) => !me || p.canRead(me))
       .map((p) => mapProjectToProjectModel(p, now));
   }
 
-  async createProject(command: ProjectCreateCommand) {
+  async createProject(command: ProjectCreateCommand, userToken: string | null) {
     if (isEmpty(command.name)) {
       throw new HttpBadRequestError("Project name is required");
     }
 
     const newProject = new Project();
     const now = new Date();
-    const me = await this._contextUser.getUserId();
+    const me = await this._contextUser.getUserId(userToken);
 
     newProject.name = command.name;
     newProject.description = command.description;
