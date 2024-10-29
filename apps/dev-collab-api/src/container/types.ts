@@ -1,4 +1,5 @@
 import { interfaces } from "inversify";
+import { IContextUser } from "../auth/context-user";
 import { IDbContext } from "../db/db-context";
 import { IProjectRepository } from "../repositories/project-repository";
 import { ISprintRepository } from "../repositories/sprint-repository";
@@ -41,6 +42,9 @@ const TYPES = {
   IUserService: Symbol.for(
     "IUserService"
   ) as interfaces.ServiceIdentifier<IUserService>,
+  IContextUser: Symbol.for(
+    "IContextUser"
+  ) as interfaces.ServiceIdentifier<IContextUser>,
 };
 
 export { TYPES };

@@ -55,6 +55,9 @@ export class Project extends BaseEntity {
   })
   users: User[] | null = null;
 
+  @Column({ type: "int" })
+  creatorId: number | null = null;
+
   get orderedSprints() {
     return sortBy(this.sprints, (s) => s.startDate);
   }
@@ -117,5 +120,12 @@ export class Project extends BaseEntity {
 
   getIsActive(now: string): boolean {
     return this.getCurrentSprintNo(now).length > 0;
+  }
+
+  canRead(userId: number) {
+    return (
+      this.creatorId === userId ||
+      (this.users && this.users.some((u) => u.userId === userId))
+    );
   }
 }

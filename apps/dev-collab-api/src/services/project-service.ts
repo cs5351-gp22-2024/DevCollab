@@ -5,6 +5,7 @@ import {
   ProjectModel,
   ProjectUpdateCommand,
 } from "shared/models/project";
+import { IContextUser } from "../auth/context-user";
 import { TYPES } from "../container/types";
 import { IDbContext } from "../db/db-context";
 import { Project } from "../entities/project";
@@ -29,7 +30,9 @@ export class ProjectService implements IProjectService {
     @inject(TYPES.IDbContext)
     private _dbContext: IDbContext,
     @inject(TYPES.IProjectRepository)
-    private _projectRepository: IProjectRepository
+    private _projectRepository: IProjectRepository,
+    @inject(TYPES.IContextUser)
+    private _contextUser: IContextUser
   ) {}
 
   async getProject(projectId: number): Promise<ProjectModel> {
@@ -46,8 +49,11 @@ export class ProjectService implements IProjectService {
   async getAllProjects(): Promise<ProjectModel[]> {
     const projects = await this._projectRepository.getAllProjects();
     const now = new Date().toISOString();
+    const me = await this._contextUser.getUserId();
 
-    return projects.map((p) => mapProjectToProjectModel(p, now));
+    return projects
+      .filter((p) => !me || p.canRead(me))
+      .map((p) => mapProjectToProjectModel(p, now));
   }
 
   async createProject(command: ProjectCreateCommand) {
@@ -57,12 +63,14 @@ export class ProjectService implements IProjectService {
 
     const newProject = new Project();
     const now = new Date();
+    const me = await this._contextUser.getUserId();
 
     newProject.name = command.name;
     newProject.description = command.description;
     newProject.avatar = command.avatar;
     newProject.created = now;
     newProject.modified = now;
+    newProject.creatorId = me;
 
     this._projectRepository.addProject(newProject);
 

@@ -1,5 +1,6 @@
 // container/container.ts
 import { Container } from "inversify";
+import { ContextUser, IContextUser } from "../auth/context-user";
 import { DbContext, IDbContext } from "../db/db-context";
 import { AppDataSource } from "../db/db-datasrc";
 import {
@@ -78,4 +79,9 @@ appContainer
 appContainer
   .bind<IUserService>(TYPES.IUserService)
   .to(UserService)
+  .inRequestScope();
+
+appContainer
+  .bind<IContextUser>(TYPES.IContextUser)
+  .to(ContextUser)
   .inRequestScope();

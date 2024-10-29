@@ -68,21 +68,21 @@
                         </v-btn>
                       </template>
                     </v-list-item>
-                    <v-list-item v-if="store.users.length === 0">
-                      <v-empty-state
-                        text="The system currently has no user yet."
-                        title="No user"
-                      ></v-empty-state>
-                    </v-list-item>
                   </template>
                 </template>
               </v-data-iterator>
-              <v-pagination
-                v-model="page"
-                :length="Math.ceil(store.allUsers.length / pageSize)"
-                rounded="circle"
-              ></v-pagination>
+              <v-list-item v-if="store.allUsers.length === 0">
+                <v-empty-state
+                  text="The system currently has no user yet."
+                  title="No user"
+                ></v-empty-state>
+              </v-list-item>
             </v-list>
+            <v-pagination
+              v-model="page"
+              :length="Math.ceil(store.allUsers.length / pageSize)"
+              rounded="circle"
+            ></v-pagination>
           </v-col>
         </v-row>
       </v-container>
