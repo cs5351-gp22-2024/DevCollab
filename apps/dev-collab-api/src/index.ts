@@ -27,6 +27,7 @@ const setupChatbot = require('./function/chatbot'); // For Chatbot
 import http from "http"; // HTTP server from Node.js
 import { Server as WebSocketServer } from "ws"; // WebSocket server implementation from 'ws' library
 import { projectUserRouter } from "./routers/project-user-router";
+import { appUserRouter } from "./routers/app-user-router";
 
 const app = express(); // Create Express app instance
 const port = 3000; // Set port number for the server
@@ -61,7 +62,8 @@ app.use("/", webhookRouter); // For Automation Github
 app.use("/", commentRouter);
 app.use("/", taskRouter); // Task-related routes
 app.use("/", notificationRouter); // Task-related routes
-app.use("/", projectUserRouter); // Task-related routes
+app.use("/", projectUserRouter);
+app.use("/", appUserRouter);
 
 // Initialize UserStoryRouter with userStoryService
 const userStoryRouter = new UserStoryRouter(userStoryService).initializeRoutes();

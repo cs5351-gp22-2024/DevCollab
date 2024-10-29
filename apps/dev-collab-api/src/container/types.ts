@@ -8,6 +8,7 @@ import { ITaskService } from "../services/Task-service";
 import { IProjectService } from "../services/project-service";
 import { IProjectUserService } from "../services/project-user-service";
 import { ISprintService } from "../services/sprint-service";
+import { IUserService } from "../services/user-service";
 
 const TYPES = {
   IDbContext: Symbol.for(
@@ -37,6 +38,9 @@ const TYPES = {
   IProjectUserService: Symbol.for(
     "IProjectUserService"
   ) as interfaces.ServiceIdentifier<IProjectUserService>,
+  IUserService: Symbol.for(
+    "IUserService"
+  ) as interfaces.ServiceIdentifier<IUserService>,
 };
 
 export { TYPES };

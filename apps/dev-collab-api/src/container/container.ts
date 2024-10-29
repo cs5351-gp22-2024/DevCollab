@@ -25,6 +25,7 @@ import {
 } from "../services/project-user-service";
 import { ISprintService, SprintService } from "../services/sprint-service";
 import { ITaskService, TaskService } from "../services/Task-service";
+import { IUserService, UserService } from "../services/user-service";
 import { TYPES } from "./types";
 
 export const appContainer = new Container();
@@ -72,4 +73,9 @@ appContainer
 appContainer
   .bind<IProjectUserService>(TYPES.IProjectUserService)
   .to(ProjectUserService)
+  .inRequestScope();
+
+appContainer
+  .bind<IUserService>(TYPES.IUserService)
+  .to(UserService)
   .inRequestScope();

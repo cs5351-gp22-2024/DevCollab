@@ -5,6 +5,7 @@ import { User } from "../entities/user";
 
 export interface IUserRepository {
   getUser(userId: number): Promise<User | null>;
+  getAllUsers(): Promise<User[]>;
 }
 
 @injectable()
@@ -17,5 +18,9 @@ export class UserRepository implements IUserRepository {
         userId,
       },
     });
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await this._dbContext.users.find();
   }
 }
