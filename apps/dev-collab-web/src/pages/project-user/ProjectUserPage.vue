@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card title="Project Sprint"></v-card>
+    <v-card title="Project Users"></v-card>
 
     <v-card class="mt-4">
       <v-container>
