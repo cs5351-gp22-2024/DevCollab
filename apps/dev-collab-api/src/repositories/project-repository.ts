@@ -22,6 +22,7 @@ export class ProjectRepository implements IProjectRepository {
       },
       relations: {
         sprints: true,
+        users: true,
       },
     });
   }

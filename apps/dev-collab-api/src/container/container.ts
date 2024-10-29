@@ -14,7 +14,15 @@ import {
   ITaskRepository,
   TaskRepository,
 } from "../repositories/task-repository";
+import {
+  IUserRepository,
+  UserRepository,
+} from "../repositories/user-repository";
 import { IProjectService, ProjectService } from "../services/project-service";
+import {
+  IProjectUserService,
+  ProjectUserService,
+} from "../services/project-user-service";
 import { ISprintService, SprintService } from "../services/sprint-service";
 import { ITaskService, TaskService } from "../services/Task-service";
 import { TYPES } from "./types";
@@ -54,4 +62,14 @@ appContainer
 appContainer
   .bind<ITaskRepository>(TYPES.ITaskRepository)
   .to(TaskRepository)
+  .inRequestScope();
+
+appContainer
+  .bind<IUserRepository>(TYPES.IUserRepository)
+  .to(UserRepository)
+  .inRequestScope();
+
+appContainer
+  .bind<IProjectUserService>(TYPES.IProjectUserService)
+  .to(ProjectUserService)
   .inRequestScope();
