@@ -7,6 +7,14 @@ import { TYPES } from "../container/types";
 export const taskRouter = express.Router();
 
 
+taskRouter.get("/api/task/overStateCount/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    console.log("123")
+    const result = await service.getOverStateCount(projectId);
+    res.send(result)
+});
+
 // Aim : get the Total Staus Number
 // The router for the get task by ProjectID 
 // api url eg :  /api/task/status/{projectId}

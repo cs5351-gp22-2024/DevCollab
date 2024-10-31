@@ -14,7 +14,17 @@ import { IProjectRepository } from "../repositories/project-repository";
 import { ISprintRepository } from "../repositories/sprint-repository";
 
 
+interface TaskStatus {
+    taskid: number;
+    status: string;
+    modified: string;
+}
 
+interface StatusProgress {
+    title: string;
+    progress: number[];
+    options: string[];
+}
 
 
 // The main method of 8 operations : 
@@ -33,6 +43,7 @@ export interface ITaskService {
     updateTask(projectId: number, sprintId: number, taskId: number, command: TaskUpdateCommand): Promise<void>;
     CheckStatusnum(projectId: number): Promise<Record<string, number>>;
     CheckPrioritynum(projectId: number): Promise<Record<string, number>>;
+    getOverStateCount(projectId: number): Promise<StatusProgress[]>;
 }
 
 @injectable()
@@ -234,6 +245,77 @@ export class TaskService implements ITaskService {
     }
 
 
+    async getOverStateCount(projectId: number): Promise<StatusProgress[]> {
+        try {
+            const tasks = await this.getTaskbyProId(projectId);
+            if (!tasks || tasks.length === 0) {
+                return [
+                    {
+                        title: 'TODO',
+                        progress: [0, 0, 0],
+                        options: ['Daily', 'Weekly', 'Monthly']
+                    },
+                    {
+                        title: 'IN PROGRESS',
+                        progress: [0, 0, 0],
+                        options: ['Daily', 'Weekly', 'Monthly']
+                    },
+                    {
+                        title: 'DONE',
+                        progress: [0, 0, 0],
+                        options: ['Daily', 'Weekly', 'Monthly']
+                    }
+                ];
+            }
 
+            // Status mapping configuration
+            const statusMapping = {
+                'TODO': ['To Do'],
+                'IN PROGRESS': ['In Progress'],
+                'DONE': ['Done']
+            };
+
+            const timeOptions = ['Daily', 'Weekly', 'Monthly'];
+            const now = new Date();
+            
+            // Time ranges
+            const timeRanges = {
+                'Daily': new Date(now.getTime() - 24 * 60 * 60 * 1000),    // 1 day ago
+                'Weekly': new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
+                'Monthly': new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) // 1 month ago
+            };
+
+            const result: StatusProgress[] = Object.entries(statusMapping).map(([title, statusValues]) => {
+                // Get tasks for current status
+                const statusTasks = tasks.filter(task => 
+                    statusValues.some(value => task.status === value)
+                );
+
+                // Calculate progress for each time period
+                const progress = timeOptions.map(period => {
+                    const periodTasks = statusTasks.filter(task => {
+                        const modifiedDate = new Date(task.modified);
+                        return modifiedDate >= timeRanges[period as keyof typeof timeRanges];
+                    }).length;
+
+                    const totalTasks = tasks.length;
+                    return Math.round((periodTasks / totalTasks) * 100);
+                });
+
+                return {
+                    title,
+                    progress,
+                    options: timeOptions
+                };
+            });
+
+
+            return result;
+
+        } catch (error) {
+            console.error('Error in getOverStateCount:', error);
+            throw error;
+        }
+    }
 
 }

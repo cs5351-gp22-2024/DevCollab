@@ -7,6 +7,11 @@ export const TaskApi = () => {
     async getTaskbyProId(projectId: number) {
       const { data } = await axios.get(`/task/${projectId}`)
       return data
+    },
+
+    async getOverStateCount(projectId: number) {
+      const { data } = await axios.get(`/task/overStateCount/${projectId}`)
+      return data
     }
   }
 }

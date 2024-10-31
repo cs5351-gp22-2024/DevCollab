@@ -52,25 +52,25 @@
           <tr>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[35%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Task
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Priority
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               State
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Due Date
             </th>
@@ -160,23 +160,6 @@ export default {
         return 0
       })
     })
-
-    // Debug watches
-    watch(
-      props.tasks,
-      (newValue) => {
-        console.log('Tasks prop changed:', newValue)
-      },
-      { immediate: true }
-    )
-
-    watch(
-      sortedTasks,
-      (newValue) => {
-        console.log('Sorted tasks changed:', newValue)
-      },
-      { immediate: true }
-    )
 
     const priorityClass = (priority: string) => {
       const baseClasses = 'px-2 py-1 rounded-full text-xs font-medium'
