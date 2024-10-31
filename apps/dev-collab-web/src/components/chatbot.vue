@@ -87,6 +87,7 @@ export default {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden; 
     padding:20px;
+  z-index: 9999;
 }
 
 .chatbot-icon {
