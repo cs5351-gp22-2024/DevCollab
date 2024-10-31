@@ -1,11 +1,15 @@
 import { interfaces } from "inversify";
+import { IContextUser } from "../auth/context-user";
 import { IDbContext } from "../db/db-context";
 import { IProjectRepository } from "../repositories/project-repository";
+import { ISprintRepository } from "../repositories/sprint-repository";
 import { ITaskRepository } from "../repositories/task-repository";
+import { IUserRepository } from "../repositories/user-repository";
 import { ITaskService } from "../services/Task-service";
 import { IProjectService } from "../services/project-service";
+import { IProjectUserService } from "../services/project-user-service";
 import { ISprintService } from "../services/sprint-service";
-import { ISprintRepository } from "../repositories/sprint-repository";
+import { IUserService } from "../services/user-service";
 
 const TYPES = {
   IDbContext: Symbol.for(
@@ -29,6 +33,18 @@ const TYPES = {
   ISprintService: Symbol.for(
     "ISprintService"
   ) as interfaces.ServiceIdentifier<ISprintService>,
+  IUserRepository: Symbol.for(
+    "IUserRepository"
+  ) as interfaces.ServiceIdentifier<IUserRepository>,
+  IProjectUserService: Symbol.for(
+    "IProjectUserService"
+  ) as interfaces.ServiceIdentifier<IProjectUserService>,
+  IUserService: Symbol.for(
+    "IUserService"
+  ) as interfaces.ServiceIdentifier<IUserService>,
+  IContextUser: Symbol.for(
+    "IContextUser"
+  ) as interfaces.ServiceIdentifier<IContextUser>,
 };
 
 export { TYPES };

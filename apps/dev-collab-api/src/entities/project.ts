@@ -3,11 +3,13 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Sprint } from "./sprint";
-
+import { User } from "./user";
 
 @Entity("Project")
 export class Project extends BaseEntity {
@@ -38,6 +40,23 @@ export class Project extends BaseEntity {
 
   @OneToMany(() => Sprint, (sprint) => sprint.project)
   sprints: Sprint[] | null = null;
+
+  @ManyToMany(() => User, (user) => user.projects)
+  @JoinTable({
+    name: "ProjectUser",
+    joinColumn: {
+      name: "projectId",
+      referencedColumnName: "projectId",
+    },
+    inverseJoinColumn: {
+      name: "userId",
+      referencedColumnName: "userId",
+    },
+  })
+  users: User[] | null = null;
+
+  @Column({ type: "int" })
+  creatorId: number | null = null;
 
   get orderedSprints() {
     return sortBy(this.sprints, (s) => s.startDate);
@@ -101,5 +120,12 @@ export class Project extends BaseEntity {
 
   getIsActive(now: string): boolean {
     return this.getCurrentSprintNo(now).length > 0;
+  }
+
+  canRead(userId: number) {
+    return (
+      this.creatorId === userId ||
+      (this.users && this.users.some((u) => u.userId === userId))
+    );
   }
 }

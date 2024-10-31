@@ -1,10 +1,10 @@
 <!-- src/App.vue -->
 <template>
-  <div class="d-flex rounded rounded-5">
-    <div class="rounded-start-5 rounded-5 left-panel shadow-lg">
-      <div class="text-center bg-red-1 rounded-top-5 py-6">
+  <div class="rounded d-flex flex-wrap w-100 px-4">
+    <div class="rounded left-panel shadow-lg d-inline-block mx-auto">
+      <div class="text-center bg-red-1 rounded-top-2 py-6">
         <div
-          class="bg-color-white d-inline rounded-circle profile-icon m-4 px-6 py-1 fw-bolder border border-5"
+          class="bg-color-white d-inline-block rounded-circle profile-icon m-4 px-6 py-1 fw-bolder border border-2"
         >
           {{ firstEmailCharacter }}
         </div>
@@ -21,6 +21,7 @@
             <div class="fw-bolder red-text-1 fs-5">{{ user_id }}</div>
           </div>
         </div>
+
         <div class="d-flex align-item-center my-4">
           <div class="me-4 d-flex align-items-center justify-content-center">
             <i class="mdi mdi-email side-icon"></i>
@@ -34,15 +35,35 @@
         </div>
         <div class="d-flex align-item-center my-4">
           <div class="me-4 d-flex align-items-center justify-content-center">
+            <i class="mdi mdi-rename side-icon"></i>
+          </div>
+          <div class="w-100">
+            <div class="d-flex">
+              <div class="fs-6">Username</div>
+            </div>
+            <div class="fw-bolder red-text-1 fs-5">{{ username }}</div>
+          </div>
+          <span class="form-check form-switch ms-4 align-self-center">
+            <button class="red-text-1" @click="usernameModalToggle">
+              <i class="mdi mdi-pencil red-text-1 side-icon"></i>
+            </button>
+          </span>
+        </div>
+        <div class="d-flex align-item-center my-4">
+          <div class="me-4 d-flex align-items-center justify-content-center">
             <i class="mdi mdi-lock side-icon"></i>
           </div>
           <div class="w-100">
             <div class="d-flex">
               <div class="fs-6">Password</div>
-              <div class="ms-auto fs-sm">Change</div>
             </div>
             <div class="fw-bolder red-text-1 fs-5">******</div>
           </div>
+          <span class="form-check form-switch ms-4 align-self-center">
+            <button class="red-text-1" @click="passwordModalToggle">
+              <i class="mdi mdi-pencil red-text-1 side-icon"></i>
+            </button>
+          </span>
         </div>
         <hr />
         <div class="d-flex align-item-center my-4">
@@ -53,16 +74,31 @@
             <div>
               <div>Security</div>
             </div>
-            <div class="fw-bolder red-text-1 fs-5">Email Sign-On</div>
+            <div class="fw-bolder red-text-1 fs-5">
+              <span>Email Sign-On</span>
+
+              <!-- <button class="red-text-1" @click="verify_2fa_toggle">
+              {{ verify_2fa ? 'ON' : 'OFF' }}
+            </button> -->
+            </div>
           </div>
-          <div><div class="red-text-1">OFF</div></div>
+          <span class="form-check form-switch ms-4 align-self-center">
+            <input
+              class="form-check-input"
+              style="width: 60px; height: 30px"
+              type="checkbox"
+              role="switch"
+              @click="verify_2fa_toggle"
+              :checked="verify_2fa"
+            />
+          </span>
         </div>
         <!-- <div class="bg-red-1 rounded-4 p-3 white-text-1 text-center my-4">Delete My Account</div> -->
       </div>
     </div>
 
-    <div class="right-panel">
-      <div class="mx-5 h-100 rounded-5 px-5 shadow overflow-auto" style="max-height: 720px">
+    <div class="right-panel d-inline-block pb-5 flex-1 mx-4">
+      <div class="h-100 rounded-5 mx-auto overflow-auto" style="max-height: 80vh">
         <div class="d-flex mb-auto pt-4">
           <div class="red-text-1 fs-4 fw-bolder">Team Management</div>
           <button
@@ -189,8 +225,8 @@
         <div class="d-flex w-100 h-100">
           <div class="w-50 bg-red-1 white-text-1 h-100 rounded-start-4 d-flex flex-column py-4">
             <div class="py-4 mt-4">
-              <div class="d-inline px-6 py-2 large-text bg-color-white red-text-1 rounded-circle">
-                <div class="px-3 d-inline">{{ firstCharOfFocusTeamName }}</div>
+              <div class="d-inline py-2 large-text bg-color-white red-text-1 rounded-circle px-4">
+                {{ firstCharOfFocusTeamName }}
               </div>
               <div class="py-2 fs-2 fw-bolder">{{ focusTeamName }}</div>
             </div>
@@ -238,6 +274,7 @@
               <table class="w-100 text-break">
                 <thead class="bg-red-1 white-text-1 fw-bolder">
                   <th class="p-2 text-start">User ID</th>
+                  <th class="p-2 text-start">Username</th>
                   <th class="p-2 text-center">Email</th>
                   <th class="p-2 text-center">Roles</th>
                   <th class="p-2 text-center">Action</th>
@@ -245,6 +282,7 @@
                 <tbody class="gray-text-2">
                   <tr v-for="member in focusGroupMemberList" :key="member.member_id">
                     <td class="red-text-1 fw-bolder">{{ member.user_id }}</td>
+                    <td>{{ member.username }}</td>
                     <td>{{ member.email }}</td>
                     <td>{{ member.group_role }}</td>
                     <td class="d-flex align-items-center justify-content-center p-2">
@@ -268,6 +306,65 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="isChangePassword"
+    class="position-fixed vw-100 vh-100 bg-color-gray-50 text-start top-0 left-0 z-999 d-flex shadow-lg"
+  >
+    <div class="create-team-modal m-auto bg-color-white rounded-2 p-4">
+      <div class="d-flex">
+        <i class="mdi mdi-lock side-icon fs-6"></i><span class="ms-2">Password</span>
+        <button
+          class="ms-auto rounded-5 px-1 fs-6 bg-red-1 white-text-1"
+          @click="passwordModalToggle"
+        >
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+      <hr />
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="Your New Password"
+          id="new_password_input"
+          type="password"
+        />
+        <button
+          class="btn btn-outline-secondary bg-red-1 white-text-1"
+          type="button"
+          @click="updatePassword"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    v-if="isChangeUsername"
+    class="position-fixed vw-100 vh-100 bg-color-gray-50 text-start top-0 left-0 z-999 d-flex shadow-lg"
+  >
+    <div class="create-team-modal m-auto bg-color-white rounded-2 p-4">
+      <div class="d-flex">
+        <i class="mdi mdi-lock side-icon fs-6"></i><span class="ms-2">Username</span>
+        <button
+          class="ms-auto rounded-5 px-1 fs-6 bg-red-1 white-text-1"
+          @click="usernameModalToggle"
+        >
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+      <hr />
+      <div class="input-group">
+        <input class="form-control" placeholder="Username" id="new_username_input" type="text" />
+        <button
+          class="btn btn-outline-secondary bg-red-1 white-text-1"
+          type="button"
+          @click="updateUsername"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -287,9 +384,13 @@ export default {
     const invitation_code_display = ref('NOT_READY')
     const user_id = ref()
     const email = ref()
+    const username = ref()
     const verify_2fa = ref(false)
     const firstEmailCharacter = ref('U')
     const focusGroupMemberList = ref([])
+    const isChangePassword = ref(false)
+    const isChangeUsername = ref(false)
+
     const toggleCreateModal = () => {
       show_create_modal.value = !show_create_modal.value
     }
@@ -352,6 +453,8 @@ export default {
       const info = await LoginApi.checkToken(LoginApi.getLocalToken())
       email.value = info.user.email
       user_id.value = info.user.userId
+      verify_2fa.value = info.user_details.email_2fa
+      username.value = info.user_details.username
       firstEmailCharacter.value = info.user.email.toString().substring(0, 1)
     }
     const deleteGroup = async () => {
@@ -370,6 +473,34 @@ export default {
       const res = await GroupApi.removeMember(focusGroup.value, member_id)
       if (res.success == true) {
         loadTeamDetail(focusGroup.value)
+      }
+    }
+    const verify_2fa_toggle = async () => {
+      const res = await LoginApi.update_2fa_setting(!verify_2fa.value)
+      if (res.success == true) {
+        setTimeout(function () {
+          window.location.reload()
+        }, 500)
+      }
+    }
+    const passwordModalToggle = () => {
+      isChangePassword.value = !isChangePassword.value
+    }
+    const updatePassword = async () => {
+      const password = document.getElementById('new_password_input').value
+      const res = await LoginApi.updatePassword(password)
+      if (res.success == true) {
+        window.location.reload()
+      }
+    }
+    const usernameModalToggle = () => {
+      isChangeUsername.value = !isChangeUsername.value
+    }
+    const updateUsername = async () => {
+      const username_value = document.getElementById('new_username_input').value
+      const res = await LoginApi.updateUsername(username_value)
+      if (res.success == true) {
+        window.location.reload()
       }
     }
     onMounted(() => {
@@ -401,7 +532,15 @@ export default {
       deleteGroup,
       removeMember,
       focusGroupRight,
-      leaveGroup
+      leaveGroup,
+      username,
+      verify_2fa_toggle,
+      isChangePassword,
+      passwordModalToggle,
+      updatePassword,
+      isChangeUsername,
+      usernameModalToggle,
+      updateUsername
     }
   }
 }
@@ -414,12 +553,7 @@ export default {
 .fs-sm {
   font-size: 12px;
 }
-.left-panel {
-  width: 25%;
-}
-.right-panel {
-  width: 75%;
-}
+
 .side-icon {
   font-size: 2rem;
 
@@ -453,6 +587,9 @@ export default {
   color: $vt-c-white;
 }
 .profile-icon {
-  font-size: 8rem;
+  height: 160px;
+  width: 160px;
+  line-height: 160px;
+  font-size: 90px;
 }
 </style>

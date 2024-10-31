@@ -1,12 +1,13 @@
 // db-context.ts
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
-import { Project } from "../entities/project";
-import { Task } from "../entities/task"
-import { UserStory } from "../entities/userStory";
-import { Sprint } from "../entities/sprint";
 import { Comment } from "../entities/comment";
 import { Notification } from "../entities/notification";
+import { Project } from "../entities/project";
+import { Sprint } from "../entities/sprint";
+import { Task } from "../entities/task";
+import { User } from "../entities/user";
+import { UserStory } from "../entities/userStory";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
@@ -15,14 +16,13 @@ export interface IDbContext {
   get sprints(): Repository<Sprint>;
   get comments(): Repository<Comment>;
   get notifications(): Repository<Notification>;
+  get users(): Repository<User>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
   save(): Promise<void>;
   rollback(): void;
 }
-
-
 
 @injectable()
 export class DbContext implements IDbContext {
@@ -32,7 +32,7 @@ export class DbContext implements IDbContext {
 
   private _toRemove: BaseEntity[] = [];
 
-  constructor(private _em: EntityManager) { }
+  constructor(private _em: EntityManager) {}
 
   get projects() {
     return this._em.getRepository(Project);
@@ -55,6 +55,10 @@ export class DbContext implements IDbContext {
 
   get notifications() {
     return this._em.getRepository(Notification);
+  }
+
+  get users() {
+    return this._em.getRepository(User);
   }
 
   needCreate(entity: BaseEntity): void {

@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../db/db-datasrc";
 import { Group } from "../entities/group";
 import { GroupMember } from "../entities/groupMember";
@@ -52,6 +53,39 @@ export class UserGroup {
           group_role: member.group_role,
         };
       }
+      return {
+        result: "SUCCESS",
+        memberList: memberList,
+        group_name: groupMembers[0].group.group_name,
+        group_id: groupMembers[0].group.group_id,
+      };
+    } else {
+      return { result: "UNSUCCESS", error: "NOT_FOUND_GROUPMATE" };
+    }
+  }
+  static async getAllMember(userid: number) {
+    console.log(userid);
+    const grouplist = await this.getGroupList(userid);
+    const user = await UserAccount.getRecordById(userid);
+
+    if (user != null && grouplist.length > 0) {
+      const groupMembers = await AppDataSource.getRepository(GroupMember).find({
+        where: {
+          group: {
+            group_id: In(grouplist.map((group) => group.group.group_id)),
+          }, // Use In operator
+        },
+        relations: ["group", "user"],
+      });
+
+      let memberList = groupMembers.map((member) => ({
+        member_id: member.memberId,
+        user_id: member.user.userId,
+        email: member.user.email,
+        group_role: member.group_role,
+        group_name: member.group.group_name,
+        group_id: member.group.group_id,
+      }));
       return {
         result: "SUCCESS",
         memberList: memberList,
@@ -178,7 +212,7 @@ export class UserGroup {
     if (!target) {
       return { result: "UNSUCCESS", error: "TARGET_NOT_IN_GROUP" };
     }
-    (await (await target).remove()).save();
+    (await (await target)!.remove()).save();
     return { result: "SUCCESS", message: "TARGET_REMOVED" };
   }
   static async deleteGroup(user: number, group: number) {
@@ -196,7 +230,7 @@ export class UserGroup {
       return { result: "UNSUCCESS", error: "NOT_ADMIN" };
     }
 
-    (await group_record.remove()).save();
+    (await group_record!.remove()).save();
     return { result: "SUCCESS", message: "GROUP_REMOVED" };
   }
   static async leaveGroup(user: number, group: number) {

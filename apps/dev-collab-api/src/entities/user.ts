@@ -1,10 +1,12 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
+  BaseEntity,
   Column,
   CreateDateColumn,
-  BaseEntity,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
+import { Project } from "./project";
 
 @Entity("users") // Table name in the database
 export class User extends BaseEntity {
@@ -31,6 +33,9 @@ export class User extends BaseEntity {
 
   @CreateDateColumn({ name: "create_time", type: "timestamp" })
   create_time!: Date;
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[] | null = null;
 
   constructor(email: string, password: string) {
     super();

@@ -27,7 +27,7 @@ export class Task extends BaseEntity {
     @Column({ type: "varchar", nullable: true })
     assignee: string | null = null;
 
-    @Column({ type: "varchar" })
+    @Column({ type: "varchar", enum: ["To Do", "In Progress", "Done"] })
     status: string | null = null;
 
     @Column({ type: "datetime" })
@@ -44,6 +44,9 @@ export class Task extends BaseEntity {
 
     @Column({ type: "integer" })
     sprintId: number | null = null;
+
+    @Column({ type: "integer", nullable: true })
+    Author: number | null = null;
 
     @ManyToOne(() => Project, (project) => project.sprints) // Relationship with Project
     @JoinColumn({ name: "projectId" })
