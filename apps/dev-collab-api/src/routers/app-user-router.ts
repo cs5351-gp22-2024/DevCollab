@@ -5,8 +5,9 @@ import { TYPES } from "../container/types";
 export const appUserRouter = express.Router();
 
 appUserRouter.get("/api/users", async (req, res) => {
+  const token = req.headers["authorization"]??null;
   const service = appContainer.get(TYPES.IUserService);
-  const result = await service.getAllUsers();
-
+  const result = await service.getGroupUsers(token);
+  
   res.send(result);
 });

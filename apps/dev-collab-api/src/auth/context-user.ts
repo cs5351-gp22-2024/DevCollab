@@ -6,6 +6,7 @@ import { UserGroup } from "../function/user-group";
 export interface IContextUser {
   getUserId(token: string | null): Promise<number | null>;
   getUserGroupList(token: string | null): Promise<number[] | null>;
+  getMemberList(token: string | null): Promise<Object[]>;
 }
 
 @injectable()
@@ -35,6 +36,31 @@ export class ContextUser implements IContextUser {
       return groupList;
     } else {
       return null;
+    }
+  }
+  async getMemberList(token: string | null): Promise<Object[]> {
+    if (token == null) return [];
+
+    const user = await UserAccount.checkJWT(token);
+
+    if (user.result == "SUCCESS") {
+      let member_result = await UserGroup.getAllMember(user.detail?.user_id!);
+      let group_member = [];
+      for (const member of member_result.memberList!) {
+        group_member[group_member.length] = {
+          userId: member.user_id,
+          name: member.email,
+          email: member.email,
+        };
+      }
+      const unqiue_group_member = group_member.filter(
+        (user, index, self) =>
+          index === self.findIndex((u) => u.userId === user.userId)
+      );
+
+      return unqiue_group_member;
+    } else {
+      return [];
     }
   }
 }
