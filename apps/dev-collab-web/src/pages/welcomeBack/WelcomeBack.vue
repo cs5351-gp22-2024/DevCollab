@@ -6,7 +6,8 @@ import GitHubBtn from '@/components/cover_page_components/GitHubBtn.vue'
 import CoverFooter from '@/components/cover_page_components/CoverFooter.vue'
 
 import TeamSelector from '@/components/cover_page_components/TeamSelector.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import LoginApi from '@/api/login.api'
 
 export default {
   data() {
@@ -18,14 +19,24 @@ export default {
   setup() {
     const Username = ref('Username')
     const defaultTeamId = ref(1001) // ref(0)
-
+    const getUserInfo = async () => {
+      const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+      Username.value = info.user_details.username
+    }
+    if (LoginApi.getLocalToken() == '') {
+      location.href = './welcome'
+    }
+    onMounted(() => {
+      getUserInfo()
+    })
     return {
       Username,
-      defaultTeamId
+      defaultTeamId,
+      getUserInfo
     }
   },
   components: {
-    TeamSelector: TeamSelector,
+    //TeamSelector: TeamSelector,
     GitHubBtn: GitHubBtn,
     SideLogo: SideLogo,
     ConnectBtn: ConnectBtn,
@@ -87,7 +98,7 @@ export default {
         <div class="h2 p-2 large-text red-text-1">{{ Username }}</div>
         <div class="h6 p-2 red-text-1">DEVCOLLAB</div>
       </div>
-      <div class="w-100 text-center d-flex justify-content-center">
+      <!-- <div class="w-100 text-center d-flex justify-content-center">
         <div class="w-50">
           <TeamSelector
             :defaultTeamId="defaultTeamId"
@@ -97,7 +108,7 @@ export default {
             <span class="cursor-pointer" @click="findTeam">I'm looking for another team</span>
           </div>
         </div>
-      </div>
+      </div> -->
       <ConnectBtn
         ref="ConnectBtn"
         class="my-auto"
