@@ -39,20 +39,20 @@ div
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import TaskTable from '@/components/project-overview/TaskTable.vue'
 import NestedDataTable from '@/components/project-overview/NestedDataTable.vue'
 import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowDiagram.vue'
 import ProgressChart from '@/components/project-overview/ProgressChart.vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
 
+import { TaskApi } from '@/api/task.api'
+
 import {
-  tasks as dummyTasks,
   story as dummyStories,
   chartData as dummyChartData,
   progressCards as dummyProgressCards,
   type ProgressData,
-  type Task,
   type Story,
   type CFDDataPoint
 } from './DummyData'
@@ -67,14 +67,12 @@ export default {
   setup() {
     const mainStore = useProjectMainStore()
     const project = mainStore.project
+    const taskApi = TaskApi()
 
     if (!project) {
       throw new Error('project is missing')
     }
 
-    console.log('project', project?.projectId)
-
-    const tasks = ref<Task[]>(dummyTasks)
     const stories = ref<Story[]>(dummyStories)
     const chartData = ref<CFDDataPoint[]>(dummyChartData)
     const progressCards = ref<ProgressData[]>(dummyProgressCards)
@@ -84,6 +82,33 @@ export default {
     const updateSelectedPeriodIndex = (cardIndex: number, newIndex: number): void => {
       selectedPeriodIndexes.value[cardIndex] = newIndex
     }
+
+    const tasks = ref([])
+    const fetchTasks = async () => {
+      try {
+        const data = await taskApi.getTaskbyProId(project.projectId)
+        console.log('data', data)
+        tasks.value = data.map(
+          (task: {
+            name: any
+            priority: string
+            state: string
+            dueDate: string | number | Date
+          }) => ({
+            name: task.name,
+            priority: task.priority,
+            state: task.status,
+            dueDate: new Date(task.duedate).toLocaleDateString() // Format the date
+          })
+        )
+      } catch (err) {
+        console.error('Error fetching:', err)
+      }
+    }
+
+    onMounted(() => {
+      fetchTasks()
+    })
 
     return {
       tasks,
