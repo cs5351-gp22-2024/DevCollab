@@ -20,7 +20,7 @@ const LoginApi = {
       }
     } catch (error) {
       //this.message = 'Login failed: ' + (error.response?.data?.message || error.message)
-      console.error('Axios error:', error)
+      //console.error('Axios error:', error)
       return { success: false, message: 'LOGIN_FAILED' }
     }
   },
