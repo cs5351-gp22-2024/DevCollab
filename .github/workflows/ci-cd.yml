@@ -1,4 +1,4 @@
-name: build
+name: web-build
 on:
   push:
     branches:
@@ -10,6 +10,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Testing run
-        run: echo "helloworld"
+      - name: NPM Install
+        working-directory: ./apps/dev-collab-web
+        run: npm i
+      - name: NPM Build
+        working-directory: ./apps/dev-collab-web
+        run: npm run build
+        
+  deploy:
+    name: Deploy
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Deploy with PM2
+        working-directory: ./apps/dev-collab-web
+        run: |
+          # Stop existing process if it exists
+          pm2 stop dev-collab-web || true
+          pm2 delete dev-collab-web || true
+          
+          # Start new process
+          pm2 start npm --name "dev-collab-web" -- start
+          
+          # Save PM2 configuration
+          pm2 save
           
