@@ -31,7 +31,7 @@ jobs:
           pm2 delete dev-collab-api || true
           
           # Start new process
-          pm2 start npm --name dev-collab-api start:prod 8080
+          pm2 start npm --name "dev-collab-api" -- run start:prod
           
           # Save PM2 configuration
           pm2 save
