@@ -34,9 +34,7 @@ jobs:
       - name: Deploy with PM2
         working-directory: .
         run: |
-          # Stop existing process if it exists
-          pm2 stop dev-collab-web || true
-          pm2 delete dev-collab-web || true
+          pm2 delete dev-collab-web 2> /dev/null
           
           # Start new process
           pm2 --name dev-collab-web serve --spa web 8080
