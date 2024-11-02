@@ -131,11 +131,11 @@ const menuItems = [
   { title: 'Projects', icon: 'mdi-file-table-box-multiple', to: { name: 'projects' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
   { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } },
-  {
-    title: 'Project Overview(temp)',
-    icon: 'mdi-chart-areaspline',
-    to: { name: 'project-overview' }
-  },
+  // {
+  //   title: 'Project Overview(temp)',
+  //   icon: 'mdi-chart-areaspline',
+  //   to: { name: 'project-overview' }
+  // },
   {
     title: 'User Management(temp)',
     icon: 'mdi-human-greeting-variant',

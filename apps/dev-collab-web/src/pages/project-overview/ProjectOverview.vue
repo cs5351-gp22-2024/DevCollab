@@ -1,8 +1,7 @@
-div
 <template>
-  <div class="mx-auto p-4 md:p-6 bg-gray-50">
-    <h1 class="text-xl md:text-2xl font-bold mb-4">Projects Overview</h1>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+  <div class="mx-auto">
+    <v-card title="Project Overview"></v-card>
+    <div class="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-7">
         <div class="lg:flex lg:justify-between lg:gap-4 overflow-auto">
           <div
@@ -39,24 +38,37 @@ div
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import TaskTable from '@/components/project-overview/TaskTable.vue'
 import NestedDataTable from '@/components/project-overview/NestedDataTable.vue'
 import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowDiagram.vue'
 import ProgressChart from '@/components/project-overview/ProgressChart.vue'
+import { useProjectMainStore } from '../project-main/project-main.store'
+import { TaskApi } from '@/api/task.api'
+import { story as dummyStories, type Story } from './DummyData'
 
-import {
-  tasks as dummyTasks,
-  story as dummyStories,
-  chartData as dummyChartData,
-  progressCards as dummyProgressCards,
-  type ProgressData,
-  type Task,
-  type Story,
-  type CFDDataPoint
-} from './DummyData'
+interface Task {
+  name: string
+  priority: string
+  state: string
+  dueDate: string
+}
+
+interface ProgressCard {
+  title: string
+  progress: number[]
+  options: string[]
+}
+
+interface FlowDiagram {
+  createdDate: string
+  todo: number
+  inProgress: number
+  done: number
+}
 
 export default {
+  name: 'ProjectOverview',
   components: {
     TaskTable,
     NestedDataTable,
@@ -64,16 +76,83 @@ export default {
     ProgressChart
   },
   setup() {
-    const tasks = ref<Task[]>(dummyTasks)
+    const mainStore = useProjectMainStore()
+    const project = mainStore.project
+    const taskApi = TaskApi()
+
+    if (!project) {
+      throw new Error('project is missing')
+    }
+
+    const tasks = ref<Task[]>([])
     const stories = ref<Story[]>(dummyStories)
-    const chartData = ref<CFDDataPoint[]>(dummyChartData)
-    const progressCards = ref<ProgressData[]>(dummyProgressCards)
-    const selectedPeriodIndexes = ref(progressCards.value.map(() => 0))
+    const chartData = ref<FlowDiagram[]>([])
+
+    // Initialize with default structure
+    const progressCards = ref<ProgressCard[]>([
+      { title: 'TODO', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
+      { title: 'IN PROGRESS', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
+      { title: 'DONE', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] }
+    ])
+
+    const selectedPeriodIndexes = ref([2, 2, 2])
     const barColorList = ['red', 'yellow', 'teal'] as const
 
     const updateSelectedPeriodIndex = (cardIndex: number, newIndex: number): void => {
       selectedPeriodIndexes.value[cardIndex] = newIndex
     }
+
+    const fetchTasks = async () => {
+      try {
+        const data = await taskApi.getTaskbyProId(project.projectId)
+        tasks.value = data.map((task: any) => ({
+          name: task.name,
+          priority: task.priority,
+          state: task.status,
+          dueDate: new Date(task.duedate).toLocaleDateString()
+        }))
+      } catch (err) {
+        console.error('Error fetching tasks:', err)
+      }
+    }
+
+    const getOverStateCount = async () => {
+      try {
+        const data = await taskApi.getOverStateCount(project.projectId)
+        if (data && Array.isArray(data)) {
+          progressCards.value = data.map((card) => ({
+            title: card.title,
+            progress: card.progress || [0, 0, 0],
+            options: card.options || ['Daily', 'Weekly', 'Monthly']
+          }))
+        }
+      } catch (err) {
+        console.error('Error fetching state count:', err)
+      }
+    }
+
+    const getCumulativeFlowDiagram = async () => {
+      try {
+        const data = await taskApi.getCumulativeFlowDiagram(project.projectId)
+        chartData.value = data
+        console.log('getCumulativeFlowDiagram', data)
+      } catch (err) {
+        console.error('Error fetching getCumulativeFlowDiagram:', err)
+      }
+    }
+
+    watch(progressCards, (newCards) => {
+      selectedPeriodIndexes.value = new Array(newCards.length).fill(0)
+    })
+
+    // Update the watch to maintain index 2
+    watch(progressCards, (newCards) => {
+      selectedPeriodIndexes.value = new Array(newCards.length).fill(2)
+    })
+
+    onMounted(async () => {
+      await Promise.all([fetchTasks(), getOverStateCount(), getCumulativeFlowDiagram()])
+    })
 
     return {
       tasks,

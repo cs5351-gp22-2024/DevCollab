@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, type PropType } from 'vue'
+import { computed, onMounted, ref, type PropType } from 'vue'
 
 export default {
   props: {
@@ -82,7 +82,7 @@ export default {
     },
     selectedPeriodIndex: {
       type: Number,
-      default: 0
+      default: 2
     }
   },
   emits: ['update:selectedPeriodIndex'],
@@ -122,6 +122,12 @@ export default {
       selectedPeriodIndexComputed.value = index
       isOpen.value = false
     }
+
+    onMounted(() => {
+      if (props.selectedPeriodIndex !== 2) {
+        selectOption(2)
+      }
+    })
 
     return {
       circumference,
