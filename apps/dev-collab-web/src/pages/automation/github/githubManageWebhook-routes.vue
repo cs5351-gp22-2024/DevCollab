@@ -8,29 +8,38 @@
     <div class="mb-4 overflow-x-auto">
       <table class="min-w-full bg-white">
         <thead class="bg-gray-100">
-              <tr>
-                  <th class="py-2 px-4 border-b">Action</th>
-                  <th class="py-2 px-4 border-b">ID</th>
-                  <th class="py-2 px-4 border-b">URL</th>
-                  <th class="py-2 px-4 border-b">Webhook Name</th>
-                  <th class="py-1 px-0 border-b">Created At</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr v-for="event in events" :key="event.id">
-                    <td>
-                      <button @click="confirmDelete(event.id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-0 px-1 rounded">
-                        Delete Webhook
-                      </button>
-                  </td>
-                  <td class="py-2 px-4 border-b">{{ event.id }}</td>
-                  <td class="py-2 px-4 border-b">{{ event.url }}</td>
-                  <td class="py-2 px-4 border-b">{{ event.name }}</td>
-                  <td class="py-1 px-0 border-b">{{ event.created_at }}</td>
-              </tr>
-          </tbody>
+          <tr>
+            <th class="py-2 px-4 border-b">Action</th>
+            <!-- <th class="py-2 px-4 border-b">ID</th> -->
+            <th class="py-2 px-4 border-b">URL</th>
+            <th class="py-2 px-4 border-b">Webhook Name</th>
+            <th class="py-1 px-0 border-b">Created At</th>
+            <th class="py-1 px-0 border-b">Test Webhook</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in events" :key="event.id">
+            <td>
+              <button @click="confirmDelete(event.id)"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-0 px-1 rounded">
+                Delete Webhook
+              </button>
+            </td>
+            <!-- <td class="py-2 px-4 border-b">{{ event.id }}</td> -->
+            <td class="py-2 px-4 border-b">{{ event.url }}</td>
+            <td class="py-2 px-4 border-b">{{ event.name }}</td>
+            <td class="py-1 px-0 border-b">{{ event.created_at }}</td>
+            <td class="py-2 px-4 border-b">
+              <details>
+                <summary>View</summary>
+                <pre
+                  class="text-wrap">curl -X POST http://localhost:3000{{ event.url }} -H "Content-Type: application/json" -d "{\"message\": \"Hello, World!\"}"</pre>
+              </details>
+            </td>
+          </tr>
+        </tbody>
       </table>
-  </div>
+    </div>
 
   </div>
 </template>
@@ -45,52 +54,60 @@ import gitlab from '@/assets/icons/Icon_gitlab.svg'
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3000' // Express backend
-  });
+  baseURL: 'http://localhost:3000' // Express backend
+});
 
 export default {
-    data() {
-        return {
-            events: []
-        };
-    },
-    created() {
-        this.fetchEvents();
-    },
-    methods: {
-        fetchEvents() {
-            instance.get('/webhook/api/webhooks')
-                .then(response => {
-                    console.log('Success fetching events.');
-                    this.events = response.data;
-                    this.events.forEach(function(item, index, array){
-                        array[index]["created_at"] = new Date(array[index]["created_at"]);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
-                });
-        },
-        confirmDelete(id) {
-            if (window.confirm('Are you sure you want to delete this item?')) {
-                // User clicked OK, proceed with deletion
-                this.deleteItem(id);
-            } else {
-                // User clicked Cancel, do nothing
-            }
-        },
-        deleteItem(id) {
-            console.log('Deleted:', id);
-            console.log('/webhook/api/webhook-delete/'.concat(id));
-            instance.post('/webhook/api/webhook-delete/'.concat(id))
-          .then(response => {
-              console.log('Deleted successfully');
-          })
-          .catch(error => {
-              console.error('Error in deletion:', error);
+  data() {
+    return {
+      events: []
+    };
+  },
+  created() {
+    this.fetchEvents();
+  },
+  methods: {
+    fetchEvents() {
+      const token = localStorage.getItem('auth_token');
+      instance.get('/webhook/api/webhooks', {
+        headers: {
+          Authorization: token
+        }
+      })
+        .then(response => {
+          console.log('Success fetching events.');
+          this.events = response.data;
+          this.events.forEach(function (item, index, array) {
+            array[index]["created_at"] = new Date(array[index]["created_at"]);
           });
-        },
-    }
+        })
+        .catch(error => {
+          console.error('Error fetching events:', error);
+        });
+    },
+    confirmDelete(id) {
+      if (window.confirm('Are you sure you want to delete this item?')) {
+        // User clicked OK, proceed with deletion
+        this.deleteItem(id);
+      } else {
+        // User clicked Cancel, do nothing
+      }
+    },
+    deleteItem(id) {
+      console.log('Deleted:', id);
+      console.log('/webhook/api/webhook-delete/'.concat(id));
+      instance.post('/webhook/api/webhook-delete/'.concat(id))
+        .then(response => {
+          console.log('Deleted successfully');
+        })
+        .catch(error => {
+          console.error('Error in deletion:', error);
+        });
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // Reload after 0.5 second
+    },
+  }
 }
 </script>
 
@@ -105,6 +122,7 @@ export default {
 
 .custom-link {
   color: $accent-color;
+
   &:hover {
     text-decoration: underline;
   }
@@ -137,24 +155,31 @@ export default {
 .bg-primary-color {
   background-color: $primary-color;
 }
+
 .bg-secondary-color {
   background-color: $secondary-color;
 }
+
 .bg-accent-color {
   background-color: $accent-color;
 }
+
 .bg-gray-1 {
   background-color: $gray-1;
 }
+
 .bg-gray-2 {
   background-color: $gray-2;
 }
+
 .bg-brown-1 {
   background-color: $brown-1;
 }
+
 .bg-pink-red-1 {
   background-color: $pink-red-1;
 }
+
 .bg-red-1 {
   background-color: $red-1;
 }
@@ -162,6 +187,7 @@ export default {
 .color-white {
   color: $vt-c-white;
 }
+
 .block {
   display: flex;
   align-items: center;
