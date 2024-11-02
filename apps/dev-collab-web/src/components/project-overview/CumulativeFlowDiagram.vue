@@ -35,7 +35,7 @@ const props = defineProps<{
   }>
 }>()
 
-const selectedPeriod = ref('Daily')
+const selectedPeriod = ref('Monthly')
 const progressCanvas = ref<HTMLCanvasElement | null>(null)
 const periodOptions = ['Daily', 'Monthly']
 let chart: Chart | null = null
