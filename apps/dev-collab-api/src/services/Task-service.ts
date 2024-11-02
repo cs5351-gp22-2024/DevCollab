@@ -26,6 +26,13 @@ interface StatusProgress {
     options: string[];
 }
 
+interface FlowDiagram {
+    createdDate: string;
+    todo: number;
+    inProgress: number;
+    done: number;
+}
+
 
 // The main method of 8 operations : 
 // create Task  by  Project ID , Sprint ID ,
@@ -44,6 +51,7 @@ export interface ITaskService {
     CheckStatusnum(projectId: number): Promise<Record<string, number>>;
     CheckPrioritynum(projectId: number): Promise<Record<string, number>>;
     getOverStateCount(projectId: number): Promise<StatusProgress[]>;
+    getCumulativeFlowDiagram(projectId: number): Promise<FlowDiagram[]>;
 }
 
 @injectable()
@@ -244,7 +252,6 @@ export class TaskService implements ITaskService {
 
     }
 
-
     async getOverStateCount(projectId: number): Promise<StatusProgress[]> {
         try {
             const tasks = await this.getTaskbyProId(projectId);
@@ -267,53 +274,93 @@ export class TaskService implements ITaskService {
                     }
                 ];
             }
-
-            // Status mapping configuration
+    
             const statusMapping = {
                 'TODO': ['To Do'],
                 'IN PROGRESS': ['In Progress'],
                 'DONE': ['Done']
             };
-
+    
             const timeOptions = ['Daily', 'Weekly', 'Monthly'];
-            const now = new Date();
+       
+            const currentDate = new Date(); 
             
-            // Time ranges
-            const timeRanges = {
-                'Daily': new Date(now.getTime() - 24 * 60 * 60 * 1000),    // 1 day ago
-                'Weekly': new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
-                'Monthly': new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) // 1 month ago
-            };
-
+            const today = currentDate.toISOString().split('T')[0];
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+            const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
             const result: StatusProgress[] = Object.entries(statusMapping).map(([title, statusValues]) => {
-                // Get tasks for current status
-                const statusTasks = tasks.filter(task => 
-                    statusValues.some(value => task.status === value)
+                // First filter by status
+                const tasksInStatus = tasks.filter(task => 
+                    statusValues.includes(task.status)
                 );
-
-                // Calculate progress for each time period
-                const progress = timeOptions.map(period => {
-                    const periodTasks = statusTasks.filter(task => {
-                        const modifiedDate = new Date(task.modified);
-                        return modifiedDate >= timeRanges[period as keyof typeof timeRanges];
-                    }).length;
-
-                    const totalTasks = tasks.length;
-                    return Math.round((periodTasks / totalTasks) * 100);
-                });
-
+    
+                const progress = [
+                    // Daily count - tasks created today
+                    tasksInStatus.filter(task => 
+                        new Date(task.created).toISOString().split('T')[0] === today
+                    ).length,
+                    
+                    // Weekly count - tasks created this week
+                    tasksInStatus.filter(task => {
+                        const taskDate = new Date(task.created);
+                        return taskDate >= startOfWeek;
+                    }).length,
+                    
+                    // Monthly count - tasks created this month
+                    tasksInStatus.filter(task => {
+                        const taskDate = new Date(task.created);
+                        return taskDate.getFullYear() === currentDate.getFullYear() && 
+                               taskDate.getMonth() === currentDate.getMonth();
+                    }).length
+                ];
+    
                 return {
                     title,
                     progress,
                     options: timeOptions
                 };
             });
-
-
+    
             return result;
-
+    
         } catch (error) {
             console.error('Error in getOverStateCount:', error);
+            throw error;
+        }
+    }
+    
+    
+
+    async getCumulativeFlowDiagram(projectId: number): Promise<FlowDiagram[]> {
+        try {
+            const tasks = await this.getTaskbyProId(projectId);
+            
+            // Group tasks by creation date
+            const result = tasks.map(task => {
+                const tasksBeforeDate = tasks.filter(t => 
+                    new Date(t.created) <= new Date(task.created)
+                );
+                
+                return {
+                    createdDate: new Date(task.created).toISOString().split('T')[0],
+                    todo: tasksBeforeDate.filter(t => t.status === 'To Do').length,
+                    inProgress: tasksBeforeDate.filter(t => t.status === 'In Progress').length,
+                    done: tasksBeforeDate.filter(t => t.status === 'Done').length
+                };
+            });
+
+            // Remove duplicates based on createdDate
+            const uniqueResult = Array.from(new Map(
+                result.map(item => [item.createdDate, item])
+            ).values());
+
+            return uniqueResult.sort((a, b) => 
+                a.createdDate.localeCompare(b.createdDate)
+            );
+    
+        } catch (error) {
             throw error;
         }
     }

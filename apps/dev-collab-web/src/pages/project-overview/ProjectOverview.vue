@@ -45,12 +45,7 @@ import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowD
 import ProgressChart from '@/components/project-overview/ProgressChart.vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
 import { TaskApi } from '@/api/task.api'
-import {
-  story as dummyStories,
-  chartData as dummyChartData,
-  type Story,
-  type CFDDataPoint
-} from './DummyData'
+import { story as dummyStories, type Story } from './DummyData'
 
 interface Task {
   name: string
@@ -63,6 +58,13 @@ interface ProgressCard {
   title: string
   progress: number[]
   options: string[]
+}
+
+interface FlowDiagram {
+  createdDate: string
+  todo: number
+  inProgress: number
+  done: number
 }
 
 export default {
@@ -84,7 +86,7 @@ export default {
 
     const tasks = ref<Task[]>([])
     const stories = ref<Story[]>(dummyStories)
-    const chartData = ref<CFDDataPoint[]>(dummyChartData)
+    const chartData = ref<FlowDiagram[]>([])
 
     // Initialize with default structure
     const progressCards = ref<ProgressCard[]>([
@@ -129,6 +131,16 @@ export default {
       }
     }
 
+    const getCumulativeFlowDiagram = async () => {
+      try {
+        const data = await taskApi.getCumulativeFlowDiagram(project.projectId)
+        chartData.value = data
+        console.log('getCumulativeFlowDiagram', data)
+      } catch (err) {
+        console.error('Error fetching getCumulativeFlowDiagram:', err)
+      }
+    }
+
     watch(progressCards, (newCards) => {
       selectedPeriodIndexes.value = new Array(newCards.length).fill(0)
     })
@@ -139,7 +151,7 @@ export default {
     })
 
     onMounted(async () => {
-      await Promise.all([fetchTasks(), getOverStateCount()])
+      await Promise.all([fetchTasks(), getOverStateCount(), getCumulativeFlowDiagram()])
     })
 
     return {

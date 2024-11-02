@@ -6,11 +6,16 @@ import { TYPES } from "../container/types";
 
 export const taskRouter = express.Router();
 
+taskRouter.get("/api/task/cumulativeFlowDiagram/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.getCumulativeFlowDiagram(projectId);
+    res.send(result)
+});
 
 taskRouter.get("/api/task/overStateCount/:projectId", async (req, res) => {
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
-    console.log("123")
     const result = await service.getOverStateCount(projectId);
     res.send(result)
 });

@@ -12,6 +12,11 @@ export const TaskApi = () => {
     async getOverStateCount(projectId: number) {
       const { data } = await axios.get(`/task/overStateCount/${projectId}`)
       return data
+    },
+
+    async getCumulativeFlowDiagram(projectId: number) {
+      const { data } = await axios.get(`/task/cumulativeFlowDiagram/${projectId}`)
+      return data
     }
   }
 }
