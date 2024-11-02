@@ -23,6 +23,7 @@ jobs:
           path: ./apps/dev-collab-web/dist/
         
   deploy:
+    needs: build
     name: Deploy
     runs-on: [self-hosted, linux, x64]
     steps:
