@@ -1,7 +1,8 @@
 <template>
   <v-container>
+    <v-card title="Project Overview"></v-card>
     <!-- Task List UI -->
-    <v-row class="mb-4" align="center">
+    <v-row class="mt-4 mb-4" align="center">
       <v-col cols="12" sm="4" md="4">
         <v-text-field
           v-model="search"
@@ -163,7 +164,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { TaskManagementApi } from '@/api/taskmanagement.api'
 import LoginApi from '@/api/login.api'
+import { useProjectMainStore } from '../project-main/project-main.store'
 const { getTasks, createTask: createTaskApi, updateTask, deleteTask } = TaskManagementApi()
+const mainStore = useProjectMainStore()
+const project = mainStore.project
+console.log(project?.projectId)
 
 interface Task {
   taskid?: number
@@ -245,7 +250,7 @@ const fetchTasks = async () => {
   error.value = null
   try {
     const info = await LoginApi.checkToken(LoginApi.getLocalToken())
-    tasks.value = await getTasks('1', '1')
+    tasks.value = await getTasks(project?.projectId) //getTasks(info.user.projectId, info.user.sprintId)
   } catch (err) {
     console.error('Error fetching tasks:', err)
     error.value = 'Failed to fetch tasks. Please try again later.'

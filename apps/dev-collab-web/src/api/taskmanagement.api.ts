@@ -5,8 +5,8 @@ export const TaskManagementApi = () => {
   const axios = useAxios()
 
   return {
-    async getTasks(projectId: string, sprintId: string) {
-      const { data } = await axios.get(`/task/${projectId}/${sprintId}`)
+    async getTasks(projectId: string) {
+      const { data } = await axios.get(`/task/${projectId}`)
       return data
     },
 
