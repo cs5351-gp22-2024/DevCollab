@@ -19,9 +19,9 @@ import { createServer } from "http"; // For Automation Github
 import { webhookRouter } from './routers/webhook-router'; // For Automation Github
 import { NotificationRouter } from "./routers/notification-router"; // Import NotificationRouter
 import { NotificationService } from "./services/notification-service"; // Import NotificationService
-
 const cors = require('cors'); // For Automation Github
 const setupChatbot = require('./function/chatbot'); // For Chatbot
+const envConfig = require(`./config/config.${process.env.NODE_ENV || "dev"}.json`);
 
 // For Automation with GitHub WebSocket setup
 import http from "http"; // HTTP server from Node.js
@@ -29,8 +29,9 @@ import { Server as WebSocketServer } from "ws"; // WebSocket server implementati
 import { projectUserRouter } from "./routers/project-user-router";
 import { appUserRouter } from "./routers/app-user-router";
 
+const env = process.env.NODE_ENV || "dev"
 const app = express(); // Create Express app instance
-const port = 3000; // Set port number for the server
+const port = envConfig.PORT; // Set port number for the server
 
 app.use(cors()); // For Automation Github - Allow requests from all origins
 
@@ -72,6 +73,13 @@ app.use("/api/userstories", userStoryRouter); // Register the user stories route
 
 // Register error handling middleware for HTTP errors
 app.use(createHttpErrorHandler());
+
+// Use env specific config
+
+app.use((req: any, res, next) => {
+  req.envConfig = envConfig;
+  next()
+})
 
 // WebSocket setup for real-time communications (For Automation GitHub)
 const server = http.createServer(app); // Create HTTP server from Express app
