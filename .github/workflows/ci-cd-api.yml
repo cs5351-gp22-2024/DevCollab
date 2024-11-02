@@ -17,7 +17,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web
-          path: ./apps/dev-collab-api/dist/
+          path: ./apps/dev-collab-api/
 
   deploy:
     needs: build
