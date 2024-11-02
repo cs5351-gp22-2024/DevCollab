@@ -1,44 +1,19 @@
-<!-- src/components/project-overview/ProjectProgressChart.vue -->
 <template>
   <div class="p-4 h-[90%]">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold text-gray-700">Number of tasks in each state over time</h2>
-      <div class="relative inline-block text-left">
-        <button
-          @click="toggleDropdown"
-          type="button"
-          class="inline-flex justify-center items-center w-full px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          {{ selectedPeriod }}
-          <svg
-            class="ml-2 -mr-1 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+      <h2 class="text-lg font-semibold text-gray-700">Task Status Cumulative Flow</h2>
+      <div class="flex items-center gap-2">
+        <v-btn-toggle v-model="selectedPeriod" mandatory class="border rounded">
+          <v-btn
+            v-for="option in periodOptions"
+            :key="option"
+            :value="option"
+            size="small"
+            variant="text"
           >
-            <path
-              fill-rule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <div
-          v-if="isDropdownOpen"
-          class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-        >
-          <div class="py-1">
-            <a
-              v-for="option in periodOptions"
-              :key="option"
-              @click.prevent="setPeriod(option)"
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              {{ option }}
-            </a>
-          </div>
-        </div>
+            {{ option }}
+          </v-btn>
+        </v-btn-toggle>
       </div>
     </div>
     <div class="h-full">
@@ -47,158 +22,200 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref, onMounted, watch, toRaw } from 'vue'
-import { Chart, registerables } from 'chart.js'
+import { Chart, type ChartOptions } from 'chart.js/auto'
 
-Chart.register(...registerables)
+const props = defineProps<{
+  chartData: Array<{
+    createdDate: string
+    todo: number
+    inProgress: number
+    done: number
+  }>
+}>()
 
-export default {
-  props: {
-    chartData: {
-      type: Array,
-      required: true
-    }
+const selectedPeriod = ref('Monthly')
+const progressCanvas = ref<HTMLCanvasElement | null>(null)
+const periodOptions = ['Daily', 'Monthly']
+let chart: Chart | null = null
+
+const chartColors = {
+  todo: {
+    background: 'rgba(255, 99, 132, 0.2)',
+    border: 'rgb(255, 99, 132)'
   },
-  setup(props) {
-    const selectedPeriod = ref('Weekly')
-    const progressCanvas = ref(null)
-    const isDropdownOpen = ref(false)
-    const periodOptions = ['Weekly', 'Monthly']
-    let chart = null
-
-    const toggleDropdown = () => {
-      isDropdownOpen.value = !isDropdownOpen.value
-    }
-
-    const setPeriod = (period) => {
-      selectedPeriod.value = period
-      isDropdownOpen.value = false
-      updateChartPeriod()
-    }
-
-    const createCFDChart = () => {
-      if (progressCanvas.value) {
-        const ctx = progressCanvas.value.getContext('2d')
-        chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: 'To Do',
-                data: [],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgb(255, 99, 132)',
-                fill: true
-              },
-              {
-                label: 'In Progress',
-                data: [],
-                backgroundColor: 'rgba(255, 206, 86, 0.5)',
-                borderColor: 'rgb(255, 206, 86)',
-                fill: true
-              },
-              {
-                label: 'Done',
-                data: [],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgb(75, 192, 192)',
-                fill: true
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                type: 'category',
-                title: {
-                  display: true,
-                  text: 'Date'
-                }
-              },
-              y: {
-                stacked: true,
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Number of Tasks'
-                }
-              }
-            },
-            plugins: {
-              tooltip: {
-                mode: 'index'
-              },
-              legend: {
-                display: true,
-                position: 'top'
-              },
-              title: {
-                display: true,
-                text: 'Cumulative Flow Diagram'
-              }
-            }
-          }
-        })
-      }
-    }
-
-    const updateChartPeriod = () => {
-      if (chart) {
-        let filteredData = toRaw(props.chartData)
-
-        if (selectedPeriod.value === 'Monthly') {
-          // Group data by month
-          const monthlyData = {}
-          filteredData.forEach((item) => {
-            const monthYear = item.date.substring(0, 7) // Get YYYY-MM
-            if (!monthlyData[monthYear]) {
-              monthlyData[monthYear] = {
-                date: `${monthYear}-01`,
-                todo: 0,
-                inProgress: 0,
-                done: 0
-              }
-            }
-            monthlyData[monthYear].todo += item.todo
-            monthlyData[monthYear].inProgress += item.inProgress
-            monthlyData[monthYear].done += item.done
-          })
-          filteredData = Object.values(monthlyData)
-        }
-
-        // Sort the filtered data by date
-        filteredData.sort((a, b) => new Date(a.date) - new Date(b.date))
-
-        chart.data.labels = filteredData.map((item) => item.date)
-        chart.data.datasets[0].data = filteredData.map((item) => item.done)
-        chart.data.datasets[1].data = filteredData.map((item) => item.done + item.inProgress)
-        chart.data.datasets[2].data = filteredData.map(
-          (item) => item.done + item.inProgress + item.todo
-        )
-        chart.update()
-      }
-    }
-
-    onMounted(() => {
-      createCFDChart()
-      updateChartPeriod()
-    })
-
-    watch(() => selectedPeriod.value, updateChartPeriod)
-    watch(() => props.chartData, updateChartPeriod, { deep: true })
-
-    return {
-      selectedPeriod,
-      progressCanvas,
-      isDropdownOpen,
-      periodOptions,
-      toggleDropdown,
-      setPeriod
-    }
+  inProgress: {
+    background: 'rgba(255, 206, 86, 0.2)',
+    border: 'rgb(255, 206, 86)'
+  },
+  done: {
+    background: 'rgba(75, 192, 192, 0.2)',
+    border: 'rgb(75, 192, 192)'
   }
 }
+
+const formatDate = (dateString: string, period: string) => {
+  const date = new Date(dateString)
+  if (period === 'Monthly') {
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
+  }
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+const getMonthKey = (date: Date) => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`
+}
+
+const getLast12Months = () => {
+  const months = []
+  const today = new Date()
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date(today.getFullYear(), today.getMonth() - i, 1)
+    months.push(getMonthKey(date))
+  }
+  return months
+}
+
+const createCFDChart = () => {
+  if (!progressCanvas.value) return
+
+  const ctx = progressCanvas.value.getContext('2d')
+  if (!ctx) return
+
+  const options: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: 'nearest'
+    },
+    scales: {
+      x: {
+        ticks: {
+          callback: function (value, index) {
+            const date = this.getLabelForValue(index as number)
+            return formatDate(date, selectedPeriod.value)
+          }
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of Tasks'
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: (context) => {
+            const date = context[0].label
+            return formatDate(date, selectedPeriod.value)
+          }
+        }
+      },
+      legend: {
+        position: 'top',
+        labels: {
+          usePointStyle: true,
+          padding: 20
+        }
+      }
+    }
+  }
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'To Do',
+          data: [],
+          backgroundColor: chartColors.todo.background,
+          borderColor: chartColors.todo.border,
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: 'In Progress',
+          data: [],
+          backgroundColor: chartColors.inProgress.background,
+          borderColor: chartColors.inProgress.border,
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: 'Done',
+          data: [],
+          backgroundColor: chartColors.done.background,
+          borderColor: chartColors.done.border,
+          fill: true,
+          tension: 0.4
+        }
+      ]
+    },
+    options
+  })
+}
+
+const updateChartData = () => {
+  if (!chart) return
+
+  let filteredData = toRaw(props.chartData)
+
+  if (selectedPeriod.value === 'Monthly') {
+    // First, aggregate the actual data by month
+    const monthlyAggregated: { [key: string]: any } = {}
+    filteredData.forEach((item) => {
+      const monthKey = getMonthKey(new Date(item.createdDate))
+      if (!monthlyAggregated[monthKey]) {
+        monthlyAggregated[monthKey] = {
+          createdDate: monthKey,
+          todo: item.todo,
+          inProgress: item.inProgress,
+          done: item.done
+        }
+      } else {
+        // Update with latest values for the month
+        monthlyAggregated[monthKey].todo = item.todo
+        monthlyAggregated[monthKey].inProgress = item.inProgress
+        monthlyAggregated[monthKey].done = item.done
+      }
+    })
+
+    // Get last 12 months and create final data array
+    const last12Months = getLast12Months()
+    filteredData = last12Months.map((monthKey) => {
+      return (
+        monthlyAggregated[monthKey] || {
+          createdDate: monthKey,
+          todo: 0,
+          inProgress: 0,
+          done: 0
+        }
+      )
+    })
+  }
+
+  filteredData.sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+
+  chart.data.labels = filteredData.map((item) => item.createdDate)
+  chart.data.datasets[0].data = filteredData.map((item) => item.todo)
+  chart.data.datasets[1].data = filteredData.map((item) => item.inProgress)
+  chart.data.datasets[2].data = filteredData.map((item) => item.done)
+
+  chart.update()
+}
+
+onMounted(() => {
+  createCFDChart()
+  updateChartData()
+})
+
+watch(() => selectedPeriod.value, updateChartData)
+watch(() => props.chartData, updateChartData, { deep: true })
 </script>
