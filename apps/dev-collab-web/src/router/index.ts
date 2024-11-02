@@ -46,7 +46,8 @@ const router = createRouter({
           createProjectOverviewRoutes(),
           createProjectDetailRoutes(),
           createProjectSprintRoutes(),
-          createProjectUserRoutes()
+          createProjectUserRoutes(),
+          createTaskManagementRoutes()
         )
       ),
       ...creategithubNewWebhookRoutes(),
@@ -55,7 +56,6 @@ const router = createRouter({
       // ...createProjectOverviewRoutes(),
       ...createUsermanagementRoutes(),
       ...createProfileRoutes(),
-      ...createTaskManagementRoutes(),
       ...createHomeRoutes(),
       ...createProjectsRoutes(),
       ...createGuideRoutes(),
