@@ -27,8 +27,6 @@ jobs:
     runs-on: [self-hosted, linux, x64]
     steps:
       - uses: actions/download-artifact@v4
-        with:
-          name: web
       - name: Display structure of downloaded files
         working-directory: ./apps/dev-collab-web
         run: ls -R
