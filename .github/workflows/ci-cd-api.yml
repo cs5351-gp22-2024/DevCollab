@@ -25,16 +25,13 @@ jobs:
     runs-on: [self-hosted, linux, x64]
     steps:
       - uses: actions/download-artifact@v4
-      - name: Display structure of downloaded files
-        working-directory: ./apps/dev-collab-api
-        run: ls -R
       - name: Deploy with PM2
         working-directory: .
         run: |
           pm2 delete dev-collab-api || true
           
           # Start new process
-          pm2 --name dev-collab-api serve --spa api 8080
+          pm2 start npm --name dev-collab-api start:prod 8080
           
           # Save PM2 configuration
           pm2 save
