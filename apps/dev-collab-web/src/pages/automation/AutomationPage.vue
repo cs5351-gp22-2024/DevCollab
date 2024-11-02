@@ -11,8 +11,7 @@
                 <img :src="github" alt="Github Icon" />
               </div>
               <div class="text">
-                <p>Github</p>
-                <p>Webhook</p>
+                <p class="font-weight-bold">Github<br>Webhook</p>
               </div>
             </div>
           </div>
@@ -24,8 +23,7 @@
                 <img :src="gitlab" alt="Gitlab Icon" />
               </div>
               <div class="text">
-                <p>Gitlab</p>
-                <p>Webhook</p>
+                <p class="font-weight-bold">Gitlab<br>Webhook</p>
               </div>
             </div>
           </div>
@@ -49,7 +47,7 @@
     </section>
   </div>
 
-  <div class="container mx-auto p-4">
+  <!-- <div class="container mx-auto p-4">
     <section class="mb-8">
       <div class="row">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 rounded">
@@ -66,7 +64,7 @@
         </div>
       </div>
     </section>
-  </div>
+  </div> -->
 </template>
 
 // For icons & Page navigation

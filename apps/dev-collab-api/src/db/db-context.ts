@@ -1,14 +1,22 @@
 // db-context.ts
 import { injectable } from "inversify";
 import { BaseEntity, EntityManager, Repository } from "typeorm";
+import { Comment } from "../entities/comment";
+import { Notification } from "../entities/notification";
 import { Project } from "../entities/project";
-import { UserStory } from "../entities/userStory";
 import { Sprint } from "../entities/sprint";
+import { Task } from "../entities/task";
+import { User } from "../entities/user";
+import { UserStory } from "../entities/userStory";
 
 export interface IDbContext {
   get projects(): Repository<Project>;
-  get userStories(): Repository<UserStory>; 
+  get tasks(): Repository<Task>;
+  get userStories(): Repository<UserStory>;
   get sprints(): Repository<Sprint>;
+  get comments(): Repository<Comment>;
+  get notifications(): Repository<Notification>;
+  get users(): Repository<User>;
   needCreate(entity: BaseEntity): void;
   needUpdate(entity: BaseEntity): void;
   needRemove(entity: BaseEntity): void;
@@ -31,11 +39,26 @@ export class DbContext implements IDbContext {
   }
 
   get userStories() {
-    return this._em.getRepository(UserStory);  
+    return this._em.getRepository(UserStory);
   }
 
   get sprints() {
     return this._em.getRepository(Sprint);
+  }
+  get tasks() {
+    return this._em.getRepository(Task);
+  }
+
+  get comments() {
+    return this._em.getRepository(Comment);
+  }
+
+  get notifications() {
+    return this._em.getRepository(Notification);
+  }
+
+  get users() {
+    return this._em.getRepository(User);
   }
 
   needCreate(entity: BaseEntity): void {

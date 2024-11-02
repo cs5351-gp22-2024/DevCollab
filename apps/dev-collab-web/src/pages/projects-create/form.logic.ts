@@ -1,10 +1,11 @@
 import { useProjectApi } from '@/api/project.api'
+import defaultProjectLogo from '@/assets/icons/project-logo.png'
 import { usePrompt } from '@/utils/prompt/prompt'
 import { useAxios } from '@/vendors/axios'
 import { useBase64 } from '@vueuse/core'
 import { AxiosError } from 'axios'
 import type { ProjectCreateCommand } from 'shared/models/project'
-import { reactive, ref, type Ref } from 'vue'
+import { computed, reactive, ref, type Ref } from 'vue'
 
 export const useForm = () => {
   const axios = useAxios()
@@ -22,7 +23,7 @@ export const useForm = () => {
 
   const submit = async () => {
     try {
-      form.avatar = await avatarBase64.promise.value
+      form.avatar = (await avatarBase64.promise.value) || defaultProjectLogo
 
       await projectApi.createProjects(form)
 
@@ -36,5 +37,7 @@ export const useForm = () => {
     }
   }
 
-  return { form, submit, avatarFile }
+  const avatarPreview = computed(() => avatarBase64.base64.value || defaultProjectLogo)
+
+  return { form, submit, avatarFile, avatarPreview }
 }

@@ -11,6 +11,8 @@ export class UserStoryService {
 
   // Create a new user story
   async createUserStory(data: Partial<UserStory>): Promise<UserStory> {
+ 
+    data.dueDate = new Date()
     const userStory = this.dbContext.userStories.create(data);
     this.dbContext.needCreate(userStory);
     await this.dbContext.save();  // Save transaction

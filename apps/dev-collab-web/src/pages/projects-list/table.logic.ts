@@ -28,13 +28,18 @@ export const useTable = () => {
       title: 'Project Name'
     },
     {
+      key: 'description',
+      title: 'Description'
+    },
+    {
       key: 'created',
       title: 'Created Date',
       value: (item: ProjectModel) => formatDate(item.created)
     },
     {
-      key: '',
-      title: 'Actions'
+      key: 'modified',
+      title: 'Last Modified Date',
+      value: (item: ProjectModel) => formatDate(item.modified)
     }
   ]
 

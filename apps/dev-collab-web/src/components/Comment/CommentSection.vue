@@ -30,15 +30,15 @@
     <CommentInput class="mt-6" @add-comment="addComment" />
     <CommentItem
       class="mt-6"
-      v-for="comment in sortedComments"
-      :key="comment.id"
+      v-for="(comment, index) in sortedComments"
+      :key="`${comment.id}-${index}`"
       :comment="comment"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { ref, computed, type PropType } from 'vue'
+import { ref, computed, type PropType, watch } from 'vue'
 import CommentItem from './CommentItem.vue'
 import CommentInput from './CommentInput.vue'
 
@@ -63,19 +63,28 @@ export default {
   },
   setup(props) {
     const sortOrder = ref('latest')
-    const localComments = ref([...props.comments])
+    const localComments = ref<Comment[]>([])
+
+    watch(
+      () => props.comments,
+      (newComments) => {
+        localComments.value = [...newComments]
+      },
+      { immediate: true, deep: true }
+    )
 
     const sortedComments = computed(() => {
       return [...localComments.value].sort((a, b) => {
-        const dateA = new Date(a.date)
-        const dateB = new Date(b.date)
-        return sortOrder.value === 'latest'
-          ? dateB.getTime() - dateA.getTime()
-          : dateA.getTime() - dateB.getTime()
+        if (sortOrder.value === 'latest') {
+          return b.date.localeCompare(a.date)
+        } else {
+          return a.date.localeCompare(b.date)
+        }
       })
     })
 
     const formatDate = (date: Date): string => {
+      const day = date.getDate()
       const months = [
         'Jan',
         'Feb',
@@ -90,7 +99,6 @@ export default {
         'Nov',
         'Dec'
       ]
-      const day = date.getDate()
       const month = months[date.getMonth()]
       const hours = date.getHours().toString().padStart(2, '0')
       const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -99,14 +107,15 @@ export default {
     }
 
     const addComment = (content: string) => {
+      const maxId = Math.max(...localComments.value.map((comment) => comment.id), 0)
       const newComment = {
-        id: localComments.value.length + 1,
-        author: 'Isaac Lai',
-        role: 'Developer',
+        id: maxId + 1,
+        author: 'User 1001',
+        role: '',
         date: formatDate(new Date()),
         content
       }
-      localComments.value.push(newComment)
+      localComments.value = [...localComments.value, newComment]
     }
 
     return {

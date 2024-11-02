@@ -39,7 +39,7 @@
 
         <!-- Password Input -->
         <InputEditText
-          v-if="signupState === 'EMAIL'"
+          v-if="signupState === 'HIDDEN'"
           class="mt-4 justify-content-start"
           InputType="number"
           PlaceHolder="Invitation Code (Optional)"
@@ -88,6 +88,7 @@ import SignUpBtn from '@/components/cover_page_components/SignUpBtn.vue'
 import SignUpTextView from '@/components/cover_page_components/SignUpTextView.vue'
 import SignupAPI from '@/api/signup.api'
 import { ref } from 'vue'
+import GroupApi from '@/api/group.api'
 
 export default {
   components: {
@@ -112,13 +113,13 @@ export default {
         if (data.success === true) {
           signupState.value = 'VERIFY'
           //FOR DEBUG
-          alert('USE `535153` to bypass the Verification code')
+          alert('USE `535153` to bypass the Verification code[DEBUG ONLY]')
           return
         } else {
           alert('Request Verification Code failed. Invalid email. Please try again.')
         }
       } catch (error) {
-        console.log(error)
+        //console.log(error)
         alert('Request Verification Code failed.[EXCEPTION]')
       }
     }
@@ -138,13 +139,19 @@ export default {
       )
       try {
         if (data.success === true) {
-          location.href = '/home'
+          const group_data = await GroupApi.createGroup('Default Group')
+          if (group_data.success === true) {
+            location.href = '/home'
+          } else {
+            location.href = '/setting'
+          }
+
           return
         } else {
           alert('Create Account failed. Please try again.')
         }
       } catch (error) {
-        console.log(error)
+        //console.log(error)
         alert('Create Account failed.[EXCEPTION]')
       }
     }

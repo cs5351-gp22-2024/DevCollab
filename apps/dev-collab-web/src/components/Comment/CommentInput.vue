@@ -55,6 +55,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
+import { CommentApi } from '@/api/comment.api'
 
 interface Mention {
   name: string
@@ -66,6 +67,7 @@ export default defineComponent({
   name: 'CommentInput',
   emits: ['add-comment'],
   setup(props, { emit }) {
+    const commentApi = CommentApi()
     const isExpanded = ref(false)
     const commentText = ref('')
     const commentTextarea = ref<HTMLTextAreaElement | null>(null)
@@ -76,13 +78,27 @@ export default defineComponent({
 
     const filteredUsers = ref<string[]>([])
 
-    const submitComment = () => {
+    const submitComment = async () => {
       if (commentText.value.trim()) {
         const htmlContent = convertToHtml(commentText.value, mentions.value)
         emit('add-comment', htmlContent)
         commentText.value = ''
         mentions.value = []
-        isExpanded.value = false
+
+        try {
+          const newComment = {
+            task_id: 1,
+            comment: htmlContent,
+            author_user_id: 1001
+          }
+
+          const response = await commentApi.createComment(newComment)
+          console.log('response', response)
+        } catch (err) {
+          console.error('Error fetching comments:', err)
+        } finally {
+          isExpanded.value = false
+        }
       }
     }
 

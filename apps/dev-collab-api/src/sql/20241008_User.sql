@@ -1,7 +1,7 @@
 CREATE TABLE users (
     user_id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(1000),
-    email VARCHAR(1000) UNIQUE,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     email_2fa BOOLEAN DEFAULT FALSE,
     last_activity_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

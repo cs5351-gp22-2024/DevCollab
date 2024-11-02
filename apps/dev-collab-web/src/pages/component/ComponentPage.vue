@@ -8,41 +8,89 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import CommentSection from '@/components/Comment/CommentSection.vue'
+import { CommentApi } from '@/api/comment.api'
+
+interface Comment {
+  comment_id: number
+  project_id: number
+  task_id: number
+  comment: string
+  author_user_id: number
+  create_date: string
+}
+
+interface FormattedComment {
+  id: number
+  author: string
+  role: string
+  date: string
+  content: string
+}
 
 export default {
   components: {
     CommentSection
   },
   setup() {
-    const dummyCommentList = ref([
-      {
-        id: 1,
-        author: 'Isaac Lai',
-        role: 'Developer',
-        date: '9 Sep 17:25',
-        content:
-          '<span>@Peter Pan</span>\nI just finished working on this part, please check it out! I just finished working on this part, please check it out! I just finished working on this part, please check it out! I just finished working on this part, please check it out!'
-      },
-      {
-        id: 2,
-        author: 'Peter Pan',
-        role: 'Project Manager',
-        date: '9 Sep 17:30',
-        content: 'Thanks.\n<span>@Alex Lee</span> Please take a look first.'
-      },
-      {
-        id: 3,
-        author: 'Alex Lee',
-        role: 'Tester',
-        date: '9 Sep 17:35',
-        content: '<span>@Peter Pan</span> No problem.'
+    const dummyCommentList = ref<FormattedComment[]>([])
+    const loading = ref(false)
+    const commentApi = CommentApi()
+
+    const formatDateToShort = (date: Date): string => {
+      const day = date.getDate()
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ]
+      const month = months[date.getMonth()]
+      const hours = date.getHours().toString().padStart(2, '0')
+      const minutes = date.getMinutes().toString().padStart(2, '0')
+
+      return `${day} ${month} ${hours}:${minutes}`
+    }
+
+    const fetchComments = async () => {
+      try {
+        loading.value = true
+        const data = await commentApi.getCommentAll()
+
+        if (Array.isArray(data)) {
+          const formattedComments = data.map((item: Comment) => ({
+            id: Number(item.comment_id),
+            author: `${item.author_user_id}`,
+            role: 'User',
+            date: formatDateToShort(new Date(item.create_date)),
+            content: item.comment
+          }))
+
+          dummyCommentList.value = [...formattedComments]
+        }
+      } catch (err) {
+        console.error('Error fetching comments:', err)
+      } finally {
+        loading.value = false
       }
-    ])
+    }
+
+    onMounted(() => {
+      fetchComments()
+    })
 
     return {
-      dummyCommentList
+      dummyCommentList,
+      loading
     }
   }
 }

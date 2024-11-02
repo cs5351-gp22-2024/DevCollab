@@ -17,17 +17,19 @@ projectRouter.get("/api/projects/:projectId", async (req, res) => {
 });
 
 projectRouter.get("/api/projects", async (req, res) => {
+  const token = req.headers["authorization"]??null;
   const service = appContainer.get(TYPES.IProjectService);
-  const result = await service.getAllProjects();
+  const result = await service.getAllProjects(token);
 
   res.send(result);
 });
 
 projectRouter.post("/api/projects", async (req, res) => {
+  const token = req.headers["authorization"]??null;
   const command = req.body as ProjectCreateCommand;
   const service = appContainer.get(TYPES.IProjectService);
 
-  const result = await service.createProject(command);
+  const result = await service.createProject(command, token);
 
   res.send(result.toString());
 });

@@ -22,6 +22,7 @@ export class ProjectRepository implements IProjectRepository {
       },
       relations: {
         sprints: true,
+        users: true,
       },
     });
   }
@@ -30,6 +31,7 @@ export class ProjectRepository implements IProjectRepository {
     return await this._dbContext.projects.find({
       relations: {
         sprints: true,
+        users: true,
       },
     });
   }
