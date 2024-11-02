@@ -7,14 +7,32 @@ import { TYPES } from "../container/types";
 export const taskRouter = express.Router();
 
 
+// * All get ,post medit , delete method need to verify the token (userid) is in the project user table . 
+
+// Aim : get the task by userID
+// The router for the get task by UserID
+// api url eg :  /api/task/user/{userID}
+// Method : GET
+taskRouter.get("/api/task/user", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
+    const service = appContainer.get(TYPES.ITaskService);
+    const result = await service.getTaskbyToken(token);
+    res.send(result)
+});
+
+
+
 // Aim : get the Total Staus Number
 // The router for the get task by ProjectID 
 // api url eg :  /api/task/status/{projectId}
 // Method : GET
 taskRouter.get("/api/task/status/:projectId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
-    const result = await service.CheckStatusnum(projectId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.CheckStatusnum(projectId, projectuserlist, token);
     res.send(result)
 });
 
@@ -24,10 +42,12 @@ taskRouter.get("/api/task/status/:projectId", async (req, res) => {
 // api url eg :  /api/task/priority/{projectId}
 // Method : GET
 taskRouter.get("/api/task/priority/:projectId", async (req, res) => {
-    console.log("Test");
+    const token = req.headers["authorization"] ?? null;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
-    const result = await service.CheckPrioritynum(projectId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.CheckPrioritynum(projectId, projectuserlist, token);
     res.send(result);
 });
 
@@ -37,9 +57,12 @@ taskRouter.get("/api/task/priority/:projectId", async (req, res) => {
 // api url eg :  /api/task/{projectId}/
 // Method : GET
 taskRouter.get("/api/task/:projectId/", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
-    const result = await service.getTaskbyProId(projectId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.getTaskbyProId(projectId, projectuserlist, token);
     res.send(result);
 });
 
@@ -49,10 +72,13 @@ taskRouter.get("/api/task/:projectId/", async (req, res) => {
 // api url eg :  /api/task/{projectId}/{sprintId}/{taskId}
 // Metohd : GET
 taskRouter.get("/api/task/:projectId/:sprintId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
     const sprintId = parseInt(req.params.sprintId);
-    const result = await service.getTaskbyProIdSprId(projectId, sprintId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.getTaskbyProIdSprId(projectId, sprintId, projectuserlist, token);
     res.send(result);
 });
 
@@ -62,11 +88,14 @@ taskRouter.get("/api/task/:projectId/:sprintId", async (req, res) => {
 // api url eg :  /api/task/{projectId}/{sprintId}/{taskId}
 // Method : GET
 taskRouter.get("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
     const sprintId = parseInt(req.params.sprintId);
     const taskId = parseInt(req.params.taskId);
-    const result = await service.getTaskbyProIdSprIdTaskId(projectId, sprintId, taskId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.getTaskbyProIdSprIdTaskId(projectId, sprintId, taskId, projectuserlist, token);
     res.send(result);
 });
 
@@ -76,11 +105,14 @@ taskRouter.get("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
 // api url eg :  /api/task/{projectId}/{sprintId}
 // Method : POST
 taskRouter.post("/api/task/:projectId/:sprintId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const command = req.body as TaskCreateCommand;
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);
     const sprintId = parseInt(req.params.sprintId);
-    const result = await service.createTask(projectId, sprintId, command);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    const result = await service.createTask(projectId, sprintId, command, projectuserlist, token);
     res.send(result.toString());
 });
 
@@ -90,12 +122,15 @@ taskRouter.post("/api/task/:projectId/:sprintId", async (req, res) => {
 // Method : PATCH
 
 taskRouter.patch("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const taskId = parseInt(req.params.taskId);
     const projectId = parseInt(req.params.projectId);
     const sprintId = parseInt(req.params.sprintId);
     const colum = req.body;
     const service = appContainer.get(TYPES.ITaskService);
-    await service.updateTask(projectId, sprintId, taskId, colum);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    await service.updateTask(projectId, sprintId, taskId, colum, projectuserlist, token);
     res.send(200);
 });
 
@@ -106,10 +141,13 @@ taskRouter.patch("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
 // Method : Delete
 
 taskRouter.delete("/api/task/:projectId/:sprintId/:taskId", async (req, res) => {
+    const token = req.headers["authorization"] ?? null;
     const taskId = parseInt(req.params.taskId);
     const projectId = parseInt(req.params.projectId);
     const sprintId = parseInt(req.params.sprintId);
     const service = appContainer.get(TYPES.ITaskService);
-    await service.removeTask(projectId, sprintId, taskId);
+    const projectuserservice = appContainer.get(TYPES.IProjectUserService);
+    const projectuserlist = await projectuserservice.getProjectUsers(projectId);
+    await service.removeTask(projectId, sprintId, taskId, projectuserlist, token);
     res.send(200);
 });

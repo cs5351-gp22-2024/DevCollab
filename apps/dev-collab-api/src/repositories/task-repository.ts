@@ -4,6 +4,7 @@ import { IDbContext } from "../db/db-context";
 import { Task } from "../entities/task";
 
 export interface ITaskRepository {
+    getAllTasks(): Promise<Task[]>;
     addTask(task: Task): void;
     updateTask(task: Task): void;
     removeTask(task: Task): void;
@@ -32,5 +33,9 @@ export class TaskRepository implements ITaskRepository {
             where: { taskid: taskid },
             relations: ["project", "sprint"], // Include relationships 
         });
+    }
+
+    async getAllTasks(): Promise<Task[]> {
+        return await this._dbContext.tasks.find();
     }
 }
