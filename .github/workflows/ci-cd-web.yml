@@ -1,0 +1,44 @@
+name: web-build
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: npm install
+        working-directory: ./apps/dev-collab-web
+        run: npm i
+      - name: npm Build
+        working-directory: ./apps/dev-collab-web
+        run: npm run build-only
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: ./apps/dev-collab-web/dist/
+        
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Display structure of downloaded files
+        working-directory: ./apps/dev-collab-web
+        run: ls -R
+      - name: Deploy with PM2
+        working-directory: .
+        run: |
+          pm2 delete dev-collab-web || true
+          
+          # Start new process
+          pm2 --name dev-collab-web serve --spa web 3000
+          
+          # Save PM2 configuration
+          pm2 save
+          
