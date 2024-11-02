@@ -15,7 +15,7 @@ jobs:
         run: npm i
       - name: NPM Build
         working-directory: ./apps/dev-collab-web
-        run: npm run build
+        run: npm run build-only
         
   deploy:
     name: Deploy
