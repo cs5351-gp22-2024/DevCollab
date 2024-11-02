@@ -5,8 +5,10 @@ import bodyParser from 'body-parser';
 import mysql, { Connection } from 'mysql2/promise';
 import { checkConnectionStatus } from '../db/db';
 import pool from '../db/db';
+import { ContextUser } from '../auth/context-user'; // For User-ID
 
 export const webhookRouter = express.Router();
+const contextUser = new ContextUser(); // For User-ID
 
 webhookRouter.use(bodyParser.json());
 const port = 3000;
@@ -23,12 +25,18 @@ webhookRouter.get('/webhook/db-status', async (req, res) => {
 
 // Test : curl -X POST http://localhost:3000/webhook/save-url -H "Content-Type: application/json" -d "{\"url\": \"TEST_URL\",\"name\": \"TEST_URL_NAME\"}"
 webhookRouter.post('/webhook/save-url', async (req, res) => {
-    const { url, name } = req.body;
+    
+    const token = req.headers["authorization"]??null;   
+    const { url, name} = req.body;
 
-    const query = 'INSERT INTO webhook_urls (url, name) VALUES (?, ?)';
+    const query = 'INSERT INTO webhook_urls (url, name, user_id) VALUES (?, ?, ?)';
     try {
+        const userId = await contextUser.getUserId(token);
+        if (userId == null) {
+            res.status(401).send('Unauthorized. Cannot get User ID.');
+        }
         const connection = await pool.getConnection();
-        await connection.query(query, [url, name]);
+        await connection.query(query, [url, name, userId]);
         connection.release();
         console.log('URL saved to database');
         res.status(200).send('URL saved successfully');
@@ -65,13 +73,20 @@ webhookRouter.post('/webhook/:randomNumber', async (req, res) => {
 
 // Test : curl -X GET http://localhost:3000/webhook/api/webhook-events
 webhookRouter.get('/webhook/api/webhook-events', async (req, res) => {
+    const token = req.headers["authorization"]??null;   
     const query = `
         SELECT we.id, wu.name, we.payload, we.created_at 
         FROM webhook_events we 
-        JOIN webhook_urls wu ON we.webhook_url_id = wu.id`;
+        JOIN webhook_urls wu ON we.webhook_url_id = wu.id WHERE wu.user_id = ?`;
     try {
+        const userId = await contextUser.getUserId(token);
+        if (userId == null) {
+            res.status(401).send('Unauthorized. Cannot get User ID.');
+        }
+        // console.log(userId)
         const connection: Connection = await pool.getConnection();
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query, [userId]);
+        // console.log(query, [userId])
         connection.release();
         res.status(200).json(results);
     } catch (err) {
@@ -82,12 +97,18 @@ webhookRouter.get('/webhook/api/webhook-events', async (req, res) => {
 
 // Test : curl -X GET http://localhost:3000/webhook/api/webhooks
 webhookRouter.get('/webhook/api/webhooks', async (req, res) => {
+    const token = req.headers["authorization"]??null;   
     const query = `
         SELECT id, url, name, created_at 
-        FROM webhook_urls`;
+        FROM webhook_urls WHERE user_id = ?`;
+        
     try {
+        const userId = await contextUser.getUserId(token);
+        if (userId == null) {
+            res.status(401).send('Unauthorized. Cannot get User ID.');
+        }
         const connection: Connection = await pool.getConnection();
-        const [results] = await connection.query(query);
+        const [results] = await connection.query(query, [userId]);
         connection.release();
         res.status(200).json(results);
     } catch (err) {
@@ -99,7 +120,7 @@ webhookRouter.get('/webhook/api/webhooks', async (req, res) => {
 // ? Test : curl -X GET http://localhost:3000/webhook/api/webhooks
 webhookRouter.post('/webhook/api/webhook-delete/:idnum', async (req, res) => {
     const idnum = req.params.idnum;
-    console.log(idnum);
+    // console.log(idnum);
 
     // Get URL first for delete in Event
     // Delete from both Event and URL
@@ -119,15 +140,15 @@ webhookRouter.post('/webhook/api/webhook-delete/:idnum', async (req, res) => {
         // console.log(results);
         if (resultsEventTable[0].length === 0) { console.log("Event table founds no ID.") }
         else{
-            resultsEventTable[0].forEach((elem) => {
-                const results3 = connection.query(DeleteFromEVENT, [`${elem.id}`]);
+            resultsEventTable[0].forEach(async (elem) => {
+                const results3 = await connection.query(DeleteFromEVENT, [`${elem.id}`]);
                 // console.log(results3);
               });
         }
         if (resultsURLTable[0].length === 0) { console.log("URL table founds no ID.") }
         else{
-            resultsURLTable[0].forEach((elem) => {
-                const results2 = connection.query(DeleteFromURL, [`${elem.url}`]);
+            resultsURLTable[0].forEach(async (elem) => {
+                const results2 = await connection.query(DeleteFromURL, [`${elem.url}`]);
                 // console.log(results2);
                 });
         }
@@ -138,3 +159,19 @@ webhookRouter.post('/webhook/api/webhook-delete/:idnum', async (req, res) => {
         res.status(500).send('Error fetching events');
     }
 });
+
+// webhookRouter.get('/webhook/api/get-user-id', async (req, res) => {
+//     const token = req.headers["authorization"]??null;
+//     console.log(token);
+//     try {
+//         const userId = await contextUser.getUserId(token);
+//         if (userId !== null) {
+//             res.status(200).json({ userId });
+//         } else {
+//             res.status(401).send('Unauthorized');
+//         }
+//     } catch (err) {
+//         console.error('Error getting user ID:', err);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });

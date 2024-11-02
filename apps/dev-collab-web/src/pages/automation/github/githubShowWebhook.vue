@@ -8,28 +8,28 @@
     <div class="mb-4 overflow-x-auto">
       <table class="min-w-full bg-white">
         <thead class="bg-gray-100">
-              <tr>
-                  <th class="py-2 px-4 border-b">ID</th>
-                  <th class="py-2 px-4 border-b">Name</th>
-                  <th class="py-2 px-4 border-b">GitHub Notification</th>
-                  <th class="py-2 px-4 border-b">Timestamp</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr v-for="event in events" :key="event.id">
-                  <td class="py-2 px-4 border-b">{{ event.id }}</td>
-                  <td class="py-2 px-4 border-b">{{ event.name }}</td>
-                  <td class="py-2 px-4 border-b">
-                      <details>
-                          <summary>View Notification</summary>
-                          <pre>{{ event.payload }}</pre>
-                      </details>
-                  </td>
-                  <td class="py-2 px-4 border-b">{{ event.created_at }}</td>
-              </tr>
-          </tbody>
+          <tr>
+            <th class="py-2 px-4 border-b">ID</th>
+            <th class="py-2 px-4 border-b">Name</th>
+            <th class="py-2 px-4 border-b">GitHub Notification</th>
+            <th class="py-2 px-4 border-b">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in events" :key="event.id">
+            <td class="py-2 px-4 border-b">{{ event.id }}</td>
+            <td class="py-2 px-4 border-b">{{ event.name }}</td>
+            <td class="py-2 px-4 border-b">
+              <details>
+                <summary>View Notification</summary>
+                <pre>{{ event.payload }}</pre>
+              </details>
+            </td>
+            <td class="py-2 px-4 border-b">{{ event.created_at }}</td>
+          </tr>
+        </tbody>
       </table>
-  </div>
+    </div>
 
   </div>
 </template>
@@ -44,33 +44,38 @@ import gitlab from '@/assets/icons/Icon_gitlab.svg'
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3000' // Express backend
-  });
+  baseURL: 'http://localhost:3000' // Express backend
+});
 
 export default {
-    data() {
-        return {
-            events: []
-        };
-    },
-    created() {
-        this.fetchEvents();
-    },
-    methods: {
-        fetchEvents() {
-            instance.get('/webhook/api/webhook-events')
-                .then(response => {
-                    console.log('Success fetching events.');
-                    this.events = response.data;
-                    this.events.forEach(function(item, index, array){
-                        array[index]["created_at"] = new Date(array[index]["created_at"]);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
-                });
+  data() {
+    return {
+      events: []
+    };
+  },
+  created() {
+    this.fetchEvents();
+  },
+  methods: {
+    fetchEvents() {
+      const token = localStorage.getItem('auth_token');
+      instance.get('/webhook/api/webhook-events', {
+        headers: {
+          Authorization: token
         }
+      })
+        .then(response => {
+          console.log('Success fetching events.');
+          this.events = response.data;
+          this.events.forEach(function (item, index, array) {
+            array[index]["created_at"] = new Date(array[index]["created_at"]);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching events:', error);
+        });
     }
+  }
 }
 </script>
 
@@ -85,6 +90,7 @@ export default {
 
 .custom-link {
   color: $accent-color;
+
   &:hover {
     text-decoration: underline;
   }
@@ -117,24 +123,31 @@ export default {
 .bg-primary-color {
   background-color: $primary-color;
 }
+
 .bg-secondary-color {
   background-color: $secondary-color;
 }
+
 .bg-accent-color {
   background-color: $accent-color;
 }
+
 .bg-gray-1 {
   background-color: $gray-1;
 }
+
 .bg-gray-2 {
   background-color: $gray-2;
 }
+
 .bg-brown-1 {
   background-color: $brown-1;
 }
+
 .bg-pink-red-1 {
   background-color: $pink-red-1;
 }
+
 .bg-red-1 {
   background-color: $red-1;
 }
@@ -142,6 +155,7 @@ export default {
 .color-white {
   color: $vt-c-white;
 }
+
 .block {
   display: flex;
   align-items: center;
