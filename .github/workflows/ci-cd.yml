@@ -32,6 +32,7 @@ jobs:
         working-directory: ./apps/dev-collab-web
         run: ls -R
       - name: Deploy with PM2
+        working-directory: ./apps/dev-collab-web
         run: |
           # Stop existing process if it exists
           pm2 stop dev-collab-web || true
