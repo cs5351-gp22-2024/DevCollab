@@ -31,6 +31,7 @@
       class="mt-6"
       :projectId="projectId"
       :taskId="taskId"
+      :userList="userList"
       @comment-added="onCommentAdded"
     />
     <div v-if="sortedComments.length > 0">
@@ -51,12 +52,17 @@ import CommentItem from './CommentItem.vue'
 import CommentInput from './CommentInput.vue'
 import { CommentApi } from '@/api/comment.api'
 
-export interface CommentType {
+interface CommentType {
   author: string
   role: string
   date: string
   content: string
   created_date: string
+}
+
+interface UserName {
+  user_id: number
+  name: string
 }
 
 const props = defineProps({
@@ -71,6 +77,10 @@ const props = defineProps({
   taskId: {
     type: Number,
     required: true
+  },
+  userList: {
+    type: Array as PropType<UserName[]>,
+    required: false
   }
 })
 

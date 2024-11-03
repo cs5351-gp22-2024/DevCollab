@@ -44,7 +44,10 @@
               <td class="py-2 px-4 border-b text-center">{{ notification.project_id }}</td>
               <td class="py-2 px-4 border-b text-center">{{ notification.task_id }}</td>
               <td class="py-2 px-4 border-b text-center">{{ notification.author_name }}</td>
-              <td class="py-2 px-4 border-b text-center">{{ notification.comment }}</td>
+              <td
+                class="py-2 px-4 border-b text-center"
+                v-html="formatComment(notification.comment)"
+              ></td>
               <td class="py-2 px-4 border-b text-center">{{ notification.mentioned_user_name }}</td>
               <td class="py-2 px-4 border-b text-center">
                 {{ formatDate(notification.create_date) }}
@@ -109,18 +112,57 @@ export default defineComponent({
       }
     }
 
-    const formatDate = (date: string | undefined) => {
+    const formatDate = (date: string | undefined): string => {
       if (!date) return ''
-      return new Date(date).toLocaleString()
+      const d = new Date(date)
+
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      const hours = String(d.getHours()).padStart(2, '0')
+      const minutes = String(d.getMinutes()).padStart(2, '0')
+      const seconds = String(d.getSeconds()).padStart(2, '0')
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     }
 
     const markAsRead = async (notificationId: number) => {
       try {
         await notificationApi.getNotificationReadStatus(notificationId)
         await fetchUnReadNotification()
+        await updateUnReadNotification()
       } catch (err) {
         console.error('Error marking as read:', err)
       }
+    }
+
+    const updateUnReadNotification = async () => {
+      try {
+        const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+        const data = await notificationApi.getCurrentUserUnReadNotificationCount(info.user.userId) // current user id
+        const badge = document.querySelector('.v-badge__badge.v-theme--light') as HTMLElement
+        if (badge) {
+          badge.textContent = data
+        }
+      } catch (err) {
+        console.error('Error fetching:', err)
+      }
+    }
+
+    const formatComment = (comment: string): string => {
+      // Create a temporary div to parse HTML
+      const div = document.createElement('div')
+      div.innerHTML = comment
+
+      // Replace each span with its text content
+      const spans = div.getElementsByTagName('span')
+      for (let i = spans.length - 1; i >= 0; i--) {
+        const span = spans[i]
+        const textContent = span.textContent || ''
+        span.replaceWith(textContent)
+      }
+
+      return div.innerHTML
     }
 
     onMounted(() => {
@@ -130,7 +172,8 @@ export default defineComponent({
     return {
       notificationsList,
       formatDate,
-      markAsRead
+      markAsRead,
+      formatComment
     }
   }
 })

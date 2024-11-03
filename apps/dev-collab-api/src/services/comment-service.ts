@@ -28,8 +28,27 @@ export class CommentService {
     
     this.dbContext.needCreate(comment);
     await this.dbContext.save(); 
+
+
+    // save the mentioned users to another table
+
+    // Extract user IDs using regex
+    const mentionedUserIds = Array.from(
+      data.comment!.matchAll(/data-user-id="(\d+)"/g),
+      match => parseInt(match[1])
+    ).filter(id => !isNaN(id));
+
+    if (mentionedUserIds.length > 0) {
+      for (const userId of mentionedUserIds) {
+        await this.dbContext.notifications.query(
+          `INSERT INTO notification (comment_id, mentioned_user_id, read_date) VALUES (?, ?, ?)`,
+          [comment.comment_id, userId, this.formatDate(new Date())]
+        );
+      }
+    }
+    
     return comment;
-  }
+}
 
   private formatCommentDates(comments: Comment[]): Comment[] {
     return comments.map(comment => ({

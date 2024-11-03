@@ -200,6 +200,7 @@
               :comments="taskComments"
               :projectId="project?.projectId"
               :taskId="currTaskId"
+              :userList="userList"
             />
           </div>
         </v-card-text>
@@ -265,6 +266,11 @@ interface Comment {
   create_date: string
 }
 
+interface UserName {
+  user_id: number
+  name: string
+}
+
 const defaultTask: Task = {
   name: '',
   description: '',
@@ -291,6 +297,7 @@ const search = ref('')
 const sortBy = ref('priority-desc')
 const taskComments = ref<FormattedComment[]>([])
 const currTaskId = ref(0)
+const userList = ref<UserName[]>([])
 // Constants
 const sortOptions = [
   { text: 'Priority (High to Low)', value: 'priority-desc' },
@@ -343,6 +350,17 @@ const fetchTaskComments = async (taskId: number) => {
         date: item.create_date,
         content: item.comment
       }))
+    }
+  } catch (err) {
+    // Error handling
+  }
+}
+
+const fetchUserList = async () => {
+  try {
+    const data = await commentApi.getAllUsers()
+    if (Array.isArray(data)) {
+      userList.value = data
     }
   } catch (err) {
     // Error handling
@@ -495,8 +513,10 @@ const formatDate = (date: string) => {
   })
 }
 
-// Lifecycle
-onMounted(fetchTasks)
+onMounted(() => {
+  fetchTasks()
+  fetchUserList()
+})
 </script>
 
 <style scoped>

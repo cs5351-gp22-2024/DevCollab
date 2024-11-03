@@ -24,11 +24,11 @@
         >
           <div
             v-for="user in filteredUsers"
-            :key="user"
+            :key="user.user_id"
             @click="selectMention(user)"
             class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
           >
-            {{ user }}
+            {{ user.name }}
           </div>
         </div>
       </div>
@@ -54,15 +54,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, type PropType } from 'vue'
 import { CommentApi } from '@/api/comment.api'
 import { dateFormatter } from './dateFormatter'
 import LoginApi from '@/api/login.api'
 
 interface Mention {
   name: string
+  userId: number
   startIndex: number
   endIndex: number
+}
+
+interface UserName {
+  user_id: number
+  name: string
 }
 
 export default defineComponent({
@@ -75,6 +81,10 @@ export default defineComponent({
     taskId: {
       type: Number,
       required: true
+    },
+    userList: {
+      type: Array as PropType<UserName[]>,
+      required: false
     }
   },
   emits: ['add-comment', 'comment-added'],
@@ -85,10 +95,8 @@ export default defineComponent({
     const commentTextarea = ref<HTMLTextAreaElement | null>(null)
     const showMentionDropdown = ref(false)
     const mentionSearch = ref('')
-    const users = ['Alice', 'Bob', 'Charlie', 'David', 'Peter Pan', 'Alex Lee']
     const mentions = ref<Mention[]>([])
-
-    const filteredUsers = ref<string[]>([])
+    const filteredUsers = ref<UserName[]>([])
 
     const submitComment = async () => {
       if (commentText.value.trim()) {
@@ -133,8 +141,8 @@ export default defineComponent({
 
       if (lastAtSymbol !== -1 && cursorPosition - lastAtSymbol <= 15) {
         mentionSearch.value = textBeforeCursor.slice(lastAtSymbol + 1)
-        filteredUsers.value = users.filter((user) =>
-          user.toLowerCase().startsWith(mentionSearch.value.toLowerCase())
+        filteredUsers.value = (props.userList || []).filter((user) =>
+          user.name.toLowerCase().startsWith(mentionSearch.value.toLowerCase())
         )
         showMentionDropdown.value = filteredUsers.value.length > 0
       } else {
@@ -148,7 +156,7 @@ export default defineComponent({
       }
     }
 
-    const selectMention = (user: string) => {
+    const selectMention = (user: UserName) => {
       const textarea = commentTextarea.value
       if (!textarea) return
 
@@ -157,19 +165,19 @@ export default defineComponent({
       const lastAtSymbol = textBeforeMention.lastIndexOf('@')
       const textAfterMention = commentText.value.slice(cursorPosition)
 
-      const mentionText = `@${user}`
+      const mentionText = `@${user.name}`
       commentText.value =
         textBeforeMention.slice(0, lastAtSymbol) + mentionText + ' ' + textAfterMention
 
       mentions.value.push({
-        name: user,
+        name: user.name,
+        userId: user.user_id,
         startIndex: lastAtSymbol,
         endIndex: lastAtSymbol + mentionText.length
       })
 
       showMentionDropdown.value = false
 
-      // Set cursor position after the inserted mention
       setTimeout(() => {
         const newCursorPosition = lastAtSymbol + mentionText.length + 1
         textarea.setSelectionRange(newCursorPosition, newCursorPosition)
@@ -184,7 +192,7 @@ export default defineComponent({
         .forEach((mention) => {
           html =
             html.slice(0, mention.startIndex) +
-            `<span>@${mention.name}</span>` +
+            `<span data-user-id="${mention.userId}">@${mention.name}</span>` +
             html.slice(mention.endIndex)
         })
       return html
