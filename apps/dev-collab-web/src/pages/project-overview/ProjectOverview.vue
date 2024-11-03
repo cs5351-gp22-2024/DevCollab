@@ -135,7 +135,6 @@ export default {
       try {
         const data = await taskApi.getCumulativeFlowDiagram(project.projectId)
         chartData.value = data
-        console.log('getCumulativeFlowDiagram', data)
       } catch (err) {
         console.error('Error fetching getCumulativeFlowDiagram:', err)
       }

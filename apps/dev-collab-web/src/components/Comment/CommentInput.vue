@@ -56,6 +56,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { CommentApi } from '@/api/comment.api'
+import { dateFormatter } from './dateFormatter'
+import LoginApi from '@/api/login.api'
 
 interface Mention {
   name: string
@@ -65,7 +67,17 @@ interface Mention {
 
 export default defineComponent({
   name: 'CommentInput',
-  emits: ['add-comment'],
+  props: {
+    projectId: {
+      type: Number,
+      required: false
+    },
+    taskId: {
+      type: Number,
+      required: true
+    }
+  },
+  emits: ['add-comment', 'comment-added'],
   setup(props, { emit }) {
     const commentApi = CommentApi()
     const isExpanded = ref(false)
@@ -80,6 +92,7 @@ export default defineComponent({
 
     const submitComment = async () => {
       if (commentText.value.trim()) {
+        const info = await LoginApi.checkToken(LoginApi.getLocalToken())
         const htmlContent = convertToHtml(commentText.value, mentions.value)
         emit('add-comment', htmlContent)
         commentText.value = ''
@@ -87,15 +100,17 @@ export default defineComponent({
 
         try {
           const newComment = {
-            task_id: 1,
+            project_id: props.projectId,
+            task_id: props.taskId,
             comment: htmlContent,
-            author_user_id: 1001
+            author_user_id: info.user.userId,
+            create_date: dateFormatter.formatDateForAPI(new Date())
           }
 
-          const response = await commentApi.createComment(newComment)
-          console.log('response', response)
+          await commentApi.createComment(newComment)
+          emit('comment-added') // Emit after successful comment creation
         } catch (err) {
-          console.error('Error fetching comments:', err)
+          console.error('Error creating comment:', err)
         } finally {
           isExpanded.value = false
         }
