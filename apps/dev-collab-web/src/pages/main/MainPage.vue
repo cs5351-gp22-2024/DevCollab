@@ -141,8 +141,8 @@ const menuItems = [
     icon: 'mdi-human-greeting-variant',
     to: { name: 'usermanagement' }
   },
-  { title: 'Automation', icon: 'mdi-refresh-auto', to: { name: 'automation' } },
-  { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } }
+  { title: 'Automation', icon: 'mdi-refresh-auto', to: { name: 'automation' } }
+  // { title: 'Guide', icon: 'mdi-book-open-variant', to: { name: 'guide' } }
   // { title: 'Component', icon: 'mdi-view-dashboard', to: { name: 'component' } }
 ]
 
