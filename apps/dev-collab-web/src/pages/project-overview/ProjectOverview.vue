@@ -37,7 +37,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import TaskTable from '@/components/project-overview/TaskTable.vue'
 import NestedDataTable from '@/components/project-overview/NestedDataTable.vue'
@@ -67,102 +67,80 @@ interface FlowDiagram {
   done: number
 }
 
-export default {
-  name: 'ProjectOverview',
-  components: {
-    TaskTable,
-    NestedDataTable,
-    CumulativeFlowDiagram,
-    ProgressChart
-  },
-  setup() {
-    const mainStore = useProjectMainStore()
-    const project = mainStore.project
-    const taskApi = TaskApi()
+const mainStore = useProjectMainStore()
+const project = mainStore.project
+const taskApi = TaskApi()
 
-    if (!project) {
-      throw new Error('project is missing')
-    }
+if (!project) {
+  throw new Error('project is missing')
+}
 
-    const tasks = ref<Task[]>([])
-    const stories = ref<Story[]>(dummyStories)
-    const chartData = ref<FlowDiagram[]>([])
+const tasks = ref<Task[]>([])
+const stories = ref<Story[]>(dummyStories)
+const chartData = ref<FlowDiagram[]>([])
 
-    // Initialize with default structure
-    const progressCards = ref<ProgressCard[]>([
-      { title: 'TODO', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
-      { title: 'IN PROGRESS', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
-      { title: 'DONE', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] }
-    ])
+// Initialize with default structure
+const progressCards = ref<ProgressCard[]>([
+  { title: 'TODO', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
+  { title: 'IN PROGRESS', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] },
+  { title: 'DONE', progress: [0, 0, 0], options: ['Daily', 'Weekly', 'Monthly'] }
+])
 
-    const selectedPeriodIndexes = ref([2, 2, 2])
-    const barColorList = ['red', 'yellow', 'teal'] as const
+const selectedPeriodIndexes = ref([2, 2, 2])
+const barColorList = ['red', 'yellow', 'teal'] as const
 
-    const updateSelectedPeriodIndex = (cardIndex: number, newIndex: number): void => {
-      selectedPeriodIndexes.value[cardIndex] = newIndex
-    }
+const updateSelectedPeriodIndex = (cardIndex: number, newIndex: number): void => {
+  selectedPeriodIndexes.value[cardIndex] = newIndex
+}
 
-    const fetchTasks = async () => {
-      try {
-        const data = await taskApi.getTaskbyProId(project.projectId)
-        tasks.value = data.map((task: any) => ({
-          name: task.name,
-          priority: task.priority,
-          state: task.status,
-          dueDate: new Date(task.duedate).toLocaleDateString()
-        }))
-      } catch (err) {
-        console.error('Error fetching tasks:', err)
-      }
-    }
-
-    const getOverStateCount = async () => {
-      try {
-        const data = await taskApi.getOverStateCount(project.projectId)
-        if (data && Array.isArray(data)) {
-          progressCards.value = data.map((card) => ({
-            title: card.title,
-            progress: card.progress || [0, 0, 0],
-            options: card.options || ['Daily', 'Weekly', 'Monthly']
-          }))
-        }
-      } catch (err) {
-        console.error('Error fetching state count:', err)
-      }
-    }
-
-    const getCumulativeFlowDiagram = async () => {
-      try {
-        const data = await taskApi.getCumulativeFlowDiagram(project.projectId)
-        chartData.value = data
-        console.log('getCumulativeFlowDiagram', data)
-      } catch (err) {
-        console.error('Error fetching getCumulativeFlowDiagram:', err)
-      }
-    }
-
-    watch(progressCards, (newCards) => {
-      selectedPeriodIndexes.value = new Array(newCards.length).fill(0)
-    })
-
-    // Update the watch to maintain index 2
-    watch(progressCards, (newCards) => {
-      selectedPeriodIndexes.value = new Array(newCards.length).fill(2)
-    })
-
-    onMounted(async () => {
-      await Promise.all([fetchTasks(), getOverStateCount(), getCumulativeFlowDiagram()])
-    })
-
-    return {
-      tasks,
-      stories,
-      chartData,
-      progressCards,
-      selectedPeriodIndexes,
-      barColorList,
-      updateSelectedPeriodIndex
-    }
+const fetchTasks = async () => {
+  try {
+    const data = await taskApi.getTaskbyProId(project.projectId)
+    tasks.value = data.map((task: any) => ({
+      name: task.name,
+      priority: task.priority,
+      state: task.status,
+      dueDate: new Date(task.duedate).toLocaleDateString()
+    }))
+  } catch (err) {
+    console.error('Error fetching tasks:', err)
   }
 }
+
+const getOverStateCount = async () => {
+  try {
+    const data = await taskApi.getOverStateCount(project.projectId)
+    if (data && Array.isArray(data)) {
+      progressCards.value = data.map((card) => ({
+        title: card.title,
+        progress: card.progress || [0, 0, 0],
+        options: card.options || ['Daily', 'Weekly', 'Monthly']
+      }))
+    }
+  } catch (err) {
+    console.error('Error fetching state count:', err)
+  }
+}
+
+const getCumulativeFlowDiagram = async () => {
+  try {
+    const data = await taskApi.getCumulativeFlowDiagram(project.projectId)
+    chartData.value = data
+  } catch (err) {
+    console.error('Error fetching getCumulativeFlowDiagram:', err)
+  }
+}
+
+watch(progressCards, (newCards) => {
+  selectedPeriodIndexes.value = new Array(newCards.length).fill(0)
+})
+
+// Update the watch to maintain index 2
+watch(progressCards, (newCards) => {
+  selectedPeriodIndexes.value = new Array(newCards.length).fill(2)
+})
+
+onMounted(async () => {
+  await Promise.all([fetchTasks(), getOverStateCount(), getCumulativeFlowDiagram()])
+})
 </script>

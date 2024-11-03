@@ -1,174 +1,240 @@
 <template>
-  <v-container>
-    <v-card title="Project Overview"></v-card>
-    <!-- Task List UI -->
-    <v-row class="mt-4 mb-4" align="center">
-      <v-col cols="12" sm="4" md="4">
-        <v-text-field
-          v-model="search"
-          label="Search tasks"
-          prepend-inner-icon="mdi-magnify"
-          clearable
-          :disabled="loading"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="4" md="4">
-        <v-select
-          v-model="sortBy"
-          :items="sortOptions"
-          item-title="text"
-          item-value="value"
-          label="Sort by"
-          :disabled="loading"
-        ></v-select>
-      </v-col>
-      <v-col cols="12" sm="4" md="4" class="text-sm-end">
-        <v-btn color="success" @click="showAddDialog" :disabled="loading">Add New Task</v-btn>
-      </v-col>
-    </v-row>
+  <div>
+    <v-card class="mb-6">
+      <v-card-title>Task Management</v-card-title>
+    </v-card>
+
+    <!-- Task Controls -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <v-text-field
+        v-model="search"
+        label="Search tasks"
+        prepend-inner-icon="mdi-magnify"
+        clearable
+        :disabled="loading"
+        density="comfortable"
+        variant="outlined"
+        hide-details
+      ></v-text-field>
+
+      <v-select
+        v-model="sortBy"
+        :items="sortOptions"
+        item-title="text"
+        item-value="value"
+        label="Sort by"
+        :disabled="loading"
+        density="comfortable"
+        variant="outlined"
+        hide-details
+      ></v-select>
+
+      <div class="flex justify-end">
+        <v-btn color="primary" @click="showAddDialog" :disabled="loading" prepend-icon="mdi-plus">
+          Add New Task
+        </v-btn>
+      </div>
+    </div>
 
     <!-- Error Alert -->
-    <v-alert v-if="error" type="error" closable @click:close="error = null">
+    <v-alert
+      v-if="error"
+      type="error"
+      variant="tonal"
+      closable
+      class="mb-6"
+      @click:close="error = null"
+    >
       {{ error }}
     </v-alert>
 
-    <!-- Loading State -->
-    <v-row v-if="loading">
-      <v-col cols="12" class="text-center">
-        <v-progress-circular indeterminate></v-progress-circular>
-      </v-col>
+    <!-- Task Grid -->
+    <v-row v-if="loading" justify="center" class="my-8">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </v-row>
 
-    <!-- Task List -->
-    <v-row v-else>
-      <v-col cols="12" md="4" v-for="task in sortedAndFilteredTasks" :key="task.taskid">
-        <v-card :elevation="2" class="mb-4">
-          <v-card-title class="text-h6">{{ task.name }}</v-card-title>
-          <v-card-text>
-            <p><strong>Project ID:</strong> {{ task.projectId }}</p>
-            <p><strong>Sprint ID:</strong> {{ task.sprintId }}</p>
-            <p><strong>Description:</strong> {{ task.description }}</p>
-            <p><strong>Priority:</strong> {{ task.priority }}</p>
-            <p><strong>Status:</strong> {{ task.status }}</p>
-            <p><strong>Assignee:</strong> {{ task.assignee }}</p>
-            <p><strong>Due Date:</strong> {{ task.duedate }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" @click="editTask(task)">Edit</v-btn>
-            <v-btn color="error" @click="confirmDelete(task)">Delete</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <v-card
+        v-for="task in sortedAndFilteredTasks"
+        :key="task.taskid"
+        class="task-card"
+        :elevation="2"
+      >
+        <v-card-title class="pb-2">{{ task.name }}</v-card-title>
 
-    <!-- Add/Edit Dialog -->
-    <v-dialog v-model="dialog" max-width="500px" persistent>
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">{{ formTitle }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  v-model.number="editedTask.projectId"
-                  label="Project ID"
-                  type="number"
-                  :rules="[(v) => !!v || 'Project ID is required']"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model.number="editedTask.sprintId"
-                  label="Sprint ID"
-                  type="number"
-                  :rules="[(v) => !!v || 'Sprint ID is required']"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="editedTask.name"
-                  label="Task Name"
-                  :rules="[(v) => !!v || 'Task name is required']"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field v-model="editedTask.description" label="Description"></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-select
-                  v-model="editedTask.priority"
-                  :items="['Low', 'Medium', 'High']"
-                  label="Priority"
-                  :rules="[(v) => !!v || 'Priority is required']"
-                ></v-select>
-              </v-col>
-              <v-col cols="12">
-                <v-select
-                  v-model="editedTask.status"
-                  :items="['To Do', 'In Progress', 'Done']"
-                  label="Status"
-                  :rules="[(v) => !!v || 'Status is required']"
-                ></v-select>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field v-model="editedTask.assignee" label="Assignee"></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="editedTask.duedate"
-                  label="Due Date"
-                  type="date"
-                  :rules="[(v) => !!v || 'Due date is required']"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+        <v-card-text class="pt-4">
+          <div class="grid grid-cols-2 gap-y-2">
+            <div class="text-gray-600">Project ID:</div>
+            <div>{{ task.projectId }}</div>
+
+            <div class="text-gray-600">Sprint ID:</div>
+            <div>{{ task.sprintId }}</div>
+            <!-- <div class="text-gray-600">Task ID:</div>
+            <div>{{ task.taskid }}</div> -->
+            <div class="text-gray-600">Priority:</div>
+            <v-chip :color="getPriorityColor(task.priority)" size="small" class="w-min">
+              {{ task.priority }}
+            </v-chip>
+
+            <div class="text-gray-600">Status:</div>
+            <v-chip :color="getStatusColor(task.status)" size="small" class="w-min">
+              {{ task.status }}
+            </v-chip>
+
+            <div class="text-gray-600">Assignee:</div>
+            <div>{{ task.assignee }}</div>
+
+            <div class="text-gray-600">Due Date:</div>
+            <div>{{ formatDate(task.duedate) }}</div>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-gray-600">Description:</div>
+            <div class="mt-1">{{ task.description }}</div>
+          </div>
         </v-card-text>
+
+        <v-divider></v-divider>
+
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" @click="closeDialog" :disabled="saving"
-            >Cancel</v-btn
+          <v-btn variant="text" color="primary" @click="editTask(task)" prepend-icon="mdi-pencil">
+            Edit
+          </v-btn>
+          <v-btn
+            variant="text"
+            color="error"
+            @click="confirmDelete(task)"
+            prepend-icon="mdi-delete"
           >
-          <v-btn color="blue-darken-1" variant="text" @click="saveTask" :loading="saving"
-            >Save</v-btn
-          >
+            Delete
+          </v-btn>
         </v-card-actions>
+      </v-card>
+    </div>
+
+    <!-- Add/Edit Dialog -->
+    <v-dialog v-model="dialog" max-width="800px" persistent>
+      <v-card>
+        <v-card-title class="pa-4">
+          <h5 class="text-gray-800">
+            {{ formTitle }}
+          </h5>
+        </v-card-title>
+
+        <v-card-text class="pa-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <v-text-field
+              v-model.number="editedTask.sprintId"
+              label="Sprint ID"
+              type="number"
+              variant="outlined"
+              density="comfortable"
+              :rules="[(v) => !!v || 'Sprint ID is required']"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="editedTask.name"
+              label="Task Name"
+              variant="outlined"
+              density="comfortable"
+              :rules="[(v) => !!v || 'Task name is required']"
+            ></v-text-field>
+
+            <v-select
+              v-model="editedTask.priority"
+              :items="['Low', 'Medium', 'High']"
+              label="Priority"
+              variant="outlined"
+              density="comfortable"
+              :rules="[(v) => !!v || 'Priority is required']"
+            ></v-select>
+
+            <v-select
+              v-model="editedTask.status"
+              :items="['To Do', 'In Progress', 'Done']"
+              label="Status"
+              variant="outlined"
+              density="comfortable"
+              :rules="[(v) => !!v || 'Status is required']"
+            ></v-select>
+
+            <v-text-field
+              v-model="editedTask.assignee"
+              label="Assignee"
+              variant="outlined"
+              density="comfortable"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="editedTask.duedate"
+              label="Due Date"
+              type="date"
+              variant="outlined"
+              density="comfortable"
+              :rules="[(v) => !!v || 'Due date is required']"
+            ></v-text-field>
+
+            <v-textarea
+              v-model="editedTask.description"
+              label="Description"
+              variant="outlined"
+              class="col-span-2"
+              auto-grow
+              rows="3"
+            ></v-textarea>
+          </div>
+        </v-card-text>
+
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn variant="outlined" @click="closeDialog" :disabled="saving">Cancel</v-btn>
+          <v-btn color="primary" @click="saveTask" :loading="saving" class="ml-2">Save</v-btn>
+        </v-card-actions>
+
+        <v-card-text class="pa-4">
+          <!-- Comments Section (Only shown in edit mode) -->
+          <div v-if="editedIndex > -1" class="mt-6">
+            <v-divider class="mb-6"></v-divider>
+            <CommentSection
+              :comments="taskComments"
+              :projectId="project?.projectId"
+              :taskId="currTaskId"
+              :userList="userList"
+            />
+          </div>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
     <!-- Delete Confirmation Dialog -->
-    <v-dialog v-model="deleteDialog" max-width="500px" persistent>
+    <v-dialog v-model="deleteDialog" max-width="400px" persistent>
       <v-card>
-        <v-card-title class="text-h5">Are you sure you want to delete this task?</v-card-title>
-        <v-card-actions>
+        <v-card-title class="text-h5 pa-4">Delete Task</v-card-title>
+        <v-card-text class="pa-4"> Are you sure you want to delete this task? </v-card-text>
+        <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue-darken-1"
-            variant="text"
-            @click="closeDeleteDialog"
-            :disabled="deleting"
-            >Cancel</v-btn
-          >
-          <v-btn color="error" variant="text" @click="deleteTaskConfirm" :loading="deleting"
-            >Delete</v-btn
-          >
+          <v-btn variant="outlined" @click="closeDeleteDialog" :disabled="deleting"> Cancel </v-btn>
+          <v-btn color="error" @click="deleteTaskConfirm" :loading="deleting" class="ml-2">
+            Delete
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { TaskManagementApi } from '@/api/taskmanagement.api'
 import LoginApi from '@/api/login.api'
 import { useProjectMainStore } from '../project-main/project-main.store'
+import CommentSection from '@/components/Comment/CommentSection.vue'
+import { CommentApi } from '@/api/comment.api'
+
 const { getTasks, createTask: createTaskApi, updateTask, deleteTask } = TaskManagementApi()
 const mainStore = useProjectMainStore()
 const project = mainStore.project
-console.log(project?.projectId)
+const commentApi = CommentApi()
 
 interface Task {
   taskid?: number
@@ -183,6 +249,28 @@ interface Task {
   author: number
 }
 
+interface FormattedComment {
+  id: number
+  author: string
+  role: string
+  date: string
+  content: string
+}
+
+interface Comment {
+  comment_id: number
+  project_id: number
+  task_id: number
+  comment: string
+  author_name: number
+  create_date: string
+}
+
+interface UserName {
+  user_id: number
+  name: string
+}
+
 const defaultTask: Task = {
   name: '',
   description: '',
@@ -190,11 +278,12 @@ const defaultTask: Task = {
   status: 'To Do',
   assignee: '',
   duedate: '',
-  projectId: 0,
+  projectId: project?.projectId || 0,
   sprintId: 0,
   author: 0
 }
 
+// State
 const tasks = ref<Task[]>([])
 const dialog = ref(false)
 const deleteDialog = ref(false)
@@ -204,8 +293,12 @@ const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
 const error = ref<string | null>(null)
-
 const search = ref('')
+const sortBy = ref('priority-desc')
+const taskComments = ref<FormattedComment[]>([])
+const currTaskId = ref(0)
+const userList = ref<UserName[]>([])
+// Constants
 const sortOptions = [
   { text: 'Priority (High to Low)', value: 'priority-desc' },
   { text: 'Priority (Low to High)', value: 'priority-asc' },
@@ -213,12 +306,11 @@ const sortOptions = [
   { text: 'Name (Z-A)', value: 'name-desc' }
 ]
 
-const sortBy = ref('priority-desc')
-
+// Computed
 const formTitle = computed(() => (editedIndex.value === -1 ? 'New Task' : 'Edit Task'))
 
 const sortedAndFilteredTasks = computed(() => {
-  let filteredTasks = [...tasks.value] // Create a new array to avoid mutation
+  let filteredTasks = [...tasks.value]
 
   if (search.value) {
     const searchLower = search.value.toLowerCase()
@@ -245,12 +337,42 @@ const sortedAndFilteredTasks = computed(() => {
   })
 })
 
+const fetchTaskComments = async (taskId: number) => {
+  try {
+    // console.log('taskId', taskId)
+    const data = await commentApi.getCommentByTaskId(taskId)
+    // console.log('fetchTaskComments', data)
+    if (Array.isArray(data)) {
+      taskComments.value = data.map((item: Comment) => ({
+        id: Number(item.comment_id),
+        author: `${item.author_name}`,
+        role: '',
+        date: item.create_date,
+        content: item.comment
+      }))
+    }
+  } catch (err) {
+    // Error handling
+  }
+}
+
+const fetchUserList = async () => {
+  try {
+    const data = await commentApi.getAllUsers()
+    if (Array.isArray(data)) {
+      userList.value = data
+    }
+  } catch (err) {
+    // Error handling
+  }
+}
+
 const fetchTasks = async () => {
   loading.value = true
   error.value = null
   try {
-    const info = await LoginApi.checkToken(LoginApi.getLocalToken())
-    tasks.value = await getTasks(project?.projectId) //getTasks(info.user.projectId, info.user.sprintId)
+    await LoginApi.checkToken(LoginApi.getLocalToken())
+    tasks.value = await getTasks(project?.projectId)
   } catch (err) {
     console.error('Error fetching tasks:', err)
     error.value = 'Failed to fetch tasks. Please try again later.'
@@ -259,18 +381,21 @@ const fetchTasks = async () => {
   }
 }
 
-onMounted(fetchTasks)
-
 const showAddDialog = () => {
   editedIndex.value = -1
   editedTask.value = { ...defaultTask }
+  taskComments.value = []
   dialog.value = true
 }
 
-const editTask = (task: Task) => {
+const editTask = async (task: Task) => {
   editedIndex.value = tasks.value.indexOf(task)
   editedTask.value = { ...task }
   dialog.value = true
+  if (task.taskid) {
+    currTaskId.value = task.taskid
+    await fetchTaskComments(task.taskid)
+  }
 }
 
 const confirmDelete = (task: Task) => {
@@ -316,7 +441,6 @@ const saveTask = async () => {
         command
       )
     } else {
-      console.log(command)
       await createTaskApi(editedTask.value.projectId, editedTask.value.sprintId, command)
     }
     await fetchTasks()
@@ -333,6 +457,7 @@ const closeDialog = () => {
   dialog.value = false
   editedIndex.value = -1
   editedTask.value = { ...defaultTask }
+  taskComments.value = []
 }
 
 const closeDeleteDialog = () => {
@@ -353,14 +478,53 @@ const getPriorityValue = (priority: string) => {
       return 0
   }
 }
+
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case 'High':
+      return 'error'
+    case 'Medium':
+      return 'warning'
+    case 'Low':
+      return 'success'
+    default:
+      return 'grey'
+  }
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'To Do':
+      return 'grey'
+    case 'In Progress':
+      return 'info'
+    case 'Done':
+      return 'success'
+    default:
+      return 'grey'
+  }
+}
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+onMounted(() => {
+  fetchTasks()
+  fetchUserList()
+})
 </script>
 
 <style scoped>
-.v-card-text p {
-  margin-bottom: 8px;
+.task-card {
+  transition: transform 0.2s ease-in-out;
 }
 
-.v-card-title {
-  word-break: break-word;
+.task-card:hover {
+  transform: translateY(-2px);
 }
 </style>

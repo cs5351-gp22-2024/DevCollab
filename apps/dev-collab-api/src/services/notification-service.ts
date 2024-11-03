@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { IDbContext } from "../db/db-context";
-import { Comment } from "../entities/comment";
 import { Notification } from "../entities/notification";
 
 @injectable()
@@ -9,6 +8,17 @@ export class NotificationService {
     @inject("IDbContext") private dbContext: IDbContext // Inject DbContext
   ) {}
 
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  
   // testing get all records
   async getNotifications(): Promise<Notification[]> {
   
@@ -52,14 +62,15 @@ export class NotificationService {
     return notifications;
   }
 
+
   async updateNotificationStatus(notificationId: number) {
     const query = `
       UPDATE notification 
-      SET is_read = 1
+      SET is_read = 1, read_date = ?
       WHERE notification_id = ?
     `;
 
-    const result = await this.dbContext.notifications.query(query, [notificationId]);
+    const result = await this.dbContext.notifications.query(query, [this.formatDate(new Date()), notificationId]);
     return result;
 }
 
