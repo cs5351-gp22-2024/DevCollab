@@ -61,7 +61,7 @@ const router = createRouter({
       ...createGuideRoutes(),
       ...createAutomationRoutes(),
       ...creategithubRoutes(),
-      ...createComponentRoutes(),
+      // ...createComponentRoutes(),
       ...creategithubShowWebhookRoutes(),
       ...creategithubManageWebhookRoutes(),
       ...createNotificationRoutes()

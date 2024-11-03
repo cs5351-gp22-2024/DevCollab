@@ -184,7 +184,15 @@
               rows="3"
             ></v-textarea>
           </div>
+        </v-card-text>
 
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn variant="outlined" @click="closeDialog" :disabled="saving">Cancel</v-btn>
+          <v-btn color="primary" @click="saveTask" :loading="saving" class="ml-2">Save</v-btn>
+        </v-card-actions>
+
+        <v-card-text class="pa-4">
           <!-- Comments Section (Only shown in edit mode) -->
           <div v-if="editedIndex > -1" class="mt-6">
             <v-divider class="mb-6"></v-divider>
@@ -195,12 +203,6 @@
             />
           </div>
         </v-card-text>
-
-        <v-card-actions class="pa-4">
-          <v-spacer></v-spacer>
-          <v-btn variant="outlined" @click="closeDialog" :disabled="saving">Cancel</v-btn>
-          <v-btn color="primary" @click="saveTask" :loading="saving" class="ml-2">Save</v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
 
