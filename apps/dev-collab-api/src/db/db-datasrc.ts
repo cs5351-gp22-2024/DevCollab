@@ -11,9 +11,6 @@ import { Invitation } from "../entities/Invitation";
 import { Comment } from "../entities/comment";
 import { Notification } from "../entities/notification";
 // AppDataSource: TypeORM configuration
-
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('P@ssw0rd');
-FLUSH PRIVILEGES;
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: "127.0.0.1",
