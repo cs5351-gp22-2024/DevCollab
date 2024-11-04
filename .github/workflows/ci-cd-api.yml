@@ -55,7 +55,7 @@ jobs:
       #     # Save PM2 configuration
       #     pm2 save
       - name: Deploy with Docker
-        working-directory: ./api-docker
+        working-directory: ./
         run: |
           docker load -i image.tar
           docker image ls
