@@ -4,6 +4,8 @@ FROM node:${NODE_VERSION}
 
 COPY  . .
 
+RUN ls -la
+
 RUN npm i
 
 CMD ["npm", "run", "start:prod"]
