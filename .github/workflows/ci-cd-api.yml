@@ -4,59 +4,66 @@ on:
     branches:
       - "**"
 jobs:
-  dockerize:
-    name: Dockerize
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      # -
-      #   name: Login to Docker Hub
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./apps/dev-collab-api
-          file: ./apps/dev-collab-api/Dockerfile
-          tags: dev-collab-api:latest
-          outputs: type=docker,dest=./apps/dev-collab-api/image.tar
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-docker
-          path: ./apps/dev-collab-api/image.tar
-
-  deploy:
-    needs: dockerize
-    name: Deploy
+  test:
+    name: Test
     runs-on: [self-hosted, linux, x64, api-runner]
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: api-docker
-      # - name: Deploy with PM2
-      #   working-directory: .
-      #   run: |
-      #     pm2 delete dev-collab-api || true
-          
-      #     # Start new process
-      #     pm2 start npm --name "dev-collab-api" -- run start:prod
-          
-      #     # Save PM2 configuration
-      #     pm2 save
-      - name: Deploy with Docker
-        working-directory: ./api-docker
+      - name:
         run: |
-          sudo docker load -i image.tar
-          sudo docker image ls
-          sudo docker run -p 80:8080 dev-collab-api
+          docker pull nginx:latest
+  # dockerize:
+  #   name: Dockerize
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     -
+  #       name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
+  #     -
+  #       name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
+  #     # -
+  #     #   name: Login to Docker Hub
+  #     #   uses: docker/login-action@v3
+  #     #   with:
+  #     #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #     #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     -
+  #       name: Build and push
+  #       uses: docker/build-push-action@v6
+  #       with:
+  #         context: ./apps/dev-collab-api
+  #         file: ./apps/dev-collab-api/Dockerfile
+  #         tags: dev-collab-api:latest
+  #         outputs: type=docker,dest=./apps/dev-collab-api/image.tar
+  #     - name: 'Upload Artifact'
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: api-docker
+  #         path: ./apps/dev-collab-api/image.tar
+
+  # deploy:
+  #   needs: dockerize
+  #   name: Deploy
+  #   runs-on: [self-hosted, linux, x64, api-runner]
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: api-docker
+  #     # - name: Deploy with PM2
+  #     #   working-directory: .
+  #     #   run: |
+  #     #     pm2 delete dev-collab-api || true
+          
+  #     #     # Start new process
+  #     #     pm2 start npm --name "dev-collab-api" -- run start:prod
+          
+  #     #     # Save PM2 configuration
+  #     #     pm2 save
+  #     - name: Deploy with Docker
+  #       working-directory: ./api-docker
+  #       run: |
+  #         sudo docker load -i image.tar
+  #         sudo docker image ls
+  #         sudo docker run -p 80:8080 dev-collab-api
