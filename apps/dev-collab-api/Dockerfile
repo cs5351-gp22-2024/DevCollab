@@ -1,13 +1,15 @@
-ARG NODE_VERSION="20.17.0"
+FROM node:20.17.0
 
-FROM node:${NODE_VERSION}
+RUN mkdir -p /app
 
 WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --frozen-lockfile
 
 COPY  . .
 
 RUN ls -la
-
-RUN npm ci
 
 CMD ["npm", "run", "start:prod"]
