@@ -12,4 +12,6 @@ COPY  . .
 
 RUN ls -la
 
+EXPOSE 8080
+
 CMD ["npm", "run", "start:prod"]
