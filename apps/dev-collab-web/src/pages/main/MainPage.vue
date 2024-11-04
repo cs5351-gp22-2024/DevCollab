@@ -9,14 +9,20 @@
       theme="dark"
     >
       <template v-slot:prepend>
-        <v-list-item :prepend-avatar="`${baseUrl}logo.png`" :title="rail ? '' : 'DevCollab'" nav>
+        <v-list-item
+          class="ps-3"
+          :prepend-avatar="`${baseUrl}logo.png`"
+          :title="rail ? '' : ''"
+          nav
+        >
+          <div v-if="!rail" class="fs-5">DevCollab</div>
           <template v-slot:append>
             <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
           </template>
         </v-list-item>
       </template>
 
-      <v-divider></v-divider>
+      <v-divider class="my-2 mx-4"></v-divider>
 
       <v-list density="compact" nav>
         <v-list-item
@@ -30,18 +36,39 @@
       </v-list>
 
       <template v-slot:append>
-        <v-divider></v-divider>
+        <div v-if="!rail">
+          <div class="d-flex align-items-center">
+            <div class="flex-1 mx-2"><hr /></div>
+            <div class="text-center"><i class="mdi mdi-account-circle"></i> User</div>
+
+            <div class="flex-1 mx-2"><hr /></div>
+          </div>
+          <div class="text-start px-2">
+            <div class="fs-5 mt-2 py-2 my-2">
+              <i class="mdi mdi-music-accidental-sharp py-1 px-1 ms-2 rounded-2 bg-white"></i>
+              <span class="ms-2">{{ user_id }}</span>
+            </div>
+            <div class="fs-5 mt-2 py-2 my-2">
+              <i class="mdi mdi-account py-1 px-1 ms-2 rounded-2 bg-white"></i>
+              <span class="ms-2">{{ username }}</span>
+            </div>
+            <div class="fs-5 mt-2 py-2">
+              <i class="mdi mdi-email py-1 px-1 ms-2 rounded-2 bg-white"></i
+              ><span class="ms-2">{{ email }}</span>
+            </div>
+          </div>
+        </div>
         <v-list density="compact" nav>
-          <v-list-item
+          <!-- <v-list-item
             prepend-icon="mdi-cog"
             :title="rail ? '' : 'Settings'"
             :to="{ name: 'profile' }"
-          ></v-list-item>
-          <v-list-item
-            prepend-icon="mdi-logout"
-            :title="rail ? '' : 'Logout'"
-            :to="{ name: 'logout' }"
-          ></v-list-item>
+          ></v-list-item> -->
+          <div class="border border-2 rounded rounded-4 bg-white mb-2 py-1">
+            <v-list-item :prepend-icon="'mdi-logout'"
+              ><span class="ps-3 fw-bolder">LOGOUT</span></v-list-item
+            >
+          </div>
         </v-list>
       </template>
     </v-navigation-drawer>
@@ -64,21 +91,9 @@
         ></v-badge>
       </v-btn>
       <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn icon v-bind="props">
-            <v-avatar color="brown" size="small">
-              <span class="text-h5">{{ userInitials }}</span>
-            </v-avatar>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item @click="openSettings">
-            <v-list-item-title>Setting</v-list-item-title>
-          </v-list-item>
-          <v-list-item :to="{ name: 'logout' }">
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list>
+        <!-- <template v-slot:activator="{ props }">
+          
+        </template> -->
       </v-menu>
     </v-app-bar>
 
@@ -125,9 +140,13 @@ const settingsDialog = ref(false)
 const isDarkTheme = ref(theme.global.current.value.dark)
 const unreadNotifications = ref(0)
 const notificationApi = NotificationApi()
+const email = ref('')
+const user_id = ref('')
+const username = ref('')
+const firstEmailCharacter = ref('')
 
 const menuItems = [
-  { title: 'Home', icon: 'mdi-home-account', to: { name: 'home' } },
+  { title: 'Home', icon: 'mdi-home-account', to: { name: 'profile' } },
   { title: 'Projects', icon: 'mdi-file-table-box-multiple', to: { name: 'projects' } },
   { title: 'User Stories', icon: 'mdi-notebook-outline', to: { name: 'userstory' } },
   { title: 'Report', icon: 'mdi-chart-areaspline', to: { name: 'report' } },
@@ -198,12 +217,17 @@ const fetchUnReadNotification = async () => {
     // console.log(unreadNotifications.value)
   }
 }
-
+const getUserInfo = async () => {
+  const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+  email.value = info.user.email
+  user_id.value = info.user.userId
+  username.value = info.user_details.username
+  firstEmailCharacter.value = info.user.email.toString().substring(0, 1)
+}
 // Set up event listener on mount
 onMounted(() => {
   updateDrawer() // Initial check
-  window.addEventListener('resize', updateDrawer)
-  fetchUnReadNotification()
+  window.addEventListener('resize', updateDrawer), fetchUnReadNotification(), getUserInfo()
 })
 
 // Clean up event listener on unmount
@@ -212,6 +236,10 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* Add any component-specific styles here */
+.bg-white {
+  background-color: $vt-c-white;
+  opacity: 0.95;
+}
 </style>

@@ -526,7 +526,7 @@ const formatDate = (date: string) => {
 const fetchMember = async () => {
   const userApi = useUserApi(useAxios())
   memberList.value = await userApi.getUsers()
-  console.log(memberList)
+  //console.log(memberList)
 }
 const getMemberEmail = () => {
   let memberEmailList = []
