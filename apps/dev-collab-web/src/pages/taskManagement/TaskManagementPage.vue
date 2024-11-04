@@ -158,13 +158,19 @@
               density="comfortable"
               :rules="[(v) => !!v || 'Status is required']"
             ></v-select>
-
-            <v-text-field
+            <v-select
+              v-model="editedTask.assignee"
+              :items="getMemberEmail()"
+              label="Assignee"
+              variant="outlined"
+              density="comfortable"
+            ></v-select>
+            <!-- <v-text-field
               v-model="editedTask.assignee"
               label="Assignee"
               variant="outlined"
               density="comfortable"
-            ></v-text-field>
+            ></v-text-field> -->
 
             <v-text-field
               v-model="editedTask.duedate"
@@ -230,6 +236,8 @@ import LoginApi from '@/api/login.api'
 import { useProjectMainStore } from '../project-main/project-main.store'
 import CommentSection from '@/components/Comment/CommentSection.vue'
 import { CommentApi } from '@/api/comment.api'
+import { useUserApi } from '@/api/user.api'
+import { useAxios } from '@/vendors/axios'
 
 const { getTasks, createTask: createTaskApi, updateTask, deleteTask } = TaskManagementApi()
 const mainStore = useProjectMainStore()
@@ -298,6 +306,8 @@ const sortBy = ref('priority-desc')
 const taskComments = ref<FormattedComment[]>([])
 const currTaskId = ref(0)
 const userList = ref<UserName[]>([])
+const memberList = ref([])
+
 // Constants
 const sortOptions = [
   { text: 'Priority (High to Low)', value: 'priority-desc' },
@@ -513,9 +523,23 @@ const formatDate = (date: string) => {
   })
 }
 
+const fetchMember = async () => {
+  const userApi = useUserApi(useAxios())
+  memberList.value = await userApi.getUsers()
+  console.log(memberList)
+}
+const getMemberEmail = () => {
+  let memberEmailList = []
+  for (const m of memberList.value) {
+    memberEmailList[memberEmailList.length] = m.email
+  }
+  return memberEmailList
+}
+
 onMounted(() => {
   fetchTasks()
   fetchUserList()
+  fetchMember()
 })
 </script>
 
