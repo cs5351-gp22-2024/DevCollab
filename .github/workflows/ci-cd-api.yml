@@ -42,9 +42,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./apps/dev-collab-api
-          file: ./Dockerfile
+          file: ./apps/dev-collab-api/Dockerfile
           tags: api:latest
-          outputs: type=oci,dest=./image.tar
+          outputs: type=oci,dest=./apps/dev-collab-api/image.tar
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
@@ -52,7 +52,7 @@ jobs:
           path: ./apps/dev-collab-api/image.tar
 
   deploy:
-    needs: build
+    needs: dockerize
     name: Deploy
     runs-on: [self-hosted, linux, x64, api-runner]
     steps:
