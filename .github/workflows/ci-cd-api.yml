@@ -54,9 +54,11 @@ jobs:
           
       #     # Save PM2 configuration
       #     pm2 save
-      - name: Deploy with Docker
+      - name: Load image with Docker
         working-directory: ./
         run: |
           docker load -i image.tar
           docker image ls
-          docker run -p 80:8080 dev-collab-api
+      - name: Run Docker compose
+        working-directory: ./
+        run: docker compose up -d
