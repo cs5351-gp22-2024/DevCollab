@@ -38,26 +38,29 @@
       <template v-slot:append>
         <div v-if="!rail">
           <div class="d-flex align-items-center">
-            <div class="flex-1 mx-2"><hr /></div>
-            <div class="text-center"><i class="mdi mdi-account-circle"></i> User</div>
+            <div class="flex-1 mx-4"><hr /></div>
+            <div class="text-center rounded px-3 border-4 rounded-circle">
+              <i class="mdi mdi-account-circle fs-1"></i>
+            </div>
 
-            <div class="flex-1 mx-2"><hr /></div>
+            <div class="flex-1 mx-4"><hr /></div>
           </div>
-          <div class="text-start px-2">
-            <div class="fs-5 mt-2 py-2 my-2">
-              <i class="mdi mdi-music-accidental-sharp py-1 px-1 ms-2 rounded-2 bg-white"></i>
+          <div class="text-start px-2 mb-3">
+            <div class="fs-5 py-1">
+              <i class="mdi mdi-music-accidental-sharp py-2 px-2 ms-2 rounded-top-4 bg-white"></i>
               <span class="ms-2">{{ user_id }}</span>
             </div>
-            <div class="fs-5 mt-2 py-2 my-2">
-              <i class="mdi mdi-account py-1 px-1 ms-2 rounded-2 bg-white"></i>
+            <div class="fs-5 py-1">
+              <i class="mdi mdi-account py-2 px-2 ms-2 bg-white"></i>
               <span class="ms-2">{{ username }}</span>
             </div>
-            <div class="fs-5 mt-2 py-2">
-              <i class="mdi mdi-email py-1 px-1 ms-2 rounded-2 bg-white"></i
+            <div class="fs-5 py-1">
+              <i class="mdi mdi-email py-2 px-2 ms-2 rounded-bottom-4 bg-white"></i
               ><span class="ms-2">{{ email }}</span>
             </div>
           </div>
         </div>
+        <hr class="mx-4" />
         <v-list density="compact" nav>
           <!-- <v-list-item
             prepend-icon="mdi-cog"
