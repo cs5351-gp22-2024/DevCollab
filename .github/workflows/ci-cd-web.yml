@@ -78,7 +78,7 @@ jobs:
         run: |
           docker load -i image.tar
           docker image ls
-      # - name: Run Docker compose
-      #   working-directory: ./
-      #   run: docker compose up -d
+      - name: Run Docker compose
+        working-directory: ./
+        run: docker compose up -d
           
