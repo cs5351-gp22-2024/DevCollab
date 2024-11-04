@@ -33,7 +33,7 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: api
+          name: api-docker
           path: ./apps/dev-collab-api/image.tar
 
   deploy:
@@ -55,7 +55,7 @@ jobs:
       #     # Save PM2 configuration
       #     pm2 save
       - name: Deploy with Docker
-        working-directory: ./apps/dev-collab-api
+        working-directory: ./api-docker
         run: |
           docker load -i image.tar
           docker image ls
