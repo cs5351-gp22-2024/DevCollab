@@ -20,7 +20,7 @@ const setupChatbot = (server) => {
     const authHeader = req.headers.auth_header;
         ws.on('message', (message) => {
   const question = message.toString();
-  let answer = qaPairs[question] || "Sorry, I don't know the answer to that. Please try 'tasks' or other questions.";
+  let answer = qaPairs[question] || "Sorry, I don't know the answer. Try 'What is DevCollab?' or other questions.";
   const query = 'SELECT COUNT(*) AS taskCount, MIN(duedate) AS upcomingDeadline FROM Task WHERE assignee = ? AND status != ?';
 
     if (question.toLowerCase().includes('task') && !answer.includes('Sorry')) {
