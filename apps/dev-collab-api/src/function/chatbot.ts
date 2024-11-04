@@ -28,7 +28,8 @@ const setupChatbot = (server) => {
     try {
         const userId = await contextUser.getUserId(authHeader);
         if (userId == null) {
-            res.status(401).send('Unauthorized. Cannot get User ID.');
+            ws.send("Please login first to view your tasks.");
+            return wss;
         }
         const connection = await pool.getConnection();
         const results = await connection.query(query, [userId, 'Done']);
