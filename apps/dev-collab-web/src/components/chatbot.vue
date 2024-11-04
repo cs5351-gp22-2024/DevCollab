@@ -42,11 +42,14 @@ export default {
         }
     },
     created() {
-        this.socket = new WebSocket('ws://localhost:3000');
-        this.socket.onmessage = (event) => {
-            this.messages[this.messages.length - 1].answer = event.data;
-        };
-    },
+  const authHeader = localStorage.getItem('auth_token'); // For user-ID
+
+  this.socket = new WebSocket('ws://localhost:3000', [authHeader]); 
+
+  this.socket.onmessage = (event) => {
+    this.messages[this.messages.length - 1].answer = event.data;
+  };
+},
     beforeDestroy() {
         this.socket.close();
     }
