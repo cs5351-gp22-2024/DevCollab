@@ -8,9 +8,11 @@
     "src/**/*.d.ts",
   ],
   "exclude": [
-    "src/**/__tests__/*"
+    "src/**/__tests__/*",
+    "src/**"
   ],
   "compilerOptions": {
+    "allowJs": true,
     "composite": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

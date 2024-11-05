@@ -13,7 +13,7 @@ import { Notification } from "../entities/notification";
 // AppDataSource: TypeORM configuration
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "127.0.0.1",
+  host: "0.0.0.0",
   port: 3306,
   username: "root",
   password: "P@ssw0rd",

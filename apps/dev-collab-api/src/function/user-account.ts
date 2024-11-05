@@ -1,4 +1,4 @@
-import { VCode } from "./Verification-Code";
+import { VCode } from "./verification-code";
 import { User } from "../entities/user";
 import { createHash } from "crypto";
 import jwt from "jsonwebtoken";
