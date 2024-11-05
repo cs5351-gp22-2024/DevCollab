@@ -39,16 +39,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: api-docker
-      # - name: Deploy with PM2
-      #   working-directory: .
-      #   run: |
-      #     pm2 delete dev-collab-api || true
-          
-      #     # Start new process
-      #     pm2 start npm --name "dev-collab-api" -- run start:prod
-          
-      #     # Save PM2 configuration
-      #     pm2 save
       - name: Load image with Docker
         working-directory: ./
         run: |
