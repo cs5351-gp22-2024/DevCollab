@@ -43,8 +43,10 @@ import github from '@/assets/icons/Icon_github.svg'
 import gitlab from '@/assets/icons/Icon_gitlab.svg'
 import axios from 'axios';
 
+let baseURLdynamic = window.location.href.includes('localhost') ? 'http://localhost:3000' : 'http://54.199.209.19';
+
 const instance = axios.create({
-  baseURL: 'http://localhost:3000' // Express backend
+  baseURL: baseURLdynamic // Express backend
 });
 
 export default {
