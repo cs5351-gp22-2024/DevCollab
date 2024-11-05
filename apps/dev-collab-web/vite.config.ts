@@ -5,14 +5,13 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import sass from 'sass'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
-import dotenv from 'dotenv';
-dotenv.config();
-
+import dotenv from 'dotenv'
+dotenv.config()
 
 export default defineConfig(({ mode }) => {
-  const isProd = mode === "production"
-  const API_URL = isProd ?? process.env.VITE_API_URL;
-
+  const isProd = mode === 'production'
+  const API_URL = isProd ? process.env.VITE_API_URL : null
+  console.log(API_URL)
   return {
     plugins: [vue(), vueJsx()],
     css: {
