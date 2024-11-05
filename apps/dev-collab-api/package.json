@@ -2,6 +2,7 @@
   "scripts": {
     "track-sql": "db-integrity-tracker --sqlfolder=./src/sql --trackfile=./db-tracker.txt",
     "dev": "npm run track-sql && cross-env NODE_ENV=dev nodemon ./src/index.ts",
+    "start:dev": "cross-env NODE_ENV=dev nodemon ./src/index.ts",
     "start:prod": "cross-env NODE_ENV=prod nodemon ./src/index.ts"
   },
   "devDependencies": {
