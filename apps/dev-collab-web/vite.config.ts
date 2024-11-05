@@ -11,7 +11,7 @@ dotenv.config();
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === "production"
-  const API_URL = isProd ? process.env.VITE_API_URL : 'http://localhost:3000';
+  const API_URL = isProd ?? process.env.VITE_API_URL;
 
   return {
     plugins: [vue(), vueJsx()],
@@ -52,7 +52,9 @@ export default defineConfig(({ mode }) => {
       }
     },
     define: {
-      'process.env': {}
+      'process.env': {
+        API_URL: API_URL
+      }
     }
   }
 })
