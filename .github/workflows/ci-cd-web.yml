@@ -2,7 +2,8 @@ name: web-build
 on:
   push:
     branches:
-      - "**"
+      - develop
+      - master
 jobs:
   # build:
   #   name: Build
