@@ -30,4 +30,4 @@ RUN ls -la
 
 EXPOSE 3000
 
-CMD ["serve", "-s", "dist"]
+CMD ["npm", "run", "preview"]
