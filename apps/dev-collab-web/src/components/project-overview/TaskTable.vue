@@ -25,7 +25,7 @@
         </button>
         <div
           v-if="isDropdownOpen"
-          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
         >
           <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             <a
@@ -36,50 +36,43 @@
               >By Priority</a
             >
             <a
-              @click.prevent="setSortBy('deadline')"
+              @click.prevent="setSortBy('dueDate')"
               href="#"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
-              >By Deadline</a
-            >
-            <a
-              @click.prevent="setSortBy('name')"
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-              role="menuitem"
-              >By Name</a
+              >By Due Date</a
             >
           </div>
         </div>
       </div>
     </div>
     <div class="overflow-auto max-h-[380px] min-h-[380px] rounded-lg border">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+      <table v-if="sortedTasks.length > 0" class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50 sticky top-0">
           <tr>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[35%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Task
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Priority
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Deadline
+              State
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="w-[25%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Detail
+              Due Date
             </th>
           </tr>
         </thead>
@@ -93,13 +86,16 @@
                 {{ task.priority }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ task.deadline }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <button :class="goButtonClass()">GO</button>
+              <span :class="stateClass(task.state)">
+                {{ task.state }}
+              </span>
             </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ task.dueDate }}</td>
           </tr>
         </tbody>
       </table>
+      <div v-else class="p-4 text-center text-gray-500">No tasks available</div>
     </div>
   </div>
 </template>
@@ -107,10 +103,14 @@
 <script lang="ts">
 import { type PropType, computed, ref, watch } from 'vue'
 
+type SortType = 'priority' | 'dueDate'
+type Priority = 'High' | 'Medium' | 'Low'
+
 interface Task {
   name: string
-  priority: 'High' | 'Medium' | 'Low'
-  deadline: string
+  priority: string
+  state: string
+  dueDate: string
 }
 
 export default {
@@ -122,73 +122,63 @@ export default {
     }
   },
   setup(props) {
-    const sortBy = ref<'priority' | 'deadline' | 'name'>('priority')
+    const sortBy = ref<SortType>('dueDate') // Default sort by due date
     const isDropdownOpen = ref(false)
 
     const toggleDropdown = () => {
       isDropdownOpen.value = !isDropdownOpen.value
     }
 
-    const setSortBy = (value: 'priority' | 'deadline' | 'name') => {
+    const setSortBy = (value: SortType) => {
       sortBy.value = value
       isDropdownOpen.value = false
     }
 
     const sortByText = computed(() => {
-      switch (sortBy.value) {
-        case 'priority':
-          return 'By Priority'
-        case 'deadline':
-          return 'By Deadline'
-        case 'name':
-          return 'By Name'
-        default:
-          return 'By Priority'
+      const texts: Record<SortType, string> = {
+        priority: 'By Priority',
+        dueDate: 'By Due Date'
       }
+      return texts[sortBy.value]
     })
 
     const sortedTasks = computed(() => {
+      if (!props.tasks?.length) return []
+
       return [...props.tasks].sort((a, b) => {
         if (sortBy.value === 'priority') {
-          const priorityOrder = { High: 1, Medium: 2, Low: 3 }
-          return priorityOrder[a.priority] - priorityOrder[b.priority]
-        } else if (sortBy.value === 'deadline') {
-          return new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-        } else {
-          return a.name.localeCompare(b.name)
+          const priorityOrder: Record<string, number> = {
+            High: 1,
+            Medium: 2,
+            Low: 3
+          }
+          return (priorityOrder[a.priority] || 999) - (priorityOrder[b.priority] || 999)
+        } else if (sortBy.value === 'dueDate') {
+          // Sort by descending order (newest first)
+          return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
         }
+        return 0
       })
     })
 
-    watch(sortBy, (newValue) => {
-      console.log('Sort by changed to:', newValue)
-    })
-
-    watch(
-      sortedTasks,
-      (newValue) => {
-        console.log('Sorted tasks changed:', newValue)
-      },
-      { deep: true }
-    )
-
     const priorityClass = (priority: string) => {
       const baseClasses = 'px-2 py-1 rounded-full text-xs font-medium'
-      switch (priority) {
-        case 'High':
-          return `${baseClasses} bg-red-100 text-red-800`
-        case 'Medium':
-          return `${baseClasses} bg-yellow-100 text-yellow-800`
-        case 'Low':
-          return `${baseClasses} bg-green-100 text-green-800`
-        default:
-          return baseClasses
+      const priorityClasses: Record<string, string> = {
+        High: `${baseClasses} bg-red-100 text-red-800`,
+        Medium: `${baseClasses} bg-yellow-100 text-yellow-800`,
+        Low: `${baseClasses} bg-green-100 text-green-800`
       }
+      return priorityClasses[priority] || baseClasses
     }
 
-    const goButtonClass = () => {
-      const baseClasses = 'px-4 py-2 rounded-md text-sm font-medium'
-      return `${baseClasses} bg-blue-500 text-white hover:bg-blue-600`
+    const stateClass = (state: string) => {
+      const baseClasses = 'px-2 py-1 rounded-full text-xs font-medium'
+      const stateClasses: Record<string, string> = {
+        'To Do': `${baseClasses} bg-red-100 text-red-800`,
+        'In Progress': `${baseClasses} bg-yellow-100 text-yellow-800`,
+        Done: `${baseClasses} bg-green-100 text-green-800`
+      }
+      return stateClasses[state] || baseClasses
     }
 
     return {
@@ -197,7 +187,7 @@ export default {
       sortByText,
       sortedTasks,
       priorityClass,
-      goButtonClass,
+      stateClass,
       toggleDropdown,
       setSortBy
     }

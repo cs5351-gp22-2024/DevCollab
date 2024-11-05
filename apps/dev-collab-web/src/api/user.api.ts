@@ -10,7 +10,7 @@ export const useUserApi = (axios: AxiosInstance) => ({
         Authorization: token
       }
     })
-    console.log(data)
+    //console.log(data)
     return data
   }
 })

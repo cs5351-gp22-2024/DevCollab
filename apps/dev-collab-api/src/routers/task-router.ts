@@ -6,6 +6,19 @@ import { TYPES } from "../container/types";
 
 export const taskRouter = express.Router();
 
+taskRouter.get("/api/task/cumulativeFlowDiagram/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.getCumulativeFlowDiagram(projectId);
+    res.send(result)
+});
+
+taskRouter.get("/api/task/overStateCount/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.getOverStateCount(projectId);
+    res.send(result)
+});
 
 // Aim : get the Total Staus Number
 // The router for the get task by ProjectID 

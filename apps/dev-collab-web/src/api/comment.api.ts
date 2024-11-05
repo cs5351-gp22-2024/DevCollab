@@ -14,8 +14,18 @@ export const CommentApi = () => {
       return data
     },
 
+    async getCommentByProjectId(projectId: number) {
+      const { data } = await axios.get(`/comment/project/${projectId}`)
+      return data
+    },
+
     async getCommentByTaskId(taskId: number) {
-      const { data } = await axios.get(`/comment/${taskId}`)
+      const { data } = await axios.get(`/comment/task/${taskId}`)
+      return data
+    },
+
+    async getAllUsers() {
+      const { data } = await axios.get(`/comment/get-users`)
       return data
     }
   }

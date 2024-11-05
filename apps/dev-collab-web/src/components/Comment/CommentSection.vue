@@ -1,6 +1,6 @@
 <template>
   <div class="mt-8">
-    <h2 class="text-2xl font-bold text-gray-800">Comments</h2>
+    <h5 class="text-gray-800">Comments</h5>
     <div class="flex justify-end">
       <div class="w-fit rounded-lg bg-gray-200 p-1">
         <button
@@ -27,102 +27,124 @@
         </button>
       </div>
     </div>
-    <CommentInput class="mt-6" @add-comment="addComment" />
-    <CommentItem
+    <CommentInput
       class="mt-6"
-      v-for="(comment, index) in sortedComments"
-      :key="`${comment.id}-${index}`"
-      :comment="comment"
+      :projectId="projectId"
+      :taskId="taskId"
+      :userList="userList"
+      @comment-added="onCommentAdded"
     />
+    <div v-if="sortedComments.length > 0">
+      <CommentItem
+        class="mt-6"
+        v-for="(comment, index) in sortedComments"
+        :key="`${comment}-${index}`"
+        :comment="comment"
+      />
+    </div>
+    <div v-else class="mt-6 text-gray-500 text-center py-4">No comments yet</div>
   </div>
 </template>
 
-<script lang="ts">
-import { ref, computed, type PropType, watch } from 'vue'
+<script setup lang="ts">
+import { ref, computed, type PropType, watch, onMounted, onUnmounted } from 'vue'
 import CommentItem from './CommentItem.vue'
 import CommentInput from './CommentInput.vue'
+import { CommentApi } from '@/api/comment.api'
 
-interface Comment {
-  id: number
+interface CommentType {
   author: string
   role: string
   date: string
   content: string
+  created_date: string
 }
 
-export default {
-  components: {
-    CommentItem,
-    CommentInput
+interface UserName {
+  user_id: number
+  name: string
+}
+
+const props = defineProps({
+  comments: {
+    type: Array as PropType<CommentType[]>,
+    required: true
   },
-  props: {
-    comments: {
-      type: Array as PropType<Comment[]>,
-      required: true
-    }
+  projectId: {
+    type: Number,
+    required: false
   },
-  setup(props) {
-    const sortOrder = ref('latest')
-    const localComments = ref<Comment[]>([])
+  taskId: {
+    type: Number,
+    required: true
+  },
+  userList: {
+    type: Array as PropType<UserName[]>,
+    required: false
+  }
+})
 
-    watch(
-      () => props.comments,
-      (newComments) => {
-        localComments.value = [...newComments]
-      },
-      { immediate: true, deep: true }
-    )
+const commentApi = CommentApi()
+const sortOrder = ref('latest')
+const localComments = ref<CommentType[]>([])
+let refreshInterval: NodeJS.Timer | null = null
 
-    const sortedComments = computed(() => {
-      return [...localComments.value].sort((a, b) => {
-        if (sortOrder.value === 'latest') {
-          return b.date.localeCompare(a.date)
-        } else {
-          return a.date.localeCompare(b.date)
-        }
-      })
-    })
+watch(
+  () => props.comments,
+  (newComments) => {
+    localComments.value = [...newComments]
+  },
+  { immediate: true, deep: true }
+)
 
-    const formatDate = (date: Date): string => {
-      const day = date.getDate()
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ]
-      const month = months[date.getMonth()]
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
+const sortedComments = computed(() => {
+  return [...localComments.value].sort((a, b) => {
+    const dateA = new Date(a.create_date)
+    const dateB = new Date(b.create_date)
 
-      return `${day} ${month} ${hours}:${minutes}`
+    if (sortOrder.value === 'latest') {
+      return dateB.getTime() - dateA.getTime()
+    } else {
+      return dateA.getTime() - dateB.getTime()
     }
+  })
+})
 
-    const addComment = (content: string) => {
-      const maxId = Math.max(...localComments.value.map((comment) => comment.id), 0)
-      const newComment = {
-        id: maxId + 1,
-        author: 'User 1001',
+// Update the fetchComments function to store original data
+const originalData = ref<any[]>([])
+
+const fetchComments = async () => {
+  try {
+    const data = await commentApi.getCommentByTaskId(props.taskId)
+    if (Array.isArray(data)) {
+      originalData.value = data // Store original data
+      localComments.value = data.map((item) => ({
+        author: item.author_name,
         role: '',
-        date: formatDate(new Date()),
-        content
-      }
-      localComments.value = [...localComments.value, newComment]
+        date: item.create_date,
+        content: item.comment,
+        create_date: item.create_date // Keep original date for sorting
+      }))
     }
-
-    return {
-      sortOrder,
-      sortedComments,
-      addComment
-    }
+  } catch (error) {
+    console.error('Error fetching comments:', error)
   }
 }
+
+const onCommentAdded = () => {
+  fetchComments()
+}
+
+// Setup interval when component mounts
+onMounted(() => {
+  fetchComments() // Initial fetch
+  refreshInterval = setInterval(fetchComments, 15000) // Fetch every 15 seconds
+})
+
+// Clean up interval when component unmounts
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
+})
 </script>

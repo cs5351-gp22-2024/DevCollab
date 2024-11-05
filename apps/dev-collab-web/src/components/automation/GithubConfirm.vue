@@ -1,70 +1,132 @@
 <template>
-    <div>
-      <h3>Step 3: Confirmation</h3>
+  <hr>
+  <br>
+  <div>
+    <h4><span class="font-weight-bold">Step 3:</span> Confirmation</h4>
 
-      <div class="mb-4 overflow-x-auto">
-        <table class="min-w-full bg-white">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="py-2 px-4 border-b">Webhook URL</th>
-              <td class="py-2 px-4 border-b">{{ url }}</td>
-            </tr>
-          </thead>
-          <tbody >
-            <tr>
-              <th class="py-2 px-4 border-b">Rules</th>
-              <td class="py-2 px-4 border-b">{{ rules }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="space-x-2 mb-4">
-        <button @click="previous" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-          Previous
-      </button>
-        <button @click="save" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-            SAVE
-        </button>
-      </div>
-      <div v-if="showNotification" class="notification">Temp notification: Saved!</div>
+    <div class="mb-4 overflow-x-auto">
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-2 px-4 border-b">Webhook URL</th>
+            <td class="py-2 px-4 border-b">{{ url }}</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="py-2 px-4 border-b">Name</th>
+            <td class="py-2 px-4 border-b">{{ name }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </template>
-  
-  <script lang="ts">
-  import { defineComponent, type PropType } from 'vue';
-  
-  export default defineComponent({
-    data() {
-      return {
-        webhookUrl: '',
-        showNotification: false
-      };
+
+    <div class="space-x-2 mb-4">
+      <button v-if="!finish" @click="previous"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Previous
+      </button>
+      <button v-if="!finish" @click="saveUrl"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        SAVE
+      </button>
+      <button v-if="finish" @click="github_home"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        FINISH
+      </button>
+    </div>
+    <div v-if="showSuccessNotification" class="notification-success">
+      <p class="font-weight-bold">Webhook Saved!</p>
+      <p>Please setup Webhook on Github with the above URL.</p>
+    </div>
+    <div v-if="showFailNotification" class="notification">Error in saving, please check connection!</div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, type PropType } from 'vue';
+import type { Router } from 'vue-router'
+import axios from 'axios';
+
+const instance = axios.create({
+  baseURL: 'http://localhost:3000' // Express backend
+});
+
+export default defineComponent({
+  data() {
+    return {
+      webhookUrl: '',
+      showSuccessNotification: false,
+      showFailNotification: false,
+      finish: false,
+      userId: null,
+    };
+  },
+  props: {
+    url: {
+      type: String,
+      required: true
     },
-    props: {
-      url: {
-        type: String,
-        required: true
-      },
-      rules: {
-        type: Array as PropType<any[]>,
-        required: true
-      }
-    },
-    methods: {
-      previous() {
-        this.$emit('previous');
-      },
-      save() {
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 3000);
-        this.$emit('save');
-      }
+    name: {
+      type: String,
+      required: true
     }
-  });
-  </script>
+  },
+  methods: {
+    previous() {
+      this.$emit('previous');
+    },
+    saveUrl() {
+      const token = localStorage.getItem('auth_token');
+      instance.post('/webhook/save-url', {
+        url: this.url.replace("http://localhost:3001", ""),
+        name: this.name
+      }, {
+        headers: {
+          Authorization: token
+        }
+      })
+        .then(response => {
+          console.log('URL saved successfully');
+          this.showSuccessNotification = true;
+          setTimeout(() => {
+            this.showSuccessNotification = false;
+          }, 5000);
+          this.$emit('save');
+          this.finish = true;
+        })
+        .catch(error => {
+          console.error('Error saving URL:', error);
+          this.showFailNotification = true;
+          setTimeout(() => {
+            this.showFailNotification = false;
+          }, 3000);
+          this.$emit('save');
+        });
+    },
+    github_home(): void {
+      const router: Router = this.$router
+      router.push('/automation/github') // Navigate back to Github Home
+    },
+    //     async getUserID() {
+    //       try {
+    //         const token = localStorage.getItem('auth_token');
+    //         console.log("token: ",token);
+    //         const response = await axios.get('http://localhost:3000/webhook/api/get-user-id', {
+    //         headers: {
+    //           authorization: token,
+    //       },
+    //     });
+    //     this.userId = response.data.userId;
+    //   } catch (error) {
+    //     console.error('Error fetching user ID:', error);
+    //   }
+    // }
+  }
+
+}
+);
+</script>
 
 
 <style lang="scss" scoped>
@@ -77,6 +139,7 @@
 
 .custom-link {
   color: $accent-color;
+
   &:hover {
     text-decoration: underline;
   }
@@ -109,24 +172,31 @@
 .bg-primary-color {
   background-color: $primary-color;
 }
+
 .bg-secondary-color {
   background-color: $secondary-color;
 }
+
 .bg-accent-color {
   background-color: $accent-color;
 }
+
 .bg-gray-1 {
   background-color: $gray-1;
 }
+
 .bg-gray-2 {
   background-color: $gray-2;
 }
+
 .bg-brown-1 {
   background-color: $brown-1;
 }
+
 .bg-pink-red-1 {
   background-color: $pink-red-1;
 }
+
 .bg-red-1 {
   background-color: $red-1;
 }
@@ -136,18 +206,30 @@
 }
 
 .notification {
-    position: fixed;
-    left: 50%;
-    background-color: #ef5350;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-  }
-  
-  .notification.hidden {
-    opacity: 0;
-  }
+  position: fixed;
+  left: 40%;
+  background-color: #de5252;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.notification-success {
+  position: fixed;
+  left: 40%;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.notification.hidden {
+  opacity: 0;
+}
 </style>

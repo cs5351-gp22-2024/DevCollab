@@ -3,7 +3,7 @@
     <div class="flex items-center mb-2">
       <img :src="avatarUrl" :alt="comment.author" class="w-8 h-8 rounded-full mr-3" />
       <div class="w-full flex justify-between">
-        <span class="font-bold text-gray-800">{{ comment.author }} - {{ comment.role }}</span>
+        <span class="font-bold text-gray-800">{{ comment.author }}</span>
         <span class="text-sm text-gray-500 ml-2">{{ comment.date }}</span>
       </div>
     </div>
@@ -23,7 +23,6 @@
 import { defineComponent, computed, type PropType } from 'vue'
 
 interface Comment {
-  id: number
   author: string
   role: string
   date: string
