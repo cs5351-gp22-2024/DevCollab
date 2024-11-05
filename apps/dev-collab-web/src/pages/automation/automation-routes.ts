@@ -4,6 +4,6 @@ export const createAutomationRoutes = defineRoutes(() => [
   {
     path: '/automation',
     name: 'automation',
-    component: () => import('./AutomationPage.vue')
+    component: () => import('./github/githubPage.vue')
   }
 ])

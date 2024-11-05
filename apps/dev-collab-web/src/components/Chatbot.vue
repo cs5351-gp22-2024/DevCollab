@@ -14,16 +14,10 @@
       </div>
     </div>
     <div class="input-container">
-      <textarea
-        class="form-control"
-        v-model="question"
-        @keyup.enter="sendQuestion"
-        placeholder="Ask me something..."
-      ></textarea>
-      <button
-        class="send-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-        @click="sendQuestion"
-      >
+      <textarea class="form-control" v-model="question" @keyup.enter="sendQuestion"
+        placeholder="Ask me something..."></textarea>
+      <button class="send-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        @click="sendQuestion">
         Send
       </button>
     </div>
@@ -55,13 +49,18 @@ export default {
     }
   },
   created() {
-    this.socket = new WebSocket('ws://localhost:3000')
+    let baseURLdynamic = window.location.href.includes('localhost') ? 'ws://localhost:3000?auth_token=' : 'ws://54.199.209.19:3000?auth_token=';
+    const authHeader = localStorage.getItem('auth_token'); // Fetch auth token
+    this.socket = new WebSocket(`${baseURLdynamic}${authHeader}`);
+    console.log(authHeader);
     this.socket.onmessage = (event) => {
-      this.messages[this.messages.length - 1].answer = event.data
-    }
+      this.messages[this.messages.length - 1].answer = event.data;
+    };
   },
   beforeUnmount() {
-    this.socket.close()
+    if (this.socket) {
+      this.socket.close();
+    }
   }
 }
 </script>
@@ -70,30 +69,34 @@ export default {
 /* .header h4:hover {
   cursor: pointer; 
 } */
-.header > h4 > i {
+.header>h4>i {
   cursor: pointer;
 }
+
 .messages {
   padding: 0px 5px;
   margin-bottom: 10px;
   line-height: 20px;
-  overflow-y: auto; /* Enable vertical scrolling */
-  max-height: 200px; /* Set a maximum height for scrollable area */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  max-height: 200px;
+  /* Set a maximum height for scrollable area */
 }
 
 .message {
-  margin-bottom: 10px; /* Add spacing between messages */
+  margin-bottom: 10px;
+  /* Add spacing between messages */
 }
 
 .message p {
-  word-break: break-all;
+  word-break: normal;
 }
 
 .chatbot {
   position: fixed;
   bottom: 60px;
   right: 30px;
-  width: 300px;
+  width: 290px;
   min-height: 350px;
   background-color: white;
   border: 1px solid #ccc;

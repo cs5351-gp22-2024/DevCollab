@@ -27,22 +27,18 @@
               </div>
             </div>
           </div>
-          <div
-            v-if="availableSoon"
-            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
-          >
+          <div v-if="availableSoon"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
             <div class="bg-white p-5 rounded-lg shadow-xl w-96">
               <h3 class="text-lg font-semibold mb-4">Available Soon</h3>
-              <button
-                @click="availableSoon = false"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
+              <button @click="availableSoon = false"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Close
               </button>
             </div>
           </div>
         </div>
-        
+
       </div>
     </section>
   </div>
@@ -83,39 +79,10 @@ export default defineComponent({
       messages: [] as { id: number; text: string }[]
     }
   },
-  mounted() {
-    // Establish WebSocket connection when the component is mounted
-    this.ws = new WebSocket('ws://localhost:3000'); // WebSocket server URL
-
-    this.ws.onopen = () => {
-      console.log('WebSocket connection established');
-    };
-
-    this.ws.onmessage = (event) => {
-      const newMessage = { id: this.messages.length + 1, text: event.data };
-      this.messages.push(newMessage);
-    };
-
-    this.ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-  },
   methods: {
     githubPage(): void {
       const router: Router = this.$router
       router.push('/automation/github') // Navigate to a sub-page
-    },
-    sendMessage() {
-      if (this.ws !== null) {
-        // Send a message to the WebSocket server
-        this.ws.send('Hello from Vue.js!');
-      }
-    }
-  },
-  beforeDestroy() {
-    // Close WebSocket connection
-    if (this.ws) {
-      this.ws.close();
     }
   }
 })
@@ -138,6 +105,7 @@ const availableSoon = ref(false)
 
 .custom-link {
   color: $accent-color;
+
   &:hover {
     text-decoration: underline;
   }
@@ -170,24 +138,31 @@ const availableSoon = ref(false)
 .bg-primary-color {
   background-color: $primary-color;
 }
+
 .bg-secondary-color {
   background-color: $secondary-color;
 }
+
 .bg-accent-color {
   background-color: $accent-color;
 }
+
 .bg-gray-1 {
   background-color: $gray-1;
 }
+
 .bg-gray-2 {
   background-color: $gray-2;
 }
+
 .bg-brown-1 {
   background-color: $brown-1;
 }
+
 .bg-pink-red-1 {
   background-color: $pink-red-1;
 }
+
 .bg-red-1 {
   background-color: $red-1;
 }
@@ -195,6 +170,7 @@ const availableSoon = ref(false)
 .color-white {
   color: $vt-c-white;
 }
+
 .block {
   display: flex;
   align-items: center;
