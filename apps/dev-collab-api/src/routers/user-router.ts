@@ -1,7 +1,6 @@
 import express from "express";
 import { VCode } from "../function/verification-code";
 import { UserAccount } from "../function/user-account";
-import { UserGroup } from "../function/user-group";
 
 export const userRouter = express.Router();
 
@@ -13,7 +12,7 @@ userRouter.get("/api/account/v-code", async (req, res) => {
   }
   VCode.createVcode(email);
   res.send({ result: "SUCCESS", email: email });
-  return;
+
 });
 
 userRouter.post("/api/account/v-code", async (req, res) => {
@@ -21,7 +20,7 @@ userRouter.post("/api/account/v-code", async (req, res) => {
 
   if (!email || !VCode.isValidEmail(email) || !code) {
     res.status(400).send({ result: "UNSUCCESS", error: "INVALID_INPUT" });
-    return;
+    return
   }
 
   try {
@@ -118,11 +117,21 @@ userRouter.post("/api/account/login/token", async (req, res) => {
 
     // Check if user exists
     if (decoded.result == "SUCCESS") {
-      res.status(200).send(decoded);
+ 
+      res.status(200).send({
+        result: "SUCCESS",
+        user: decoded.user,
+        detail: {
+          user_id: decoded.detail!.user_id,
+          name: decoded.detail!.name,
+          email: decoded.detail!.email,
+          email_2fa: decoded.detail!.email_2fa,
+        },
+      });
       return;
     } else {
-      res.status(400).send(decoded);
-      return;
+      res.status(400).send({ result: "UNSUCCESS", error: "USER_NOT_FOUND" });
+      return
     }
   } catch (error) {
     res.status(500).send({ result: "UNSUCCESS", error: "LOGIN_FAILED" });
@@ -153,7 +162,7 @@ userRouter.post("/api/account/2fa-setting", async (req, res) => {
     res.status(200).send(result_2fa);
     return;
   } else {
-    res.status(400).send(decoded);
+    res.status(400).send({ result: "UNSUCCESS", error: "USER_NOT_FOUND" });
     return;
   }
 });
@@ -187,7 +196,7 @@ userRouter.post("/api/account/password", async (req, res) => {
 
     return;
   } else {
-    res.status(400).send(decoded);
+    res.status(400).send({ result: "UNSUCCESS", error: "USER_NOT_FOUND" });
     return;
   }
 });
@@ -221,7 +230,7 @@ userRouter.post("/api/account/username", async (req, res) => {
 
     return;
   } else {
-    res.status(400).send(decoded);
+    res.status(400).send({ result: "UNSUCCESS", error: "USER_NOT_FOUND" });
     return;
   }
 });
