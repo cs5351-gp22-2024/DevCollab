@@ -67,7 +67,10 @@
             :title="rail ? '' : 'Settings'"
             :to="{ name: 'profile' }"
           ></v-list-item> -->
-          <div class="border border-2 rounded rounded-4 bg-white mb-2 py-1">
+          <div
+            class="border border-2 rounded rounded-4 bg-white mb-2 py-1 cursor-pointer"
+            @click="logout"
+          >
             <v-list-item :prepend-icon="'mdi-logout'"
               ><span class="ps-3 fw-bolder">LOGOUT</span></v-list-item
             >
@@ -195,10 +198,9 @@ const showNotifications = () => {
   router.push({ name: 'notification' })
 }
 
-const openProfile = () => {
-  // Implement profile opening logic
-
-  console.log('Open profile')
+const logout = () => {
+  console.log('Logout')
+  location.href = './logout'
 }
 
 // Function to update drawer based on window width
@@ -222,6 +224,8 @@ const fetchUnReadNotification = async () => {
 }
 const getUserInfo = async () => {
   const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+
+  if (info.success == false) logout()
   email.value = info.user.email
   user_id.value = info.user.userId
   username.value = info.user_details.username
