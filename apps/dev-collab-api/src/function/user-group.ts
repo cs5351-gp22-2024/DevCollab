@@ -208,11 +208,11 @@ export class UserGroup {
       return { result: "UNSUCCESS", error: "NOT_ADMIN" };
     }
 
-    const target = this.isGroupMember(targetMember_id);
-    if (!target) {
+    const target = await this.isGroupMember(targetMember_id);
+    if (target == null) {
       return { result: "UNSUCCESS", error: "TARGET_NOT_IN_GROUP" };
     }
-    (await (await target)!.remove()).save();
+    (await target!.remove()).save();
     return { result: "SUCCESS", message: "TARGET_REMOVED" };
   }
   static async deleteGroup(user: number, group: number) {
@@ -229,7 +229,7 @@ export class UserGroup {
     if (right_checker.group_role != "ADMIN") {
       return { result: "UNSUCCESS", error: "NOT_ADMIN" };
     }
-    if (group_record != null)  (await group_record.remove()).save();
+    if (group_record != null) (await group_record.remove()).save();
     return { result: "SUCCESS", message: "GROUP_REMOVED" };
   }
   static async leaveGroup(user: number, group: number) {
