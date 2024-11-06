@@ -80,8 +80,11 @@ export default defineComponent({
     },
     saveUrl() {
       const token = localStorage.getItem('auth_token');
+      let baseURLdynamic = window.location.href.includes('localhost')
+        ? 'http://localhost:3001'
+        : 'http://54.199.209.19'
       instance.post('/webhook/save-url', {
-        url: this.url.replace("http://localhost:3001", ""),
+        url: this.url.replace(baseURLdynamic, ""),
         name: this.name
       }, {
         headers: {
