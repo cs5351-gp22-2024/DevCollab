@@ -229,8 +229,7 @@ export class UserGroup {
     if (right_checker.group_role != "ADMIN") {
       return { result: "UNSUCCESS", error: "NOT_ADMIN" };
     }
-
-    (await group_record!.remove()).save();
+    if (group_record != null)  (await group_record.remove()).save();
     return { result: "SUCCESS", message: "GROUP_REMOVED" };
   }
   static async leaveGroup(user: number, group: number) {
@@ -247,7 +246,7 @@ export class UserGroup {
     if (right_checker.group_role == "ADMIN") {
       return { result: "UNSUCCESS", error: "ADMIN_CANNOT_LEAVE" };
     }
-    (await (await right_checker).remove()).save();
+    (await right_checker.remove()).save();
     return { result: "SUCCESS", message: "LEVEA_THE_GROUP" };
   }
 }
