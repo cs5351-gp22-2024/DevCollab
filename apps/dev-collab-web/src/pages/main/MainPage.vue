@@ -234,7 +234,9 @@ const getUserInfo = async () => {
 // Set up event listener on mount
 onMounted(() => {
   updateDrawer() // Initial check
-  window.addEventListener('resize', updateDrawer), fetchUnReadNotification(), getUserInfo()
+  window.addEventListener('resize', updateDrawer)
+  fetchUnReadNotification()
+  getUserInfo()
 })
 
 // Clean up event listener on unmount

@@ -36,7 +36,7 @@ export class UserGroup {
   static async getMemberList(userid: number, group_id: number) {
     const group = await this.getGroup(group_id);
     const user = await UserAccount.getRecordById(userid);
-    const checkMember = await this.isGroupMember(null, group, user);
+    //const checkMember = await this.isGroupMember(null, group, user);
     if (group != null && user != null) {
       const groupMembers = await AppDataSource.getRepository(GroupMember).find({
         where: {
