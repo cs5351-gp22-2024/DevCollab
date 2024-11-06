@@ -14,10 +14,16 @@
       </div>
     </div>
     <div class="input-container">
-      <textarea class="form-control" v-model="question" @keyup.enter="sendQuestion"
-        placeholder="Ask me something..."></textarea>
-      <button class="send-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-        @click="sendQuestion">
+      <textarea
+        class="form-control"
+        v-model="question"
+        @keyup.enter="sendQuestion"
+        placeholder="Ask me something..."
+      ></textarea>
+      <button
+        class="send-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        @click="sendQuestion"
+      >
         Send
       </button>
     </div>
@@ -49,17 +55,19 @@ export default {
     }
   },
   created() {
-    let baseURLdynamic = window.location.href.includes('localhost') ? 'ws://localhost:3000?auth_token=' : 'ws://54.199.209.19:3000?auth_token=';
-    const authHeader = localStorage.getItem('auth_token'); // Fetch auth token
-    this.socket = new WebSocket(`${baseURLdynamic}${authHeader}`);
-    console.log(authHeader);
+    let baseURLdynamic = window.location.href.includes('localhost')
+      ? 'ws://localhost:3000?auth_token='
+      : 'ws://54.199.209.19:3000?auth_token='
+    const authHeader = localStorage.getItem('auth_token') // Fetch auth token
+    this.socket = new WebSocket(`${baseURLdynamic}${authHeader}`)
+    //console.log(authHeader);
     this.socket.onmessage = (event) => {
-      this.messages[this.messages.length - 1].answer = event.data;
-    };
+      this.messages[this.messages.length - 1].answer = event.data
+    }
   },
   beforeUnmount() {
     if (this.socket) {
-      this.socket.close();
+      this.socket.close()
     }
   }
 }
@@ -69,7 +77,7 @@ export default {
 /* .header h4:hover {
   cursor: pointer; 
 } */
-.header>h4>i {
+.header > h4 > i {
   cursor: pointer;
 }
 

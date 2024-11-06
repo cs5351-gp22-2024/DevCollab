@@ -139,12 +139,9 @@ export default {
       )
       try {
         if (data.success === true) {
-          const group_data = await GroupApi.createGroup('Default Group')
-          if (group_data.success === true) {
-            location.href = '/home'
-          } else {
-            location.href = '/setting'
-          }
+          await GroupApi.createGroup('Default Group')
+
+          location.href = '/home'
 
           return
         } else {
