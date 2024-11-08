@@ -56,6 +56,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, type PropType } from 'vue'
 import { CommentApi } from '@/api/comment.api'
+import { NotificationApi } from '@/api/notification.api'
 import { dateFormatter } from './dateFormatter'
 import LoginApi from '@/api/login.api'
 
@@ -90,6 +91,7 @@ export default defineComponent({
   emits: ['add-comment', 'comment-added'],
   setup(props, { emit }) {
     const commentApi = CommentApi()
+    const notificationApi = NotificationApi()
     const isExpanded = ref(false)
     const commentText = ref('')
     const commentTextarea = ref<HTMLTextAreaElement | null>(null)
@@ -116,12 +118,26 @@ export default defineComponent({
           }
 
           await commentApi.createComment(newComment)
+          updateUnReadNotification()
           emit('comment-added') // Emit after successful comment creation
         } catch (err) {
           console.error('Error creating comment:', err)
         } finally {
           isExpanded.value = false
         }
+      }
+    }
+
+    const updateUnReadNotification = async () => {
+      try {
+        const info = await LoginApi.checkToken(LoginApi.getLocalToken())
+        const data = await notificationApi.getCurrentUserUnReadNotificationCount(info.user.userId) // current user id
+        const badge = document.querySelector('.v-badge__badge.v-theme--light') as HTMLElement
+        if (badge) {
+          badge.textContent = data
+        }
+      } catch (err) {
+        console.error('Error fetching:', err)
       }
     }
 
@@ -216,7 +232,8 @@ export default defineComponent({
       cancelComment,
       handleInput,
       handleKeydown,
-      selectMention
+      selectMention,
+      updateUnReadNotification
     }
   }
 })
