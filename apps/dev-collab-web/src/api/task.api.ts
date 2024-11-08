@@ -17,6 +17,11 @@ export const TaskApi = () => {
     async getCumulativeFlowDiagram(projectId: number) {
       const { data } = await axios.get(`/task/cumulativeFlowDiagram/${projectId}`)
       return data
+    },
+
+    async getOverviewUserStory(projectId: number) {
+      const { data } = await axios.get(`/task/overviewUserStory/${projectId}`)
+      return data
     }
   }
 }

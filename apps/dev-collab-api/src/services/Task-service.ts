@@ -52,6 +52,7 @@ export interface ITaskService {
     CheckPrioritynum(projectId: number): Promise<Record<string, number>>;
     getOverStateCount(projectId: number): Promise<StatusProgress[]>;
     getCumulativeFlowDiagram(projectId: number): Promise<FlowDiagram[]>;
+    getOverviewUserStory(projectId: number): Promise<FlowDiagram[]>;
 }
 
 @injectable()
@@ -66,6 +67,17 @@ export class TaskService implements ITaskService {
         @inject(TYPES.ISprintRepository)
         private _sprintRepository: ISprintRepository
     ) { }
+
+    private formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
 
     // create Task  by  Project ID , Sprint ID 
     async createTask(projectId: number, sprintId: number, command: TaskCreateCommand) {
@@ -363,6 +375,35 @@ export class TaskService implements ITaskService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async getOverviewUserStory(projectId: number) {
+        const query = `
+        SELECT 
+            userStoryId,
+            title,
+            asA,
+            iWantTo,
+            soThat,
+            priority,
+            DATE_FORMAT(dueDate, '%d/%m/%Y') as dueDate,
+            upvoteCount,
+            downvoteCount,
+            projectId
+        FROM userStory
+        WHERE projectId = ?
+        ORDER BY 
+            CASE priority
+                WHEN 'High' THEN 1
+                WHEN 'Medium' THEN 2
+                WHEN 'Low' THEN 3
+                ELSE 4
+            END,
+            (upvoteCount - downvoteCount) DESC,
+            dueDate ASC`;
+
+        const result = await this._dbContext.userStories.query(query, [projectId]);
+        return result;
     }
 
 }

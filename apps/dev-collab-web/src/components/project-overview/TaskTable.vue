@@ -101,10 +101,9 @@
 </template>
 
 <script lang="ts">
-import { type PropType, computed, ref, watch } from 'vue'
+import { type PropType, computed, ref } from 'vue'
 
 type SortType = 'priority' | 'dueDate'
-type Priority = 'High' | 'Medium' | 'Low'
 
 interface Task {
   name: string

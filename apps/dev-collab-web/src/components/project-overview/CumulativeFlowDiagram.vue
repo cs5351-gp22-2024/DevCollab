@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 h-[90%]">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold text-gray-700">Task Status Cumulative Flow</h2>
+      <h6 class="text-gray-700">Task Status Cumulative Flow</h6>
       <div class="flex items-center gap-2">
         <v-btn-toggle v-model="selectedPeriod" mandatory class="border rounded">
           <v-btn

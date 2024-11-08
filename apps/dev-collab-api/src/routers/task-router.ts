@@ -6,6 +6,13 @@ import { TYPES } from "../container/types";
 
 export const taskRouter = express.Router();
 
+taskRouter.get("/api/task/overviewUserStory/:projectId", async (req, res) => {
+    const service = appContainer.get(TYPES.ITaskService);
+    const projectId = parseInt(req.params.projectId);
+    const result = await service.getOverviewUserStory(projectId);
+    res.send(result)
+});
+
 taskRouter.get("/api/task/cumulativeFlowDiagram/:projectId", async (req, res) => {
     const service = appContainer.get(TYPES.ITaskService);
     const projectId = parseInt(req.params.projectId);

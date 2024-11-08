@@ -45,7 +45,6 @@ import CumulativeFlowDiagram from '@/components/project-overview/CumulativeFlowD
 import ProgressChart from '@/components/project-overview/ProgressChart.vue'
 import { useProjectMainStore } from '../project-main/project-main.store'
 import { TaskApi } from '@/api/task.api'
-import { story as dummyStories, type Story } from './DummyData'
 
 interface Task {
   name: string
@@ -67,6 +66,18 @@ interface FlowDiagram {
   done: number
 }
 
+interface StoryTask {
+  title: string
+  priority: string
+  dueDate: string
+  upvoteCount: number
+  downvoteCount: number
+  expanded: Boolean
+  asA: string
+  iWantTo: string
+  soThat: string
+}
+
 const mainStore = useProjectMainStore()
 const project = mainStore.project
 const taskApi = TaskApi()
@@ -76,7 +87,7 @@ if (!project) {
 }
 
 const tasks = ref<Task[]>([])
-const stories = ref<Story[]>(dummyStories)
+const stories = ref<StoryTask[]>([])
 const chartData = ref<FlowDiagram[]>([])
 
 // Initialize with default structure
@@ -131,6 +142,15 @@ const getCumulativeFlowDiagram = async () => {
   }
 }
 
+const getOverviewUserStory = async () => {
+  try {
+    const data = await taskApi.getOverviewUserStory(project.projectId)
+    stories.value = data
+  } catch (err) {
+    console.error('Error fetching getOverviewUserStory:', err)
+  }
+}
+
 watch(progressCards, (newCards) => {
   selectedPeriodIndexes.value = new Array(newCards.length).fill(0)
 })
@@ -141,6 +161,11 @@ watch(progressCards, (newCards) => {
 })
 
 onMounted(async () => {
-  await Promise.all([fetchTasks(), getOverStateCount(), getCumulativeFlowDiagram()])
+  await Promise.all([
+    fetchTasks(),
+    getOverStateCount(),
+    getCumulativeFlowDiagram(),
+    getOverviewUserStory()
+  ])
 })
 </script>
