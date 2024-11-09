@@ -1,4 +1,4 @@
-name: build
+name: trivy-security-scanning
 on:
   push:
     branches:
